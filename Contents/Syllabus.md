@@ -15,23 +15,17 @@ On completion of the course, the student will have the ability to:
 
 ## 🧾 Syllabus Content
 
-### Introduction  
-History and applications. Spring and bar elements, Minimum potential energy principle, Direct stiffness method, Nodal equilibrium equations, Assembly of global stiffness matrix, Element strain and stress  
+- **Introduction :** History and applications. Spring and bar elements, Minimum potential energy principle, Direct stiffness method, Nodal equilibrium equations, Assembly of global stiffness matrix, Element strain and stress  
 
-### Beam Elements  
-Flexure element, Element stiffness matrix, Element load vector  
+- **Beam Elements:** Flexure element, Element stiffness matrix, Element load vector  
 
-### Method of Weighted Residuals  
-Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
+- **Method of Weighted Residuals:** Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
 
-### Types  
-Triangular Elements, Rectangular Elements, Three-dimensional elements, Iso-parametric Formulation, Axis-Symmetric elements, Numerical integration, Gaussian quadrature  
+- **Types:** Triangular Elements, Rectangular Elements, Three-dimensional elements, Iso-parametric Formulation, Axis-Symmetric elements, Numerical integration, Gaussian quadrature  
 
-### Application to Solid Mechanics  
-Plane stress, CST element, Plane strain rectangular element, Isoparametric formulation of the plane quadrilateral element, Axis- symmetric stress analysis, Strain and stress computations  
+- **Application to Solid Mechanics:** Plane stress, CST element, Plane strain rectangular element, Isoparametric formulation of the plane quadrilateral element, Axis- symmetric stress analysis, Strain and stress computations  
 
-### Computer Implementation  
-Use of commercial FEA Software, Pre-processing, Solution, Post-processing  
+- **Computer Implementation:** Use of commercial FEA Software, Pre-processing, Solution, Post-processing  
 
 ---
 
