@@ -1,7 +1,7 @@
 
 # 📘 **MST-102: Finite Element Method in Structural Engineering**
 
-### ✏️ Unit 1: Introduction
+## ✏️ Unit 1: Introduction
 
 
 ## 1.1 History and Applications of Finite Element Method
