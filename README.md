@@ -2,7 +2,7 @@
 
 | **[Contents](Contents/Content.md)** | **[Syllabus](Contents/Syllabus.md)** | **[Contact](Contents/Contact.md)** |  
 
-![FEM](Contents/Images/FEM.png)
+![FEM](Contents/FEM.png)
 
 ---
 
