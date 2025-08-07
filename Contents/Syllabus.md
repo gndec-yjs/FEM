@@ -15,7 +15,7 @@ On completion of the course, the student will have the ability to:
 
 ## 🧾 Syllabus Content
 
-- **Introduction :** History and applications. Spring and bar elements, Minimum potential energy principle, Direct stiffness method, Nodal equilibrium equations, Assembly of global stiffness matrix, Element strain and stress  
+- **Introduction :** History and applications, Spring and bar elements, Minimum potential energy principle, Direct stiffness method, Nodal equilibrium equations, Assembly of global stiffness matrix, Element strain and stress  
 
 - **Beam Elements:** Flexure element, Element stiffness matrix, Element load vector  
 
