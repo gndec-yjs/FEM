@@ -83,8 +83,6 @@ The versatility of FEM lies in its ability to model and analyze various physical
 * Product design and optimization
 * MEMS and nanotechnology
 
-\[Insert Figure: FEM Application Domains Schematic]
-
 ### 4. Advantages of FEM
 
 * Can handle complex geometries and boundaries
