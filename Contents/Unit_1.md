@@ -18,7 +18,7 @@ The **Finite Element Method (FEM)** is a powerful numerical technique used to ob
 
 ### 1. What is Finite Element Method?
 
-In FEM, a physical domain is divided into a collection of smaller and simpler parts, known as **elements**, which are connected at points called **nodes**. The behavior of each element is approximated using polynomial interpolation functions, and the system of equations is assembled for the entire structure. These equations are then solved to obtain an approximate solution.
+In FEM, a physical domain is divided into a collection of smaller and simpler parts, known as **elements**, which are connected at points called **nodes**. The behaviour of each element is approximated using polynomial interpolation functions, and the system of equations is assembled for the entire structure. These equations are then solved to obtain an approximate solution.
 
 The Finite Element Method is particularly useful when dealing with:
 
@@ -43,10 +43,6 @@ The origin of FEM lies in both **mathematics** and **engineering mechanics**.
 * **1980s onwards** – Commercial FEA software such as ANSYS, ABAQUS, and NASTRAN emerged.
 
 * **Today** – FEM is indispensable in multiple fields of engineering and science.
-
-\[Insert Figure: Timeline of FEM Development]
-
-
 
 ### 3. Applications of FEM in Engineering
 
