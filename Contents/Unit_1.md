@@ -1,12 +1,3 @@
-$$
-\begin{bmatrix} f_1 \\ f_2 \end{bmatrix}
-=
-k
-\begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}
-\begin{bmatrix} u_1 \\ u_2 \end{bmatrix}
-$$
-
-
 # MST-102: Finite Element Method in Structural Engineering  
 
 ## Unit 1: Introduction
