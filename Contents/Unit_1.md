@@ -24,7 +24,7 @@
 - [Element Strain and Stress](#element-strain-and-stress)
 
 
-### History and Applications of Finite Element Method
+## History and Applications of Finite Element Method
 
 The **Finite Element Method (FEM)** is a powerful numerical technique used to obtain approximate solutions to a wide range of engineering problems, particularly those governed by differential equations. It is based on discretizing a structure or continuum into smaller parts, called *finite elements*, and formulating algebraic equations that can be solved using computational methods.
 
@@ -115,29 +115,57 @@ The versatility of FEM lies in its ability to model and analyze various physical
 The Finite Element Method is a cornerstone of modern engineering analysis, enabling engineers to simulate and predict the behavior of real-world systems under a variety of physical conditions. With a robust mathematical foundation and widespread software implementation, FEM is both an academic and industrial standard.
 
 ---
-### Spring and Bar Elements
 
-Spring and bar elements are the simplest structural elements in finite element analysis.
-They form the foundation for understanding stiffness matrix formulation, nodal force–displacement relationships, and assembly procedures.
+## **Spring and Bar Elements**
+
+Spring and bar elements are the simplest structural elements in the finite element method.
+They are used to model members that resist only axial deformation and serve as the foundation for understanding stiffness matrix formulation, nodal force–displacement relationships, and the assembly of element equations into a global system.
 
 ---
 
-### 1. Spring Element
+### **1. Spring Element**
 
-A spring element resists only axial deformation.  
-It can be represented by two nodes, each with a single displacement degree of freedom.
+A **spring element** is the simplest one-dimensional finite element. It is assumed to resist **only axial deformation** and is defined by:
 
-Hooke’s Law for a spring:  
+* **Two nodes** — labelled $1$ and $2$
+* **One displacement degree of freedom per node** — $u_1, u_2$
+* **Linear elastic behavior** — force proportional to displacement difference
+
+*(Insert Figure: Spring element with two nodes, displacements $u_1, u_2$, forces $f_1, f_2$)*
+
+---
+
+#### Force–Displacement Relationship
+
+From **Hooke’s Law** for a linear spring:
+
 $$
-f = k (u_2 - u_1)
+f = k(u_2 - u_1)
 $$
 
-Where:  
-- $f$ = force in the spring (N)  
-- $k$ = spring stiffness (N/m)  
-- $u_1, u_2$ = nodal displacements (m)  
+where:
 
-Nodal force–displacement relationship in matrix form:
+* $f$ = force in the spring (N)
+* $k$ = spring stiffness (N/m)
+* $u_1, u_2$ = nodal displacements (m)
+
+At the individual nodes, the forces can be written as:
+
+$$
+f_1 = -k(u_2 - u_1)
+$$
+
+$$
+f_2 = \phantom{-}k(u_2 - u_1)
+$$
+
+These satisfy **Newton’s third law** — equal and opposite forces.
+
+---
+
+#### Matrix Form of Element Equations
+
+The nodal force–displacement relation can be written as:
 
 $$
 \begin{bmatrix}
@@ -156,7 +184,7 @@ u_2
 \end{bmatrix}
 $$
 
-Thus, the element stiffness matrix is:
+The **element stiffness matrix** is therefore:
 
 $$
 [k] = k
@@ -166,36 +194,111 @@ $$
 \end{bmatrix}
 $$
 
-*(Insert Figure: Spring element with two nodes, displacements $u_1$ & $u_2$, and forces $f_1$ & $f_2$)*
+---
+
+#### Properties of the Spring Element
+
+1. **Order of matrix:** $2 \times 2$ — because there are two DOFs.
+2. **Symmetry:** $k_{12} = k_{21}$ — valid for linear elastic systems.
+3. **Singular determinant:** Indicates rigid body motion if the element is unconstrained.
+4. **Linearity:** Valid for small deformations with constant $k$.
 
 ---
 
-### 2. Bar Element in 1D
+**Figure Placeholders:**
 
-A bar element is a straight structural member that resists only axial forces.
+* *(Insert Figure: Linear spring element showing nodes, displacements, and forces — fig\_spring\_element.png)*
+* *(Insert Figure: Force–displacement graph of linear spring — fig\_spring\_graph.png)*
 
-**Assumptions:**
-- Material is linearly elastic  
-- Cross-section is uniform  
-- Deformation is small  
-- Only axial displacement is considered  
+---
 
-Strain–Displacement Relation:  
+### **2. Bar Element in 1D**
+
+A **bar element** is a straight structural member that resists only axial forces — either **tension** or **compression**.
+It is one of the most basic finite elements used to model **trusses** and **axially loaded members** in frames.
+
+---
+
+#### Description and Assumptions
+
+* **Two nodes** — labelled $1$ and $2$
+* **One displacement degree of freedom per node** — $u_1, u_2$ (along the element axis)
+* **Length** — $L$ (constant)
+* **Cross-sectional area** — $A$ (uniform)
+* **Material** — homogeneous and linearly elastic, modulus of elasticity $E$
+* **Deformations** — small, so geometry changes are negligible
+* **Loading** — purely axial (no bending or shear)
+
+*(Insert Figure: Bar element showing length $L$, cross-section $A$, nodes 1 and 2, displacements $u_1, u_2$, and internal axial force $F$)*
+
+---
+
+#### Strain–Displacement Relation
+
+The **axial strain** is defined as the change in length per unit original length:
+
 $$
 \varepsilon = \frac{u_2 - u_1}{L}
 $$
 
-Stress–Strain Law:  
+Where $u_2 - u_1$ is the total elongation (or shortening) of the element.
+
+---
+
+#### Stress–Strain Law
+
+From **Hooke’s Law** for axial loading:
+
 $$
-\sigma = E \cdot \varepsilon = E \cdot \frac{u_2 - u_1}{L}
+\sigma = E \cdot \varepsilon
 $$
 
-Force–Displacement Relation:  
 $$
-F = \sigma \cdot A = \frac{E \cdot A}{L} (u_2 - u_1)
+\sigma = E \cdot \frac{u_2 - u_1}{L}
 $$
 
-Nodal force–displacement relation in matrix form:
+Where:
+
+* $\sigma$ = axial stress in the bar (N/m²)
+* $E$ = Young’s modulus (Pa)
+
+---
+
+#### Force–Displacement Relation
+
+The internal axial force in the bar is:
+
+$$
+F = \sigma \cdot A
+$$
+
+$$
+F = \frac{EA}{L} (u_2 - u_1)
+$$
+
+This represents **tension** when $u_2 > u_1$ and **compression** when $u_2 < u_1$.
+
+---
+
+#### Nodal Force Equations
+
+Considering equilibrium of each node:
+
+$$
+f_1 = -\frac{EA}{L} (u_2 - u_1)
+$$
+
+$$
+f_2 = \phantom{-}\frac{EA}{L} (u_2 - u_1)
+$$
+
+Here $f_1$ and $f_2$ are the **nodal forces** (positive in tension).
+
+---
+
+#### Matrix Form of Element Equations
+
+The above equations can be written compactly as:
 
 $$
 \begin{bmatrix}
@@ -203,7 +306,7 @@ f_1 \\
 f_2
 \end{bmatrix}
 =
-\frac{E A}{L}
+\frac{EA}{L}
 \begin{bmatrix}
 1 & -1 \\
 -1 & 1
@@ -214,91 +317,34 @@ u_2
 \end{bmatrix}
 $$
 
-Thus:
+Thus, the **element stiffness matrix** is:
 
 $$
-[k] = \frac{E A}{L}
+[k] =
+\frac{EA}{L}
 \begin{bmatrix}
 1 & -1 \\
 -1 & 1
 \end{bmatrix}
 $$
 
-*(Insert Figure: Bar element with length $L$, area $A$, modulus $E$, nodes 1 & 2)*
+---
+
+#### Properties of the Bar Element
+
+1. **Matrix size:** $2 \times 2$ (two DOFs)
+2. **Symmetry:** stiffness matrix is symmetric ($k_{12} = k_{21}$)
+3. **Positive semi-definite:** determinant zero if no boundary conditions are applied
+4. **Linearity:** valid for constant $E$ and $A$ with small deformations
 
 ---
 
-### 3. Assembly of Element Equations
+**Figure Placeholders:**
 
-When multiple elements are connected, their stiffness matrices are combined into a **global stiffness matrix**.
-
-Example: Two bar elements in series (nodes 1–2–3) with stiffnesses $k_1$ and $k_2$:
-
-$$
-[K] =
-\begin{bmatrix}
-k_1 & -k_1 & 0 \\
--k_1 & k_1 + k_2 & -k_2 \\
-0 & -k_2 & k_2
-\end{bmatrix}
-$$
-
-*(Insert Figure: Two bar elements in series with node connectivity diagram)*
+* *(Insert Figure: Bar element with nodes 1 & 2, axial displacements, and internal force — fig\_bar\_element.png)*
+* *(Insert Figure: Free-body diagram of bar element — fig\_bar\_fbd.png)*
 
 ---
-
-### 4. Solved Example
-
-**Problem:**  
-A steel bar of length $2 \ \mathrm{m}$, cross-section $100 \ \mathrm{mm}^2$, and modulus $E = 200 \ \mathrm{GPa}$ is fixed at the left end and subjected to a $10 \ \mathrm{kN}$ axial load at the right end.  
-Find the displacement at the free end.
-
-**Step 1: Convert units**  
-$$
-A = 100 \ \mathrm{mm}^2 = 1.0 \times 10^{-4} \ \mathrm{m}^2
-$$
-$$
-E = 200 \ \mathrm{GPa} = 2.0 \times 10^{11} \ \mathrm{Pa}
-$$
-$$
-L = 2 \ \mathrm{m}
-$$
-
-**Step 2: Calculate element stiffness**  
-$$
-k = \frac{E A}{L} =
-\frac{(2.0 \times 10^{11})(1.0 \times 10^{-4})}{2} =
-1.0 \times 10^7 \ \mathrm{N/m}
-$$
-
-**Step 3: Apply boundary conditions**  
-At node 1: $u_1 = 0$ (fixed)  
-At node 2: load $F = 10,000 \ \mathrm{N}$  
-
-**Step 4: Solve for displacement**  
-$$
-F = k (u_2 - u_1)
-$$
-$$
-10,000 = (1.0 \times 10^7) (u_2 - 0)
-$$
-$$
-u_2 = 0.001 \ \mathrm{m} = 1 \ \mathrm{mm}
-$$
-
-**Answer:** Displacement at free end = **1 mm**
-
----
-
-### Summary
-
-- Spring and bar elements are the basic building blocks for FEM formulation.  
-- They follow a linear force–displacement relationship from Hooke’s law.  
-- Their stiffness matrices are simple and form the basis for complex element derivations in later topics.
-
-
-
-
 
 
 
