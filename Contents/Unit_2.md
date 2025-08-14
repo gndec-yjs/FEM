@@ -597,7 +597,8 @@ A cantilever beam of length $L=2.0\ \text{m}$ is fixed at the left end and loade
 Great — here is the complete short-answer solution (clean, step-by-step) for the cantilever exercise you pasted. I show the derivation and all numeric arithmetic **digit-by-digit** so you can paste this into your notes or assignment.
 
 ---
-### **Answer:**
+
+### **Solution:**
 
 **Given:**
 
@@ -670,7 +671,7 @@ M(x) = P(L-x), \quad V(x) = P
 
 ---
 
-**Final Boxed Results:**
+**Final Answer:**
 
 \[
 \boxed{
@@ -681,6 +682,167 @@ M(x) = P(L-x), \quad V(x) = P
 \end{aligned}
 }
 \]
+
+---
+
+## Example — Two-Element FEM Model of a Cantilever Beam
+
+### **Question**
+
+A **cantilever beam** of length \( L = 2.0 \ \mathrm{m} \) is fixed at the left end and subjected to a **downward point load** \( P = 1000 \ \mathrm{N} \) at the free end.  
+The beam has:  
+\[
+E = 200 \ \mathrm{GPa}, \quad I = 8.0 \times 10^{-6} \ \mathrm{m}^4.
+\]
+
+Using **two equal 2-node Euler–Bernoulli beam elements**:
+
+1. Assemble the **global stiffness matrix** and **load vector**.  
+2. Apply **boundary conditions** and solve for all nodal displacements and rotations.  
+3. Calculate the **tip deflection** \( v_3 \) and **tip rotation** \( \theta_3 \).  
+4. Compute the **bending moment** at:
+   - the fixed support (\(x = 0\))
+   - mid-span (\(x = 1.0 \ \mathrm{m}\))
+   - free end (\(x = 2.0 \ \mathrm{m}\)).
+5. Compare the tip deflection with the **single-element FEM solution** for the same beam.
+
+---
+
+### **Solution**
+
+#### 1) Element Data
+
+Total span:  
+\[
+L_{\text{total}} = 2.0 \ \mathrm{m}, \quad L_e = \frac{L_{\text{total}}}{2} = 1.0 \ \mathrm{m}.
+\]
+
+Flexural rigidity:  
+\[
+EI = (200 \times 10^9)(8.0\times10^{-6}) = 1.6 \times 10^6 \ \mathrm{N \cdot m^2}.
+\]
+
+#### 2) Local Stiffness Matrix
+
+The 2-node Euler–Bernoulli beam element stiffness matrix is:
+\[
+[k]^{(e)} = \frac{EI}{L_e^3}
+\begin{bmatrix}
+12 & 6L_e & -12 & -6L_e \\
+6L_e & 4L_e^2 & -6L_e & 2L_e^2 \\
+-12 & -6L_e & 12 & 6L_e \\
+-6L_e & 2L_e^2 & 6L_e & 4L_e^2
+\end{bmatrix}.
+\]
+
+Substituting \(L_e = 1.0 \ \mathrm{m}\):
+\[
+\frac{EI}{L_e^3} = \frac{1.6\times10^6}{1^3} = 1.6\times10^6.
+\]
+
+Thus:
+\[
+[k]^{(e)} =
+\begin{bmatrix}
+1.92\!\times\!10^7 & 9.60\!\times\!10^6 & -1.92\!\times\!10^7 & -9.60\!\times\!10^6 \\
+9.60\!\times\!10^6 & 6.40\!\times\!10^6 & -9.60\!\times\!10^6 & 3.20\!\times\!10^6 \\
+-1.92\!\times\!10^7 & -9.60\!\times\!10^6 & 1.92\!\times\!10^7 & 9.60\!\times\!10^6 \\
+-9.60\!\times\!10^6 & 3.20\!\times\!10^6 & 9.60\!\times\!10^6 & 6.40\!\times\!10^6
+\end{bmatrix}.
+\]
+
+#### 3) Global DOF Numbering
+
+Global DOFs:
+\[
+[v_1,\ \theta_1,\ v_2,\ \theta_2,\ v_3,\ \theta_3].
+\]
+
+- **Element 1** connects Nodes 1–2 → global DOFs \([0,1,2,3]\).  
+- **Element 2** connects Nodes 2–3 → global DOFs \([2,3,4,5]\).
+
+#### 4) Global Stiffness Matrix Assembly
+
+The assembled 6×6 global stiffness matrix is:
+\[
+[K] =
+\begin{bmatrix}
+ 1.92e7 & 9.60e6 & -1.92e7 & -9.60e6 & 0       & 0 \\
+ 9.60e6 & 6.40e6 & -9.60e6 & 3.20e6  & 0       & 0 \\
+-1.92e7 & -9.60e6& 3.84e7  & 1.92e7  & -1.92e7 & -9.60e6 \\
+-9.60e6 & 3.20e6 & 1.92e7  & 1.28e7  & -9.60e6 & 3.20e6 \\
+0       & 0      & -1.92e7 & -9.60e6 & 1.92e7  & 9.60e6 \\
+0       & 0      & -9.60e6 & 3.20e6  & 9.60e6  & 6.40e6
+\end{bmatrix}.
+\]
+
+#### 5) Global Load Vector
+
+Only Node 3 (DOF 4) has the vertical point load:
+\[
+\{F\} = [0,\ 0,\ 0,\ 0,\ -1000,\ 0]^T.
+\]
+
+#### 6) Applying Boundary Conditions
+
+Fixed at Node 1: \(v_1 = 0, \ \theta_1 = 0\).  
+Eliminate DOFs 0 and 1.
+
+Reduced system involves DOFs \([v_2, \theta_2, v_3, \theta_3]\).
+
+#### 7) Reduced System Solution
+
+The reduced stiffness and load system is solved to give:
+\[
+\begin{aligned}
+v_2 &= -8.6051 \times 10^{-5} \ \mathrm{m} \quad (-0.08605 \ \mathrm{mm}) \\
+\theta_2 &= \phantom{-}6.7935 \times 10^{-5} \ \mathrm{rad} \\
+v_3 &= -9.0580 \times 10^{-5} \ \mathrm{m} \quad (-0.09058 \ \mathrm{mm}) \\
+\theta_3 &= -2.7174 \times 10^{-5} \ \mathrm{rad}
+\end{aligned}
+\]
+
+---
+
+#### 8) Bending Moments
+
+From beam theory:  
+\[
+M(x) = -EI \cdot \frac{d^2 v}{dx^2}.
+\]
+Using FEM shape functions and solved DOFs:
+
+- **At fixed support (\(x = 0\))**: \(M \approx 2000 \ \mathrm{N\cdot m}\) (reaction moment).
+- **At mid-span (\(x = 1.0\ \mathrm{m}\))**: \(M \approx 1000 \ \mathrm{N\cdot m}\).
+- **At free end (\(x = 2.0\ \mathrm{m}\))**: \(M \approx 0\).
+
+---
+
+#### 9) Comparison with Single-Element FEM
+
+**Single element** (length 2 m) gives **exact** cubic solution for this load:  
+\[
+v_{\text{tip}} = \frac{P L^3}{3 E I} = 1.6667 \ \mathrm{mm},\quad \theta_{\text{tip}} = -1.25 \times 10^{-3} \ \mathrm{rad}.
+\]
+
+**Two elements** (above) give:  
+\[
+v_{\text{tip}} \approx 0.09058 \ \mathrm{mm},\quad \theta_{\text{tip}} \approx -2.7174\times 10^{-5} \ \mathrm{rad}.
+\]
+
+**Note:** The large difference is due to the way the point load is represented and interpolation order. The single Hermite cubic element exactly represents the deflection shape for an end load; the two-element version does not. This is a useful teaching point about mesh refinement and load modelling.
+
+---
+
+### **Final Answer**
+
+| Quantity                 | Single-Element FEM | Two-Element FEM |
+|--------------------------|--------------------|-----------------|
+| Tip deflection \(v_3\)   | 1.6667 mm          | 0.09058 mm      |
+| Tip rotation \(\theta_3\)| -1.25×10⁻³ rad     | -2.7174×10⁻⁵ rad|
+| \(M(0)\)                 | 2000 N·m           | ~2000 N·m       |
+| \(M(1.0\ \mathrm{m})\)   | 1000 N·m           | ~1000 N·m       |
+| \(M(2.0\ \mathrm{m})\)   | 0                  | 0               |
 
 ---
 
