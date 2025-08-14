@@ -1346,6 +1346,749 @@ $$
 
 ---
 
+## **Detailed Worked Example (Direct Stiffness Method)**
+
+**Problem**
+A prismatic steel bar is modeled with **three axial (bar) elements** in series: Nodes $1\!-\!2\!-\!3\!-\!4$.
+
+* Modulus: $E = 200{,}000 \ \text{MPa} = 200{,}000 \ \text{N/mm}^2$
+* Area: $A = 100 \ \text{mm}^2$ (constant)
+* Lengths: $L_1 = 500 \ \text{mm}, \quad L_2 = 500 \ \text{mm}, \quad L_3 = 1000 \ \text{mm}$
+* Boundary condition: **Node 1 fixed**, $u_1 = 0$
+* Loads: $F_3 = 30 \ \text{kN}$ (tension), $F_4 = 20 \ \text{kN}$ (tension), $F_2 = 0$
+
+*(Insert Figure from Hutton — **Direct Stiffness example**: node & element numbering, axial bar with loads; Chapter 2 near “Direct Stiffness Method”)*
+
+### **1) Element Stiffness Matrices**
+
+For a 1D bar element,
+
+$$
+[k]^{(e)}=\frac{EA}{L_e}
+\begin{bmatrix}
+1 & -1\\
+-1 & 1
+\end{bmatrix}
+\quad\Rightarrow\quad
+k_e=\frac{EA}{L_e}
+$$
+
+Compute $k_e$ (units N/mm):
+
+$$
+EA = (200{,}000)(100)=20{,}000{,}000 \ \text{N}
+$$
+
+$$
+k_1=\frac{20{,}000{,}000}{500}=40{,}000,\quad
+k_2=\frac{20{,}000{,}000}{500}=40{,}000,\quad
+k_3=\frac{20{,}000{,}000}{1000}=20{,}000
+$$
+
+*(Insert Figure from Hutton — **Local 2-node bar stiffness** and sign convention)*
+
+### **2) Assemble the Global Stiffness Matrix**
+
+Connectivity (global DOFs are nodal displacements $u_1,u_2,u_3,u_4$):
+
+$$
+[K]=
+\begin{bmatrix}
+k_1 & -k_1 & 0 & 0\\
+-k_1 & k_1{+}k_2 & -k_2 & 0\\
+0 & -k_2 & k_2{+}k_3 & -k_3\\
+0 & 0 & -k_3 & k_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+40000 & -40000 & 0 & 0\\
+-40000 & 80000 & -40000 & 0\\
+0 & -40000 & 60000 & -20000\\
+0 & 0 & -20000 & 20000
+\end{bmatrix}
+$$
+
+*(Insert Figure from Hutton — **Assembly diagram** showing overlapping stiffness contributions into $[K]$)*
+
+### **3) Apply Boundary Conditions and Loads**
+
+* Essential BC: $u_1=0$
+* Load vector: $\{F\}=[0,\;0,\;30000,\;20000]^T \ \text{N}$
+
+Reduce the system by removing row/column for $u_1$:
+
+$$
+[K_r]=
+\begin{bmatrix}
+80000 & -40000 & 0\\
+-40000 & 60000 & -20000\\
+0 & -20000 & 20000
+\end{bmatrix},\quad
+\{u_r\}=
+\begin{bmatrix}
+u_2\\u_3\\u_4
+\end{bmatrix},\quad
+\{F_r\}=
+\begin{bmatrix}
+0\\30000\\20000
+\end{bmatrix}
+$$
+
+*(Insert Figure from Hutton — **Boundary condition imposition** & reduced system depiction)*
+
+### **4) Solve for Nodal Displacements**
+
+$$
+[K_r]\{u_r\}=\{F_r\}
+\quad\Rightarrow\quad
+\{u_r\}=
+\begin{bmatrix}
+1.25\\[2pt]
+2.50\\[2pt]
+3.50
+\end{bmatrix}\ \text{mm}
+$$
+
+Hence:
+
+$$
+u_1=0,\quad u_2=1.25\ \text{mm},\quad u_3=2.50\ \text{mm},\quad u_4=3.50\ \text{mm}
+$$
+
+### **5) Element Forces and Stresses (Post-processing)**
+
+Element axial forces (tension positive):
+
+$$
+F_1 = k_1(u_2-u_1)=40000(1.25-0)=50{,}000\ \text{N}=50\ \text{kN}
+$$
+
+$$
+F_2 = k_2(u_3-u_2)=40000(2.50-1.25)=50\ \text{kN}
+$$
+
+$$
+F_3 = k_3(u_4-u_3)=20000(3.50-2.50)=20\ \text{kN}
+$$
+
+Element stresses $\sigma_e=F_e/A$ (with $A=100\ \text{mm}^2$):
+
+$$
+\sigma_1=\frac{50{,}000}{100}=500\ \text{MPa},\quad
+\sigma_2=500\ \text{MPa},\quad
+\sigma_3=\frac{20{,}000}{100}=200\ \text{MPa}
+$$
+
+*(Insert Figure from Hutton — **Element force directions & sign convention**; **stress distribution** sketch)*
+
+### **6) Support Reaction Check**
+
+Compute reactions via $\{R\}=[K]\{u\}-\{F\}$ (using the full system):
+
+$$
+R_1 = 50 \ \text{kN},\quad R_2=R_3=R_4=0
+$$
+
+**Equilibrium check:** $R_1 = F_3+F_4 = 30+20=50\ \text{kN}$ ✓
+
+*(Insert Figure from Hutton — **Support reaction extraction** illustration)*
+
+### **7) What This Example Demonstrates**
+
+1. Clean **DSM workflow**: element $k_e$ → assemble $[K]$ → apply BCs → solve $\{u\}$ → recover forces/stresses → reactions.
+2. **Physical consistency**: internal element forces match applied nodal loads; reactions satisfy global equilibrium.
+3. **Scalability**: the exact same steps extend to 2D/3D trusses, frames (with rotation DOFs), and beyond.
+
+---
+
+### **Figure Placeholders from Hutton (drop where indicated above)**
+
+* *Insert Hutton figure: Node & element numbering for a multi-element bar (Ch. 2, Direct Stiffness section).*
+* *Insert Hutton figure: Local 2-node bar stiffness & sign conventions (Ch. 2).*
+* *Insert Hutton figure: Global assembly illustration for serial bar elements (Ch. 2).*
+* *Insert Hutton figure: Imposing boundary conditions / reduced system (Ch. 2).*
+* *Insert Hutton figure: Reaction recovery and equilibrium check (Ch. 2).*
+
+---
+
+## **Direct Stiffness Method — At a Glance**
+
+### **Step-by-Step Checklist**
+
+1. **Discretize the Structure**
+
+   * Define nodes and elements
+   * Assign numbers and connectivity
+     *(Insert Figure Placeholder: simple bar/truss with nodes labeled)*
+
+2. **Define Element Properties**
+
+   * $E$, $A$, $I$, length $L$, and orientation (if 2D/3D)
+
+3. **Form Local Element Stiffness Matrices**
+
+   * For 1D bar:
+
+     $$
+     [k]^{(e)}=\frac{EA}{L_e}
+     \begin{bmatrix}
+     1 & -1\\
+     -1 & 1
+     \end{bmatrix}
+     $$
+   * Apply transformation if needed (2D/3D)
+
+4. **Assemble Global Stiffness Matrix**
+
+   * Place element matrices into the correct positions in $[K]$ using node connectivity
+
+5. **Apply Boundary Conditions**
+
+   * Modify $[K]$ and $\{F\}$ for prescribed displacements
+
+6. **Solve for Nodal Displacements**
+
+   * $[K]\{u\}=\{F\}$
+
+7. **Post-process**
+
+   * **Element forces**: $\{f^{(e)}\}=[k]^{(e)}\{u^{(e)}\}$
+   * **Stresses**: $\sigma = F/A$
+   * **Reactions**: $\{R\}=[K]\{u\}-\{F\}$
+
+---
+
+### **Direct Stiffness Method (DSM) Flowchart**
+
+**Flow:**
+Discretize → Define Properties → Form $[k]^{(e)}$ → Assemble $[K]$ → Apply BCs → Solve $\{u\}$ → Post-process
+
++-----------------------------------------------------+
+|                DIRECT STIFFNESS METHOD              |
++-----------------------------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 1) DISCRETIZE STRUCTURE                              |
+|    - Define nodes & elements                         |
+|    - Number nodes (global DOFs)                      |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 2) DEFINE PROPERTIES                                 |
+|    - E, A, I, geometry (L), orientation (if 2D/3D)   |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 3) ELEMENT STIFFNESS [k] (LOCAL)                     |
+|    - Bars: (EA/L)[[1,-1],[-1,1]]                    |
+|    - Beams/Frames: appropriate [k]_local             |
++----------------------+------------------------------+
+                       |
+            +----------+-----------+
+            |                      |
+            v                      v
++----------------------+   +--------------------------+
+| (if 2D/3D)           |   | (if 1D axial)            |
+| 3a) TRANSFORM TO     |   | 3a) SKIP TRANSFORM       |
+|     GLOBAL: [k]_g =  |   |     [k]_g = [k]_local    |
+|     T^T [k]_local T  |   +--------------------------+
++----------------------+
+            |
+            v
++----------------------+------------------------------+
+| 4) ASSEMBLE GLOBAL [K]                               |
+|    - Scatter/gather element [k]_g into [K]           |
+|    - Sum overlaps at shared DOFs                     |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 5) APPLY BOUNDARY CONDITIONS                         |
+|    - Essential (prescribed u): modify [K], {F}       |
+|    - Record constrained DOFs                         |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 6) SOLVE FOR {u}                                      |
+|    - [K]{u} = {F}                                    |
+|    - Use linear solver                               |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 7) POST-PROCESS                                       |
+|    - Element forces: {f} = [k]_e {u}_e               |
+|    - Stresses (bars): σ = F/A                        |
+|    - Reactions: {R} = [K]{u} - {F}                   |
++----------------------+------------------------------+
+                       |
+                       v
++----------------------+------------------------------+
+| 8) CHECKS                                             |
+|    - Equilibrium (ΣF = 0)                            |
+|    - BCs satisfied                                   |
+|    - Sanity: trends, units, magnitudes               |
++----------------------+------------------------------+
+
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="1080" viewBox="0 0 920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Direct Stiffness Method Flowchart</title>
+  <desc id="desc">Flowchart showing DSM steps from discretization to checks.</desc>
+  <style>
+    .box{fill:#ffffff;stroke:#222;stroke-width:2;rx:8;ry:8}
+    .arrow{stroke:#222;stroke-width:2;marker-end:url(#arrow)}
+    .text{font-family:system-ui,Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;fill:#111}
+    .head{font-weight:700;font-size:18px}
+    .code{font-family:ui-monospace,Consolas,Monaco,monospace}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#222"/>
+    </marker>
+  </defs>
+
+  <!-- Header -->
+  <rect class="box" x="160" y="20" width="600" height="60"/>
+  <text class="text head" x="460" y="58" text-anchor="middle">DIRECT STIFFNESS METHOD</text>
+
+  <!-- 1 Discretize -->
+  <rect class="box" x="140" y="110" width="640" height="90"/>
+  <text class="text head" x="160" y="140">1) Discretize Structure</text>
+  <text class="text" x="160" y="165">• Define nodes & elements; number nodes (global DOFs)</text>
+
+  <!-- Arrow -->
+  <line class="arrow" x1="460" y1="200" x2="460" y2="230"/>
+
+  <!-- 2 Properties -->
+  <rect class="box" x="140" y="230" width="640" height="90"/>
+  <text class="text head" x="160" y="260">2) Define Properties</text>
+  <text class="text" x="160" y="285">• E, A, I, geometry (L), orientation (2D/3D)</text>
+
+  <line class="arrow" x1="460" y1="320" x2="460" y2="350"/>
+
+  <!-- 3 Element stiffness (local) -->
+  <rect class="box" x="140" y="350" width="640" height="110"/>
+  <text class="text head" x="160" y="380">3) Element Stiffness [k] (local)</text>
+  <text class="text code" x="160" y="405">Bars: [k] = (EA/L) [[1,-1],[-1,1]]</text>
+  <text class="text" x="160" y="428">Beams/Frames: use appropriate local matrices</text>
+
+  <!-- Split arrows to transform / skip -->
+  <line class="arrow" x1="460" y1="460" x2="300" y2="490"/>
+  <line class="arrow" x1="460" y1="460" x2="620" y2="490"/>
+
+  <!-- 3a Transform (left) -->
+  <rect class="box" x="80" y="490" width="360" height="90"/>
+  <text class="text head" x="100" y="520">3a) Transform to Global (if 2D/3D)</text>
+  <text class="text code" x="100" y="545">[k]_g = Tᵀ [k]_local T</text>
+
+  <!-- 3a Skip (right) -->
+  <rect class="box" x="480" y="490" width="360" height="90"/>
+  <text class="text head" x="500" y="520">3a) Skip Transform (1D axial)</text>
+  <text class="text code" x="500" y="545">[k]_g = [k]_local</text>
+
+  <!-- Merge to Assemble -->
+  <line class="arrow" x1="260" y1="580" x2="260" y2="610"/>
+  <line class="arrow" x1="700" y1="580" x2="700" y2="610"/>
+  <line class="arrow" x1="260" y1="610" x2="460" y2="640"/>
+  <line class="arrow" x1="700" y1="610" x2="460" y2="640"/>
+
+  <!-- 4 Assemble -->
+  <rect class="box" x="140" y="640" width="640" height="100"/>
+  <text class="text head" x="160" y="670">4) Assemble Global [K]</text>
+  <text class="text" x="160" y="695">• Scatter/gather each [k]_g into [K] using connectivity</text>
+  <text class="text" x="160" y="718">• Sum overlapping entries at shared DOFs</text>
+
+  <line class="arrow" x1="460" y1="740" x2="460" y2="770"/>
+
+  <!-- 5 BCs -->
+  <rect class="box" x="140" y="770" width="640" height="90"/>
+  <text class="text head" x="160" y="800">5) Apply Boundary Conditions</text>
+  <text class="text" x="160" y="825">• Prescribed displacements → modify [K], {F}</text>
+
+  <line class="arrow" x1="460" y1="860" x2="460" y2="890"/>
+
+  <!-- 6 Solve -->
+  <rect class="box" x="140" y="890" width="640" height="85"/>
+  <text class="text head" x="160" y="920">6) Solve for {u}</text>
+  <text class="text code" x="160" y="945">[K]{u} = {F}</text>
+
+  <line class="arrow" x1="460" y1="975" x2="460" y2="1005"/>
+
+  <!-- 7 Post-process + 8 Checks (merged) -->
+  <rect class="box" x="140" y="1005" width="640" height="140"/>
+  <text class="text head" x="160" y="1035">7) Post-process  &  8) Checks</text>
+  <text class="text" x="160" y="1060">• Element forces: {f} = [k]_e {u}_e;  Stresses: σ = F/A</text>
+  <text class="text" x="160" y="1083">• Reactions: {R} = [K]{u} − {F};  Equilibrium & BC verification</text>
+</svg>
+
+---
+
+## **Practice Problems**
+
+**Problem 1 — Single Bar Element**
+A steel rod of length $L = 2 \ \mathrm{m}$, $E = 210 \ \mathrm{GPa}$, $A = 150 \ \mathrm{mm}^2$ is fixed at one end and subjected to a tensile load of $25 \ \mathrm{kN}$ at the free end.
+
+* (a) Form the element stiffness matrix.
+* (b) Find the displacement at the free end.
+* (c) Find the axial stress in the bar.
+
+---
+
+**Problem 2 — Two Elements in Series**
+Two steel bars ($E = 200 \ \mathrm{GPa}$, $A = 100 \ \mathrm{mm}^2$) are connected in series:
+
+* $L_1 = 400 \ \mathrm{mm}$
+* $L_2 = 600 \ \mathrm{mm}$
+  Node 1 is fixed, a load of $20 \ \mathrm{kN}$ is applied at Node 3.
+* (a) Write the global stiffness matrix.
+* (b) Determine nodal displacements $u_2$ and $u_3$.
+* (c) Find element forces.
+
+---
+
+**Problem 3 — Three-Bar Truss (Axial only)**
+A triangular truss has nodes at coordinates:
+
+* Node 1: (0, 0) — fixed
+* Node 2: (3 m, 0) — roller (vertical displacement free)
+* Node 3: (3 m, 4 m) — loaded with $40 \ \mathrm{kN}$ downwards
+
+Members: (1–2), (2–3), (1–3), all with $E = 210 \ \mathrm{GPa}$, $A = 250 \ \mathrm{mm}^2$.
+
+* (a) Form transformation matrices for each member.
+* (b) Assemble the global stiffness matrix.
+* (c) Solve for all displacements and element forces.
+
+---
+
+**Tip for Students:** Always draw:
+
+1. Node/element diagram with DOFs
+2. Connectivity table
+3. Step-by-step stiffness assembly table
+
+---
+
+## **Nodal Equilibrium Equations**
+
+Nodal equilibrium equations form the mathematical core of the finite element method. They express the condition that, at each node of a discretized structure, the algebraic sum of all forces (external and internal) must be zero for the system to be in static equilibrium.
+
+### 1. Concept and Physical Meaning
+
+In structural mechanics, equilibrium means that the **sum of forces and moments** acting on a body (or a node) is zero.
+For a finite element model, this equilibrium condition is applied **at discrete nodal points**.
+
+* **Internal forces** come from the deformation of connected elements (given by stiffness × displacement).
+* **External forces** are the loads applied at the nodes (point loads, equivalent nodal loads from distributed forces, thermal effects, etc.).
+
+At each free degree of freedom (DOF), equilibrium is expressed as:
+
+$$
+\sum F_{\text{internal}} + \sum F_{\text{external}} = 0
+$$
+
+Or, in FEM matrix form:
+
+$$
+[K] \{u\} = \{F\}
+$$
+
+Where:
+
+* $[K]$ = global stiffness matrix (assembled from element stiffness matrices)
+* $\{u\}$ = vector of unknown nodal displacements
+* $\{F\}$ = vector of known external nodal loads
+
+*(Insert Figure: Node connected to multiple elements showing internal and external forces — from Hutton Fig. 2.xx)*
+
+### 2. Mathematical Formulation
+
+For a single 1D bar element between nodes $i$ and $j$:
+
+Element stiffness equation:
+
+$$
+\begin{bmatrix}
+f_i \\
+f_j
+\end{bmatrix}
+=
+\frac{EA}{L}
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+u_i \\
+u_j
+\end{bmatrix}
+$$
+
+Here, $f_i$ and $f_j$ are **internal nodal forces** — they are not applied loads but the forces the element exerts on its nodes due to deformation.
+
+When several elements meet at a node, their contributions are summed algebraically:
+
+$$
+F_{\text{ext},k} = \sum_{e \in \text{connected to node k}} f_k^{(e)}
+$$
+
+This yields the **global nodal equilibrium equation** for node $k$.
+
+In compact matrix form for the whole structure:
+
+$$
+[K] \{u\} = \{F\}
+$$
+
+Boundary conditions (prescribed displacements) are then applied to reduce and solve the system.
+
+*(Insert Figure: Global equilibrium at a node showing multiple connecting elements — from Hutton Fig. 2.xx)*
+
+### 3. Connection with DSM and MPE
+
+* **Direct Stiffness Method (DSM)** assembles the $[K]$ matrix directly from element stiffnesses, then applies nodal equilibrium.
+* **Minimum Potential Energy Principle (MPE)** arrives at the same equations by minimizing total potential energy.
+* Both lead to the same governing equation $[K]\{u\} = \{F\}$, but via different reasoning — **force balance** vs. **energy minimization**.
+
+### 4. Simple Numerical Illustration
+
+Consider two bar elements in series: nodes 1–2–3, with stiffnesses $k_1$ and $k_2$. Node 1 is fixed, a load $P$ is applied at node 3.
+
+Element stiffness matrices:
+
+$$
+[k^{(1)}] =
+\begin{bmatrix}
+k_1 & -k_1 \\
+-k_1 & k_1
+\end{bmatrix},
+\quad
+[k^{(2)}] =
+\begin{bmatrix}
+k_2 & -k_2 \\
+-k_2 & k_2
+\end{bmatrix}
+$$
+
+Global stiffness after assembly:
+
+$$
+[K] =
+\begin{bmatrix}
+k_1 & -k_1 & 0 \\
+-k_1 & k_1+k_2 & -k_2 \\
+0 & -k_2 & k_2
+\end{bmatrix}
+$$
+
+Global equilibrium equation:
+
+$$
+[K] \{u_1, u_2, u_3\}^T = \{0, 0, P\}^T
+$$
+
+Apply BC: $u_1 = 0$, solve for $u_2, u_3$.
+
+*(Insert Figure: Two-element bar system with loads and supports — from Hutton Fig. 2.xx)*
+
+### 5. Key Points
+
+* Nodal equilibrium is simply **ΣF = 0 applied at discrete points**.
+* The FEM equation $[K]\{u\} = \{F\}$ is the algebraic form of nodal equilibrium.
+* Internal forces are not the same as applied loads — they arise from deformation.
+* Proper **assembly** and **sign conventions** are essential for correct results.
+* This concept is valid for any structural type — trusses, beams, frames, solids.
+
+---
+
+Alright — here’s the **summary table** and an **ASCII “at a glance” diagram** that will drop cleanly into your `.md` file without breaking MathJax or GitHub rendering.
+
+---
+
+## **Nodal Equilibrium Equations — Summary Table**
+
+| **Term**                 | **Meaning**                                      | **Expression**                                            |
+| ------------------------ | ------------------------------------------------ | --------------------------------------------------------- |
+| **Nodal equilibrium**    | Force balance at each node                       | $\sum F_{\text{internal}} + \sum F_{\text{external}} = 0$ |
+| **Internal nodal force** | Force developed in an element due to deformation | $\{f^{(e)}\} = [k]^{(e)} \{u^{(e)}\}$                     |
+| **Global equilibrium**   | Force balance for all nodes                      | $[K]\{u\} = \{F\}$                                        |
+| **Boundary conditions**  | Known displacements or reactions                 | Applied to modify $[K]$ and $\{F\}$                       |
+| **Result of solving**    | Nodal displacements, element forces, reactions   | —                                                         |
+
+---
+
+## **Nodal Equilibrium — At a Glance (ASCII Diagram)**
+
+         ┌─────────────┐
+         │   Node k    │
+         └─────┬───────┘
+               │
+   Internal    │    External
+   Forces      │    Loads
+   from all    │    (Given)
+ connected     │
+ elements      │
+     ↓         ↓
+   ΣF_internal + ΣF_external = 0
+               │
+               ↓
+       [K]{u} = {F}
+
+---
+
+**Figure Placeholders (from Hutton’s book):**
+
+* *(Insert Figure: Free-body diagram of a node with connected element forces — Hutton Fig. 2.xx)*
+* *(Insert Figure: Assembled nodal equilibrium equations for a multi-element system — Hutton Fig. 2.xx)*
+
+---
+
+## **Assembly of Global Stiffness Matrix**
+
+The **global stiffness matrix** $[K]$ represents the stiffness relationship for the entire structure, assembled from the **local stiffness matrices** $[k]^{(e)}$ of individual elements. It allows us to relate all nodal displacements to all applied nodal loads in a single system of equations.
+
+$$
+[K] \{u\} = \{F\}
+$$
+
+Where:
+
+* $[K]$ = global stiffness matrix (size: total DOFs × total DOFs)
+* $\{u\}$ = global nodal displacement vector
+* $\{F\}$ = global nodal force vector
+
+---
+
+### 1. Concept
+
+Each element has its own **local stiffness matrix** defined for its own node numbering (local coordinates). To analyze the entire structure:
+
+1. **Map local DOFs to global DOFs** using an **element connectivity table**.
+2. **Place each local stiffness matrix** into the correct position within the global matrix, adding contributions if multiple elements share a DOF.
+
+*(Insert Figure: Example showing element local node numbering and global node numbering — from Hutton Fig. 2.xx)*
+
+---
+
+### 2. Assembly Procedure
+
+**Step 1 — Number the nodes**
+Assign a unique global DOF number to each displacement variable in the structure.
+
+**Step 2 — Prepare the connectivity table**
+The table lists, for each element, the correspondence between local node numbers and global DOF numbers.
+
+| Element | Local Node 1 | Local Node 2 | Global DOF 1 | Global DOF 2 |
+| ------- | ------------ | ------------ | ------------ | ------------ |
+| 1       | 1            | 2            | 1            | 2            |
+| 2       | 2            | 3            | 2            | 3            |
+
+**Step 3 — Form each element stiffness matrix** in local coordinates.
+
+For a 1D bar element:
+
+$$
+[k]^{(e)} = \frac{EA}{L}
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}
+$$
+
+**Step 4 — Insert local matrices into global matrix** according to the connectivity table.
+
+If an element’s local DOFs correspond to global DOFs $i$ and $j$, place:
+
+* $k_{11}$ into $[K]_{ii}$
+* $k_{12}$ into $[K]_{ij}$
+* $k_{21}$ into $[K]_{ji}$
+* $k_{22}$ into $[K]_{jj}$
+
+Add contributions if another element already has entries in those locations.
+
+**Step 5 — Continue until all elements are assembled** into $[K]$.
+
+*(Insert Figure: Bar elements in series and parallel, showing stiffness contribution in the global matrix — from Hutton Fig. 2.xx)*
+
+---
+
+### 3. Example — Two Bar Elements in Series
+
+**Given:**
+
+* Element 1: Nodes 1–2, stiffness $k_1$
+* Element 2: Nodes 2–3, stiffness $k_2$
+
+**Element stiffness matrices:**
+
+$$
+[k]^{(1)} =
+\begin{bmatrix}
+k_1 & -k_1 \\
+-k_1 & k_1
+\end{bmatrix}
+\quad
+[k]^{(2)} =
+\begin{bmatrix}
+k_2 & -k_2 \\
+-k_2 & k_2
+\end{bmatrix}
+$$
+
+**Global stiffness matrix assembly:**
+
+* From $k^{(1)}$:
+  $[K]_{11} += k_1,\ [K]_{12} += -k_1,\ [K]_{21} += -k_1,\ [K]_{22} += k_1$
+* From $k^{(2)}$:
+  $[K]_{22} += k_2,\ [K]_{23} += -k_2,\ [K]_{32} += -k_2,\ [K]_{33} += k_2$
+
+Final global stiffness matrix:
+
+$$
+[K] =
+\begin{bmatrix}
+k_1 & -k_1 & 0 \\
+-k_1 & k_1 + k_2 & -k_2 \\
+0 & -k_2 & k_2
+\end{bmatrix}
+$$
+
+---
+
+### 4. Key Points
+
+* Assembly is **additive** — stiffness contributions from different elements connected at a node are summed.
+* The **size of $[K]$** equals the total number of global DOFs.
+* **Connectivity tables** are essential for mapping local DOFs to global DOFs.
+* After assembly, $[K]$ is **symmetric** for linear elastic problems.
+* Boundary conditions are applied after the full global matrix is assembled.
+
+---
+
+## **Assembly of Global Stiffness Matrix — Summary Table**
+
+| **Step**                     | **Description**                                                                 | **Key Formula / Note**                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 1. Node numbering            | Assign unique global DOF numbers to all displacement variables                  | —                                                                         |
+| 2. Connectivity table        | Map element local nodes to global DOFs                                          | Essential for correct placement                                           |
+| 3. Local stiffness matrix    | Compute $[k]^{(e)}$ for each element in local coordinates                       | For 1D bar: $\frac{EA}{L} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}$ |
+| 4. Insert into global matrix | Place local stiffness terms into $[K]$ at positions given by connectivity table | Add contributions if entries already exist                                |
+| 5. Complete $[K]$            | Repeat for all elements until global stiffness is fully assembled               | $[K]$ is symmetric for linear elastic problems                            |
+| 6. Apply BCs                 | Impose known displacements or forces                                            | Modify $[K]$ and $\{F\}$ before solving                                   |
+
+**Key Points:**
+
+* Assembly is **additive** at shared DOFs.
+* Global matrix size = total global DOFs × total global DOFs.
+* Symmetry of $[K]$ simplifies computation.
+* Assembly is independent of the solution method — it’s purely a bookkeeping step.
+
+---
+
+
 
 
 
