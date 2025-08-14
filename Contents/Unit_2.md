@@ -587,6 +587,105 @@ So the FEM solution reproduces the exact internal bending moment and shear field
 
 ---
 
+### **Worked Example — Cantilever Beam (Single Beam Element)** 
+
+A cantilever beam of length $L=2.0\ \text{m}$ is fixed at the left end and loaded by a downward point load $P=1000\ \text{N}$ at the free end. The beam has $E=200\ \text{GPa}$ and $I=8.0\times10^{-6}\ \text{m}^4$. Using a single 2-node Euler–Bernoulli beam element:
+(a) Find the tip vertical displacement $v_2$ and tip rotation $\theta_2$.
+(b) Obtain expressions for the transverse deflection $v(x)$, bending moment $M(x)$, and shear $V(x)$.
+(c) Evaluate $M(0)$, $M(L/2)$, $M(L)$ and $V(x)$.
+
+Great — here is the complete short-answer solution (clean, step-by-step) for the cantilever exercise you pasted. I show the derivation and all numeric arithmetic **digit-by-digit** so you can paste this into your notes or assignment.
+
+---
+### **Answer:**
+
+**Given:**
+
+\[
+L = 2.0\ \text{m}, \quad P = 1000\ \text{N}, \quad 
+E = 200\times10^{9}\ \text{Pa}, \quad 
+I = 8.0\times 10^{-6}\ \text{m}^4
+\]
+
+We model with a single 2-node Euler–Bernoulli beam element \([v_1,\theta_1,v_2,\theta_2]\), fixed at node 1 (\(v_1=\theta_1=0\)).
+
+---
+
+### (a) Tip Displacement \(v_2\) and Tip Rotation \(\theta_2\)
+
+For a cantilever with an end load:
+
+\[
+v_2 = \frac{P L^3}{3 E I}, \quad \theta_2 = -\frac{P L^2}{2 E I}
+\]
+
+**Step-by-step:**
+
+- \(L^3 = 2.0^3 = 8.0\ \text{m}^3\)  
+- \(P L^3 = 1000 \times 8.0 = 8000\ \text{N·m}^3\)  
+- \(E I = (200\times 8.0)\times 10^{3} = 1.6\times 10^{6}\ \text{N·m}^2\)  
+- \(3EI = 4.8\times 10^{6}\ \text{N·m}^2\)  
+
+\[
+v_2 = \frac{8000}{4.8\times 10^{6}} = 1.6667\times 10^{-3}\ \text{m} 
+\]
+\[
+\boxed{v_2 = 1.6667\ \text{mm (downward)}}
+\]
+
+For \(\theta_2\):
+
+- \(L^2 = 4.0\ \text{m}^2\)  
+- \(P L^2 = 4000\ \text{N·m}^2\)  
+- \(2EI = 3.2\times 10^{6}\ \text{N·m}^2\)  
+
+\[
+\theta_2 = -\frac{4000}{3.2\times 10^{6}} = -1.25\times 10^{-3}\ \text{rad}
+\]
+\[
+\boxed{\theta_2 \approx -0.0716^\circ}
+\]
+
+---
+
+### (b) Expressions for \(v(x)\), \(M(x)\), and \(V(x)\)
+
+From beam theory:
+
+\[
+v(x) = -\frac{P}{6EI}\,(3Lx^2 - x^3)
+\]
+\[
+M(x) = P(L-x), \quad V(x) = P
+\]
+
+---
+
+### (c) Numerical Values
+
+- \(M(0) = P L = 1000\times 2.0 = 2000\ \text{N·m}\)  
+- \(M(L/2) = P\left(L - \frac{L}{2}\right) = 1000\times 1.0 = 1000\ \text{N·m}\)  
+- \(M(L) = 0\)  
+- \(V(x) = 1000\ \text{N}\) (constant)
+
+---
+
+**Final Boxed Results:**
+
+\[
+\boxed{
+\begin{aligned}
+&v_2 = 1.6667\ \text{mm (downward)}, \quad \theta_2 = -1.25\times 10^{-3}\ \text{rad} \ (\approx -0.0716^\circ) \\
+&v(x) = -\frac{P}{6EI}\,(3Lx^2 - x^3),\quad M(x) = P(L-x),\quad V(x) = P \\
+&M(0)=2000\ \text{N·m},\quad M(L/2)=1000\ \text{N·m},\quad M(L)=0
+\end{aligned}
+}
+\]
+
+---
+
+
+
 
 
 
