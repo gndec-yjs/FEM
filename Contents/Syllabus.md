@@ -33,7 +33,7 @@ On completion of the course, the student will have the ability to:
 
 1. *Finite Element Analysis* – Seshu P., Prentice-Hall of India  
 2. *Concepts and Applications of Finite Element Analysis* – Cook R. D., Wiley, New York  
-3. *Fundamentals of Finite Element Analysis* – Hutton David, McGraw-Hill  
+3. [*Fundamentals of Finite Element Analysis*](Resources/FEM_Hutton.pdf) – Hutton David, McGraw-Hill  
 4. *Finite Element Analysis* – Buchanan G.R., McGraw-Hill Publications, New York  
 5. *Finite Element Method* – Zienkiewicz O.C. & Taylor R.L., Vol. I, II & III, Elsevier  
 6. *Finite Element Methods in Engineering* – Belegundu A.D., Chandrupatla T.R., Prentice Hall India  
