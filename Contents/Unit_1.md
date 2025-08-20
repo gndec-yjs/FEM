@@ -131,7 +131,7 @@ A **spring element** is the simplest one-dimensional finite element. It is assum
 * **One displacement degree of freedom per node** — $u_1, u_2$
 * **Linear elastic behavior** — force proportional to displacement difference
 
-*(Insert Figure: Spring element with two nodes, displacements $u_1, u_2$, forces $f_1, f_2$)*
+<img width="657" height="305" alt="image" src="https://github.com/user-attachments/assets/97ca0ee6-10c6-47db-92ad-533a819c0d2b" />
 
 ---
 
