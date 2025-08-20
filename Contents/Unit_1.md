@@ -882,11 +882,11 @@ $$
 
 #### **Final Answer:**
 
-* $u_2 = 0.6 \ \text{mm}$
-* $u_3 = 1.55238 \ \text{mm}$
-* $F_1 = F_2 = 50 \ \text{kN}$
-* $\sigma_1 = 200 \ \text{MPa}$
-* $\sigma_2 \approx 166.67 \ \text{MPa}$
+$u_2 = 0.6 \ \text{mm}$
+$u_3 = 1.55238 \ \text{mm}$
+$F_1 = F_2 = 50 \ \text{kN}$
+$\sigma_1 = 200 \ \text{MPa}$
+$\sigma_2 \approx 166.67 \ \text{MPa}$
 
 ---
 
@@ -1069,9 +1069,9 @@ $$
 
 The equations are:
 
-1. $$5 U_2 - 2 U_3 = \tfrac{W}{k}$$  
-2. $$-2 U_2 + 3 U_3 - U_4 = \tfrac{W}{k}$$  
-3. $$-U_3 + U_4 = \tfrac{W}{k}$$
+1) $$5 U_2 - 2 U_3 = \tfrac{W}{k}$$
+2) $$-2 U_2 + 3 U_3 - U_4 = \tfrac{W}{k}$$  
+3) $$-U_3 + U_4 = \tfrac{W}{k}$$
 
 From (3):  
 
@@ -1141,7 +1141,7 @@ $$U_1 = 0$$
 $$U_2 = \tfrac{W}{k}$$  
 $$U_3 = \tfrac{2W}{k}$$  
 $$U_4 = \tfrac{3W}{k}$$  
-- Reaction: $$F_1 = -3W$$  
+Reaction: $$F_1 = -3W$$  
 
 ---
 
@@ -1150,6 +1150,17 @@ The displacements increase linearly with the node number since each spring carri
 
 
 ---
+### Note the general procedure as follows:
+
+-  Formulate the individual element stiffness matrices.
+- Write the element to global displacement relations.
+- Assemble the global equilibrium equation in matrix form.
+- Reduce the matrix equations according to specified constraints.
+- Solve the system of equations for the unknown nodal displacements (primary variables).
+- Solve for the reaction forces (secondary variable) by back-substitution.
+
+---
+
 
 ## **5. Summary Table & Key Points — Spring and Bar Elements**
 
