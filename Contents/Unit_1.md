@@ -898,151 +898,256 @@ Figure depicts a system of three linearly elastic springs supporting three equal
 
 <img width="242" height="375" alt="image" src="https://github.com/user-attachments/assets/13bf0445-7b89-4604-80c8-caf2e5759508" />
 
-#### 1. Element stiffness matrices (local form)
+---
 
-Each spring (1D axial) has an element stiffness matrix (2 × 2):
+#### Step 1: Element Stiffness Matrices
+
+Each spring element stiffness matrix is (general form):
+
 $$
-[k_i] \;=\; k_i
+k^{(e)} =
 \begin{bmatrix}
-1 & -1\\
--1 & 1
-\end{bmatrix}
-\qquad (i=1,2,3)
-$$
-where \(k_i = \dfrac{E_i A_i}{L_i}\) for each spring (or simply the spring constant if given).
-
-#### 2. Global assembly (DOFs and connectivity)
-
-We take the unknown displacements as the nodal DOFs:
-\[
-\mathbf{U} = \begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
-\]
-The fixed support above spring 1 is not a DOF (its displacement = 0).
-
-Assembling contributions from the three springs gives the global stiffness matrix \([K]\) for the 3 DOFs:
-
-$$
-[K] \;=\;
-\begin{bmatrix}
-k_1 + k_2 & -k_2      & 0       \\
--k_2       & k_2 + k_3 & -k_3    \\
-0          & -k_3      & k_3
+k & -k \\
+-k & k
 \end{bmatrix}
 $$
 
-(Each diagonal entry is the sum of stiffnesses of springs meeting the node; off-diagonals are negative stiffnesses between connected nodes.)
+For the three springs:
 
-The external load vector (downward positive) is:
+- Element (1), stiffness = $$3k$$  
 $$
-\mathbf{F} \;=\; \begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}
-$$
-
-Thus the equilibrium equations are:
-$$
-[K]\mathbf{U} = \mathbf{F}
-$$
-
-#### 3. Solve symbolically for equal springs (special case)
-
-If all three springs are identical, \(k_1 = k_2 = k_3 = k\), the global matrix simplifies to:
-
-$$
-[K] = k
+k^{(1)} =
 \begin{bmatrix}
-2 & -1 & 0 \\
--1 & 2 & -1 \\
-0 & -1 & 1
+3k & -3k \\
+-3k & 3k
 \end{bmatrix}
 $$
 
-We solve
+- Element (2), stiffness = $$2k$$  
+$$
+k^{(2)} =
+\begin{bmatrix}
+2k & -2k \\
+-2k & 2k
+\end{bmatrix}
+$$
+
+- Element (3), stiffness = $$k$$  
+$$
+k^{(3)} =
+\begin{bmatrix}
+k & -k \\
+-k & k
+\end{bmatrix}
+$$
+
+---
+
+#### Step 2: Element-to-Global DOF Relations
+
+Assign global displacements: $$U_1, U_2, U_3, U_4$$.  
+
+Mapping:
+
+- $$u^{(1)}_1 = U_1, \quad u^{(1)}_2 = U_2$$  
+- $$u^{(2)}_1 = U_2, \quad u^{(2)}_2 = U_3$$  
+- $$u^{(3)}_1 = U_3, \quad u^{(3)}_2 = U_4$$  
+
+---
+
+#### Step 3: Assemble Global Stiffness Matrix
+
+Expanding each element stiffness matrix into the global 4×4 form:
+
+- For element (1):
+
+$$
+\begin{bmatrix}
+3k & -3k & 0 & 0 \\
+-3k & 3k & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+
+- For element (2):
+
+$$
+\begin{bmatrix}
+0 & 0 & 0 & 0 \\
+0 & 2k & -2k & 0 \\
+0 & -2k & 2k & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+
+- For element (3):
+
+$$
+\begin{bmatrix}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & k & -k \\
+0 & 0 & -k & k
+\end{bmatrix}
+$$
+
+Adding them gives the global stiffness matrix:
+
+$$
+K =
+k \begin{bmatrix}
+3 & -3 & 0 & 0 \\
+-3 & 5 & -2 & 0 \\
+0 & -2 & 3 & -1 \\
+0 & 0 & -1 & 1
+\end{bmatrix}
+$$
+
+---
+
+#### Step 4: Global Equilibrium Equations
+
+The global system is:
+
+$$
+K \, U = F
+$$
+
+That is:
+
 $$
 k
 \begin{bmatrix}
-2 & -1 & 0 \\
--1 & 2 & -1 \\
+3 & -3 & 0 & 0 \\
+-3 & 5 & -2 & 0 \\
+0 & -2 & 3 & -1 \\
+0 & 0 & -1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+U_1 \\ U_2 \\ U_3 \\ U_4
+\end{bmatrix}
+=
+\begin{bmatrix}
+F_1 \\ W \\ W \\ W
+\end{bmatrix}
+$$
+
+---
+
+#### Step 5: Apply Constraint
+
+Node 1 is fixed: $$U_1 = 0$$.  
+
+Constraint equation:
+
+$$
+-3k U_2 = F_1
+$$
+
+Active system (removing row 1, col 1):
+
+$$
+k
+\begin{bmatrix}
+5 & -2 & 0 \\
+-2 & 3 & -1 \\
 0 & -1 & 1
 \end{bmatrix}
-\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
-=
-\begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}
-$$
-
-Divide both sides by \(k\):
-$$
 \begin{bmatrix}
-2 & -1 & 0 \\
--1 & 2 & -1 \\
-0 & -1 & 1
+U_2 \\ U_3 \\ U_4
 \end{bmatrix}
-\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
 =
-\frac{W}{k}
-\begin{bmatrix} 1 \\[4pt] 1 \\[4pt] 1 \end{bmatrix}
-$$
-
-Solving this linear system (by elimination or matrix inverse) yields:
-$$
-U_1 = \frac{3W}{k},\qquad
-U_2 = \frac{5W}{k},\qquad
-U_3 = \frac{6W}{k}.
-$$
-
-So each displacement is proportional to \(W/k\); note \(U_3>U_2>U_1\) as expected because lower nodes experience cumulative extension.
-
-#### 4. General solution (unequal springs)
-
-If the springs are not identical, solve the 3×3 linear system:
-
-$$
 \begin{bmatrix}
-k_1 + k_2 & -k_2      & 0       \\
--k_2       & k_2 + k_3 & -k_3    \\
-0          & -k_3      & k_3
+W \\ W \\ W
 \end{bmatrix}
-\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
-=
-\begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}.
 $$
 
-You can solve this directly (Gaussian elimination or symbolic algebra). For completeness, the solution by elimination sequence is:
+---
 
-From row 3:
-\[
-k_3(U_3 - U_2) = W \quad\Rightarrow\quad U_3 = U_2 + \frac{W}{k_3}.
-\]
+#### Step 6: Solve System
 
-Substitute into row 2:
-\[
-(k_2 + k_3)U_2 - k_3 U_3 = W
-\;\Rightarrow\;
-k_2 U_2 - W = W
-\;\Rightarrow\;
-k_2 U_2 = 2W \quad\text{(this simplification is valid only when following algebraic substitution carefully; in general keep symbolic steps)}
-\]
+The equations are:
 
-(The above shows the substitution idea — for full general algebra carry out exact substitution with given \(k_i\).)
+1. $$5 U_2 - 2 U_3 = \tfrac{W}{k}$$  
+2. $$-2 U_2 + 3 U_3 - U_4 = \tfrac{W}{k}$$  
+3. $$-U_3 + U_4 = \tfrac{W}{k}$$
 
-#### 5. Numerical check (example)
+From (3):  
 
-Take a quick numeric example for identical springs:
-- \(k = 1000\ \text{N/m}\)
-- \(W = 200\ \text{N}\)
+$$
+U_4 = U_3 + \tfrac{W}{k}
+$$
 
-Then
-\[
-U_1 = \frac{3\times 200}{1000} = 0.6\ \text{m},\quad
-U_2 = \frac{5\times 200}{1000} = 1.0\ \text{m},\quad
-U_3 = \frac{6\times 200}{1000} = 1.2\ \text{m}.
-\]
+Substitute into (2):  
 
-(Units consistent: W in N, k in N/m → U in m.)
+$$
+-2 U_2 + 3 U_3 - (U_3 + \tfrac{W}{k}) = \tfrac{W}{k}
+$$
 
-#### 6. Remarks
+$$
+-2 U_2 + 2 U_3 = 2 \tfrac{W}{k}
+\;\;\Rightarrow\;\;
+- U_2 + U_3 = \tfrac{W}{k}
+$$
 
-* The assembled matrix is symmetric and banded (tridiagonal) — a common pattern for 1D chains.  
-* If the top support were free (no fixed support), the global stiffness would be singular (no unique solution) — always ensure boundary conditions are applied.  
-* The same procedure applies when springs represent bar elements with stiffness \(k_i = E_i A_i / L_i\).
+So:  
+
+$$
+U_3 = U_2 + \tfrac{W}{k}
+$$
+
+Now substitute into (1):  
+
+$$
+5 U_2 - 2 (U_2 + \tfrac{W}{k}) = \tfrac{W}{k}
+$$
+
+$$
+5 U_2 - 2 U_2 - 2 \tfrac{W}{k} = \tfrac{W}{k}
+$$
+
+$$
+3 U_2 = 3 \tfrac{W}{k}
+\;\;\Rightarrow\;\;
+U_2 = \tfrac{W}{k}
+$$
+
+Then:  
+
+$$
+U_3 = U_2 + \tfrac{W}{k} = 2 \tfrac{W}{k}
+$$
+
+$$
+U_4 = U_3 + \tfrac{W}{k} = 3 \tfrac{W}{k}
+$$
+
+---
+
+#### Step 7: Reaction Force at Node 1
+
+From constraint equation:  
+
+$$
+F_1 = -3k U_2 = -3k \left(\tfrac{W}{k}\right) = -3W
+$$
+
+---
+
+### Final Results
+
+- $$U_1 = 0$$  
+- $$U_2 = \tfrac{W}{k}$$  
+- $$U_3 = \tfrac{2W}{k}$$  
+- $$U_4 = \tfrac{3W}{k}$$  
+- Reaction: $$F_1 = -3W$$  
+
+---
+
+**Interpretation:**  
+The displacements increase linearly with the node number since each spring carries the same load. The reaction balances the three applied weights.
+
 
 ---
 
