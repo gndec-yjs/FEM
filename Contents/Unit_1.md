@@ -547,12 +547,15 @@ Here:
 ### Example 1: Two-Element Spring System — Solve for \(U_2\) and \(U_3\)
 
 **Problem:**  
-Consider the two-element system shown in Figure 2.2.  
-- Node 1 is fixed (\(U_1 = 0\))  
-- Spring stiffnesses: \(k_1 = 50 \ \text{lb/in}, \ k_2 = 75 \ \text{lb/in}\)  
-- External forces: \(F_2 = 75 \ \text{lb}, \ F_3 = 75 \ \text{lb}\)  
+Consider the two-element system shown in Figure below.
 
-Determine the nodal displacements \(U_2\) and \(U_3\).
+<img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/547ab6ec-bea6-4b32-ba1d-f7c7a7d797c2" />
+
+- Node 1 fixed: $$U_1 = 0$$  
+- Spring stiffnesses: $$k_1 = 50 \ \text{lb/in}, \ k_2 = 75 \ \text{lb/in}$$  
+- External forces: $$F_2 = 75 \ \text{lb}, \ F_3 = 75 \ \text{lb}$$  
+
+Determine the nodal displacements $$U_2$$ and $$U_3$$.
 
 ---
 
@@ -579,7 +582,7 @@ U_3
 \end{bmatrix}
 $$
 
-Substitute values \(k_1 = 50, \ k_2 = 75\):
+Substitute values $$k_1 = 50, \ k_2 = 75$$:
 
 $$
 \begin{bmatrix}
@@ -602,15 +605,13 @@ $$
 
 ---
 
-#### Step 2: Apply Boundary Condition \(U_1 = 0\)
+#### Step 2: Apply Boundary Condition $$U_1 = 0$$
 
 Constraint equation from Row 1:
 
 $$
 -50 U_2 = F_1
 $$
-
-(since \(U_1 = 0\), this defines the reaction at Node 1).
 
 Active system (Rows 2 and 3):
 
@@ -690,15 +691,18 @@ $$
 
 ### Final Results
 
-- \(U_2 = 3 \ \text{in}\)  
-- \(U_3 = 4 \ \text{in}\)  
-- \(F_1 = -150 \ \text{lb}\) (reaction force)
+$$U_2 = 3 \ \text{in}$$  
+
+$$U_3 = 4 \ \text{in}$$  
+
+$$F_1 = -150 \ \text{lb}$$  
 
 Check equilibrium:
 
 $$
 F_1 + F_2 + F_3 = (-150) + 75 + 75 = 0 \quad \checkmark
 $$
+
 
 ---
 
