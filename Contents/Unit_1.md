@@ -205,19 +205,12 @@ $$
 
 ---
 
-**Figure Placeholders:**
-
-* *(Insert Figure: Linear spring element showing nodes, displacements, and forces — fig\_spring\_element.png)*
-* *(Insert Figure: Force–displacement graph of linear spring — fig\_spring\_graph.png)*
-
----
-
 ### **2. Bar Element in 1D**
 
 A **bar element** is a straight structural member that resists only axial forces — either **tension** or **compression**.
 It is one of the most basic finite elements used to model **trusses** and **axially loaded members** in frames.
 
----
+<img width="297" height="173" alt="image" src="https://github.com/user-attachments/assets/bd322428-7c08-4b01-8a10-61ad8d9b6608" />
 
 #### Description and Assumptions
 
@@ -229,7 +222,12 @@ It is one of the most basic finite elements used to model **trusses** and **axia
 * **Deformations** — small, so geometry changes are negligible
 * **Loading** — purely axial (no bending or shear)
 
-*(Insert Figure: Bar element showing length $L$, cross-section $A$, nodes 1 and 2, displacements $u_1, u_2$, and internal axial force $F$)*
+#### Formulation of the finite element characteristics of an elastic bar element is based on the following assumptions:
+
+1. The bar is geometrically straight.
+2. The material obeys Hooke’s law.
+3. Forces are applied only at the ends of the bar.
+4. The bar supports axial loading only; bending, torsion, and shear are not transmitted to the element via the nature of its connections to other  elements.
 
 ---
 
@@ -339,12 +337,6 @@ $$
 
 ---
 
-**Figure Placeholders:**
-
-* *(Insert Figure: Bar element with nodes 1 & 2, axial displacements, and internal force — fig\_bar\_element.png)*
-* *(Insert Figure: Free-body diagram of bar element — fig\_bar\_fbd.png)*
-
----
 ### **3. Assembly of Element Equations**
 
 When several spring or bar elements are connected together to form a structure, their **element stiffness equations** must be combined into a **global stiffness matrix**. This process is called **assembly**.
@@ -369,6 +361,8 @@ The key idea:
 #### Example: Two Bar Elements in Series
 
 Consider two bar elements connected in series, forming three nodes:
+
+<img width="416" height="157" alt="image" src="https://github.com/user-attachments/assets/2f698902-16b0-43b4-a1e8-eeddeae5c8ae" />
 
 * **Element 1:** connects Node 1 to Node 2, stiffness $k_1 = \frac{E_1A_1}{L_1}$
 * **Element 2:** connects Node 2 to Node 3, stiffness $k_2 = \frac{E_2A_2}{L_2}$
@@ -459,30 +453,23 @@ Here:
 
 ---
 
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure from Hutton: Fig. 2.9 — Spring elements connected in series)*
-* *(Insert Figure from Hutton: Fig. 2.10 — Assembly of element stiffness into global stiffness matrix)*
-
----
-
 ### **4. Solved Example – Spring/Bar Element**
 
-**Example:** (Adapted from Hutton)
-A steel bar is composed of **two segments** joined in series.
+**Example:** A steel bar is composed of **two segments** joined in series.
 
 * **Segment 1:** $L_1 = 600 \ \text{mm}$, $A_1 = 250 \ \text{mm}^2$, $E_1 = 200 \ \text{GPa}$
 * **Segment 2:** $L_2 = 400 \ \text{mm}$, $A_2 = 300 \ \text{mm}^2$, $E_2 = 70 \ \text{GPa}$
 
+<img width="1162" height="301" alt="image" src="https://github.com/user-attachments/assets/f543f5d3-be9e-4c4a-a396-1914f3d50c56" />
+
 The bar is fixed at the left end (Node 1) and subjected to a **tensile load** of $F = 50 \ \text{kN}$ at the free end (Node 3).
 
-**Required:**
+**Find:**
 
 1. Displacement at the junction (Node 2) and at the free end (Node 3)
 2. Element forces
 3. Stresses in each segment
 
-*(Insert Figure from Hutton: Fig. 2.13 — Two-segment bar with axial load and fixed support)*
 
 ---
 
@@ -652,13 +639,6 @@ $$
 
 ---
 
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure from Hutton: Fig. 2.13 — Two-segment bar with fixed support and axial load)*
-* *(Insert Figure from Hutton: Fig. 2.14 — Displacement diagram for two-segment bar)*
-
----
-
 ## **5. Summary Table & Key Points — Spring and Bar Elements**
 
 ---
@@ -715,18 +695,18 @@ $$
 
 ## **Minimum Potential Energy Principle**
 
----
-
 ### **1. Introduction**
 
 The **Principle of Minimum Potential Energy** is a fundamental concept in mechanics and the basis for many finite element formulations.
 It states that:
 
+> *Of all displacement states of a body or structure, subjected to external loading, that satisfy the geometric boundary conditions (imposed displacements), the displacement state that also satisfies the equilibrium equations is such that the total potential energy is a minimum for stable equilibrium.*
+
+In simple words, 
+
 > *Of all the possible displacement configurations that a structure can assume under given loads and boundary conditions, the one that actually occurs is the one for which the **total potential energy** is minimum.*
 
 This principle provides an **energy-based route** to deriving equilibrium equations, rather than directly using Newton’s laws or force equilibrium.
-
-*(Insert Figure from Hutton: Fig. 2.17 — Bar element showing displacement and forces for energy approach)*
 
 ---
 
@@ -734,8 +714,8 @@ This principle provides an **energy-based route** to deriving equilibrium equati
 
 The **total potential energy** of a deformable body is the sum of:
 
-1. **Strain Energy (U)** – stored in the body due to deformation.
-2. **Potential Energy of External Loads (V)** – work done by external forces.
+1. **Strain Energy (U or U_e)** – stored in the body due to deformation.
+2. **Potential Energy of External Loads (V or U_f)** – work done by external forces.
 
 $$
 \Pi = U + V
