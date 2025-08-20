@@ -546,123 +546,159 @@ Here:
 
 ### Example 1: Two-Element Spring System — Solve for \(U_2\) and \(U_3\)
 
-<img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/7b055322-8f26-4520-95e1-5cfd178fdf54" />
+**Problem:**  
+Consider the two-element system shown in Figure 2.2.  
+- Node 1 is fixed (\(U_1 = 0\))  
+- Spring stiffnesses: \(k_1 = 50 \ \text{lb/in}, \ k_2 = 75 \ \text{lb/in}\)  
+- External forces: \(F_2 = 75 \ \text{lb}, \ F_3 = 75 \ \text{lb}\)  
 
-**Given:**
-- Node 1 fixed: \(U_1 = 0\)  
-- Spring stiffnesses: \(k_1 = 50\ \text{lb/in},\quad k_2 = 75\ \text{lb/in}\)  
-- External forces: \(F_2 = 75\ \text{lb},\quad F_3 = 75\ \text{lb}\)  
-- Arrangement: Node 1 —( \(k_1\) )— Node 2 —( \(k_2\) )— Node 3  
+Determine the nodal displacements \(U_2\) and \(U_3\).
 
 ---
 
-#### 1) Element and Global Equations
+#### Step 1: Global Stiffness Matrix
 
-For two axial spring elements in series, the assembled global equation is:
+The global finite element equations are
 
 $$
 \begin{bmatrix}
-F_1 \\
-F_2 \\
+F_1 \\[6pt]
+F_2 \\[6pt]
 F_3
 \end{bmatrix}
 =
 \begin{bmatrix}
-k_1 & -k_1 & 0 \\
--k_1 & k_1+k_2 & -k_2 \\
+k_1 & -k_1 & 0 \\[6pt]
+-k_1 & k_1 + k_2 & -k_2 \\[6pt]
 0 & -k_2 & k_2
 \end{bmatrix}
 \begin{bmatrix}
-U_1 \\
-U_2 \\
+U_1 \\[6pt]
+U_2 \\[6pt]
 U_3
 \end{bmatrix}
 $$
 
-Apply the boundary condition \(U_1 = 0\) and given nodal loads \(F_2=75,\ F_3=75\).
-
-Row 2:
+Substitute values \(k_1 = 50, \ k_2 = 75\):
 
 $$
-(k_1+k_2)U_2 - k_2 U_3 = F_2
-$$
-
-Row 3:
-
-$$
--\,k_2 U_2 + k_2 U_3 = F_3
-$$
-
-\[
-\Rightarrow \; U_3 = U_2 + \frac{F_3}{k_2}
-\]
-
----
-
-#### 2) Solve for \(U_2\) and \(U_3\)
-
-Substitute into Row 2:
-
-$$
-(k_1+k_2)U_2 - k_2\!\left(U_2 + \frac{F_3}{k_2}\right) = F_2
-$$
-
-$$
-k_1 U_2 - F_3 = F_2
-$$
-
-$$
-U_2 = \frac{F_2 + F_3}{k_1}
-$$
-
-Now back-substitute:
-
-$$
-U_3 = U_2 + \frac{F_3}{k_2}
-= \frac{F_2 + F_3}{k_1} + \frac{F_3}{k_2}
+\begin{bmatrix}
+F_1 \\[6pt]
+F_2 \\[6pt]
+F_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+50 & -50 & 0 \\[6pt]
+-50 & 125 & -75 \\[6pt]
+0 & -75 & 75
+\end{bmatrix}
+\begin{bmatrix}
+U_1 \\[6pt]
+U_2 \\[6pt]
+U_3
+\end{bmatrix}
 $$
 
 ---
 
-#### 3) Numerical Evaluation
+#### Step 2: Apply Boundary Condition \(U_1 = 0\)
 
-For \(k_1=50,\ k_2=75,\ F_2=F_3=75\):
-
-$$
-U_2 = \frac{75+75}{50} = \frac{150}{50} = 3\ \text{in}
-$$
+Constraint equation from Row 1:
 
 $$
-U_3 = 3 + \frac{75}{75} = 3 + 1 = 4\ \text{in}
+-50 U_2 = F_1
 $$
 
-**Final Results:**
+(since \(U_1 = 0\), this defines the reaction at Node 1).
 
-\[
-U_2 = 3\ \text{in}, \quad U_3 = 4\ \text{in}
-\]
+Active system (Rows 2 and 3):
+
+$$
+\begin{bmatrix}
+125 & -75 \\[6pt]
+-75 & 75
+\end{bmatrix}
+\begin{bmatrix}
+U_2 \\[6pt]
+U_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+75 \\[6pt]
+75
+\end{bmatrix}
+$$
 
 ---
 
-#### 4) Reaction at Node 1
+#### Step 3: Solve for Displacements
 
-From Row 1:
-
-$$
-F_1 = k_1 U_1 - k_1 U_2 = -k_1 U_2
-$$
+Equation (2):  
 
 $$
-F_1 = -50 \times 3 = -150\ \text{lb}
+125 U_2 - 75 U_3 = 75
 $$
+
+Equation (3):  
+
+$$
+-75 U_2 + 75 U_3 = 75
+$$
+
+From Equation (3):  
+
+$$
+75 (U_3 - U_2) = 75
+\;\;\Rightarrow\;\;
+U_3 = U_2 + 1
+$$
+
+Substitute into Equation (2):  
+
+$$
+125 U_2 - 75 (U_2 + 1) = 75
+$$
+
+$$
+125 U_2 - 75 U_2 - 75 = 75
+$$
+
+$$
+50 U_2 = 150
+\;\;\Rightarrow\;\;
+U_2 = 3 \ \text{in}
+$$
+
+Back-substitute:
+
+$$
+U_3 = U_2 + 1 = 3 + 1 = 4 \ \text{in}
+$$
+
+---
+
+#### Step 4: Reaction at Node 1
+
+From constraint equation:
+
+$$
+F_1 = -50 U_2 = -50 (3) = -150 \ \text{lb}
+$$
+
+---
+
+### Final Results
+
+- \(U_2 = 3 \ \text{in}\)  
+- \(U_3 = 4 \ \text{in}\)  
+- \(F_1 = -150 \ \text{lb}\) (reaction force)
 
 Check equilibrium:
 
 $$
 F_1 + F_2 + F_3 = (-150) + 75 + 75 = 0 \quad \checkmark
 $$
-
-**Interpretation:** Negative \(F_1\) indicates a support reaction opposing the applied loads.
 
 ---
 
