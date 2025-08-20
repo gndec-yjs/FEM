@@ -363,9 +363,8 @@ Consider two spring elements connected in series, forming three nodes:
 
 <img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/547ab6ec-bea6-4b32-ba1d-f7c7a7d797c2" />
 
-- **Element 1**: connects Node 1 to Node 2, stiffness \( k_1 = \dfrac{E_1 A_1}{L_1} \)  
-- **Element 2**: connects Node 2 to Node 3, stiffness \( k_2 = \dfrac{E_2 A_2}{L_2} \)
-
+- **Element 1**: connects Node 1 to Node 2, stiffness $k_1 = \frac{E_{1} A_{1}}{L_{1}}$  
+- **Element 2**: connects Node 2 to Node 3, stiffness $k_2 = \frac{E_{2} A_{2}}{L_{2}}$
 
 <img width="455" height="212" alt="image" src="https://github.com/user-attachments/assets/6f0263f7-4fd3-4be9-8129-aad56b7f28a9" />
 
