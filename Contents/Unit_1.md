@@ -547,95 +547,123 @@ Here:
 
 ### Example 1: Two-Element Spring System — Solve for \(U_2\) and \(U_3\)
 
-
 <img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/7b055322-8f26-4520-95e1-5cfd178fdf54" />
 
-
 **Given:**
-- Node 1 fixed: \(U_1 = 0\)
-- Spring stiffnesses: \(k_1 = 50\ \text{lb/in},\quad k_2 = 75\ \text{lb/in}\)
-- External forces: \(F_2 = 75\ \text{lb},\quad F_3 = 75\ \text{lb}\)
-- Arrangement: Node 1 —( \(k_1\) )— Node 2 —( \(k_2\) )— Node 3
+- Node 1 fixed: \(U_1 = 0\)  
+- Spring stiffnesses: \(k_1 = 50\ \text{lb/in},\quad k_2 = 75\ \text{lb/in}\)  
+- External forces: \(F_2 = 75\ \text{lb},\quad F_3 = 75\ \text{lb}\)  
+- Arrangement: Node 1 —( \(k_1\) )— Node 2 —( \(k_2\) )— Node 3  
+
+---
 
 #### 1) Element and Global Equations
 
-For two axial spring elements in series, the assembled global equation with DOFs \((U_1,U_2,U_3)\) is:
+For two axial spring elements in series, the assembled global equation is:
+
 $$
 \begin{bmatrix}
-F_1\\[2pt]
-F_2\\[2pt]
+F_1 \\
+F_2 \\
 F_3
 \end{bmatrix}
 =
 \begin{bmatrix}
-k_1 & -k_1 & 0\\
--k_1 & k_1+k_2 & -k_2\\
+k_1 & -k_1 & 0 \\
+-k_1 & k_1+k_2 & -k_2 \\
 0 & -k_2 & k_2
 \end{bmatrix}
 \begin{bmatrix}
-U_1\\[2pt]
-U_2\\[2pt]
+U_1 \\
+U_2 \\
 U_3
 \end{bmatrix}
 $$
 
-Apply the boundary condition \(U_1=0\) and the given nodal loads \(F_2=75\), \(F_3=75\):
-- Row 2:
-  $$
-  (k_1+k_2)U_2 - k_2 U_3 = F_2
-  $$
-- Row 3:
-  $$
-  -k_2 U_2 + k_2 U_3 = F_3
-  \;\;\Rightarrow\;\;
-  k_2(U_3 - U_2) = F_3
-  \;\;\Rightarrow\;\;
-  U_3 = U_2 + \frac{F_3}{k_2}
-  $$
+Apply the boundary condition \(U_1 = 0\) and given nodal loads \(F_2=75,\ F_3=75\).
+
+Row 2:
+
+$$
+(k_1+k_2)U_2 - k_2 U_3 = F_2
+$$
+
+Row 3:
+
+$$
+-\,k_2 U_2 + k_2 U_3 = F_3
+$$
+
+\[
+\Rightarrow \; U_3 = U_2 + \frac{F_3}{k_2}
+\]
+
+---
 
 #### 2) Solve for \(U_2\) and \(U_3\)
 
-Substitute \(U_3 = U_2 + \dfrac{F_3}{k_2}\) into Row 2:
+Substitute into Row 2:
+
 $$
 (k_1+k_2)U_2 - k_2\!\left(U_2 + \frac{F_3}{k_2}\right) = F_2
-\;\;\Rightarrow\;\;
+$$
+
+$$
 k_1 U_2 - F_3 = F_2
-\;\;\Rightarrow\;\;
+$$
+
+$$
 U_2 = \frac{F_2 + F_3}{k_1}
 $$
 
-Now back-substitute for \(U_3\):
+Now back-substitute:
+
 $$
 U_3 = U_2 + \frac{F_3}{k_2}
 = \frac{F_2 + F_3}{k_1} + \frac{F_3}{k_2}
 $$
 
-Plug in numbers \(k_1=50,\ k_2=75,\ F_2=75,\ F_3=75\):
+---
+
+#### 3) Numerical Evaluation
+
+For \(k_1=50,\ k_2=75,\ F_2=F_3=75\):
+
 $$
-U_2 = \frac{75 + 75}{50} = \frac{150}{50} = 3\ \text{in}
+U_2 = \frac{75+75}{50} = \frac{150}{50} = 3\ \text{in}
 $$
+
 $$
 U_3 = 3 + \frac{75}{75} = 3 + 1 = 4\ \text{in}
 $$
 
-**Result:**
-- \( \boxed{U_2 = 3\ \text{in}} \)
-- \( \boxed{U_3 = 4\ \text{in}} \)
+**Final Results:**
 
+\[
+U_2 = 3\ \text{in}, \quad U_3 = 4\ \text{in}
+\]
 
-#### (Optional) Reaction at Node 1
+---
+
+#### 4) Reaction at Node 1
 
 From Row 1:
+
 $$
-F_1 = k_1 U_1 - k_1 U_2 = -k_1 U_2 = -50 \times 3 = -150\ \text{lb}
+F_1 = k_1 U_1 - k_1 U_2 = -k_1 U_2
 $$
 
-Check global equilibrium:
+$$
+F_1 = -50 \times 3 = -150\ \text{lb}
+$$
+
+Check equilibrium:
+
 $$
 F_1 + F_2 + F_3 = (-150) + 75 + 75 = 0 \quad \checkmark
 $$
 
-**Interpretation:** The negative sign on \(F_1\) indicates a reaction at Node 1 opposing the applied loads at Nodes 2 and 3, satisfying equilibrium.
+**Interpretation:** Negative \(F_1\) indicates a support reaction opposing the applied loads.
 
 ---
 
