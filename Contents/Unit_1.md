@@ -1137,10 +1137,10 @@ $$
 
 ### Final Results
 
-- $$U_1 = 0$$  
-- $$U_2 = \tfrac{W}{k}$$  
-- $$U_3 = \tfrac{2W}{k}$$  
-- $$U_4 = \tfrac{3W}{k}$$  
+$$U_1 = 0$$  
+$$U_2 = \tfrac{W}{k}$$  
+$$U_3 = \tfrac{2W}{k}$$  
+$$U_4 = \tfrac{3W}{k}$$  
 - Reaction: $$F_1 = -3W$$  
 
 ---
