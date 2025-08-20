@@ -357,6 +357,92 @@ The key idea:
 5. **Sum overlapping terms** where elements share a node.
 
 ---
+### Example: Two Spring Elements in Series
+
+Consider two spring elements connected in series, forming three nodes:
+
+<img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/547ab6ec-bea6-4b32-ba1d-f7c7a7d797c2" />
+
+- **Element 1**: connects Node 1 to Node 2, stiffness \( k_1 = \dfrac{E_1 A_1}{L_1} \)  
+- **Element 2**: connects Node 2 to Node 3, stiffness \( k_2 = \dfrac{E_2 A_2}{L_2} \)  
+
+#### Element Equations
+
+For **Element 1**:
+
+$$
+\begin{bmatrix}
+f_1 \\
+f_2
+\end{bmatrix}
+=
+k_1
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+u_1 \\
+u_2
+\end{bmatrix}
+$$
+
+For **Element 2**:
+
+$$
+\begin{bmatrix}
+f'_2 \\
+f_3
+\end{bmatrix}
+=
+k_2
+\begin{bmatrix}
+1 & -1 \\
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+u_2 \\
+u_3
+\end{bmatrix}
+$$
+
+#### Combining Forces at Node 2
+
+The total force at Node 2 is the sum of contributions from both elements:
+
+$$
+F_2 = f_2 + f'_2
+$$
+
+#### Global Stiffness Equation
+
+Collecting contributions for all three nodes, we obtain:
+
+$$
+\begin{bmatrix}
+F_1 \\
+F_2 \\
+F_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+k_1 & -k_1 & 0 \\
+-k_1 & k_1 + k_2 & -k_2 \\
+0 & -k_2 & k_2
+\end{bmatrix}
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+u_3
+\end{bmatrix}
+$$
+
+
+#### Observations:
+- The **global stiffness matrix** is \( 3 \times 3 \), since there is **one degree of freedom per node**.  
+- It is **symmetric** and has a **banded structure**, typical of FEM formulations.  
+
+---
 
 #### Example: Two Bar Elements in Series
 
@@ -455,7 +541,7 @@ Here:
 
 ### **4. Solved Example – Spring/Bar Element**
 
-**Example:** A steel bar is composed of **two segments** joined in series.
+**Example 1:** A steel bar is composed of **two segments** joined in series.
 
 * **Segment 1:** $L_1 = 600 \ \text{mm}$, $A_1 = 250 \ \text{mm}^2$, $E_1 = 200 \ \text{GPa}$
 * **Segment 2:** $L_2 = 400 \ \text{mm}$, $A_2 = 300 \ \text{mm}^2$, $E_2 = 70 \ \text{GPa}$
