@@ -544,7 +544,7 @@ Here:
 
 ### **4. Solved Example – Spring/Bar Element**
 
-### Example 1: Two-Element Spring System — Solve for \(U_2\) and \(U_3\)
+### Example 1: Two-Element Spring System 
 
 **Problem:**  
 Consider the two-element system shown in Figure below.
