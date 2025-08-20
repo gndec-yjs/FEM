@@ -364,7 +364,11 @@ Consider two spring elements connected in series, forming three nodes:
 <img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/547ab6ec-bea6-4b32-ba1d-f7c7a7d797c2" />
 
 - **Element 1**: connects Node 1 to Node 2, stiffness \( k_1 = \dfrac{E_1 A_1}{L_1} \)  
-- **Element 2**: connects Node 2 to Node 3, stiffness \( k_2 = \dfrac{E_2 A_2}{L_2} \)  
+- **Element 2**: connects Node 2 to Node 3, stiffness \( k_2 = \dfrac{E_2 A_2}{L_2} \)
+
+
+<img width="455" height="212" alt="image" src="https://github.com/user-attachments/assets/6f0263f7-4fd3-4be9-8129-aad56b7f28a9" />
+
 
 #### Element Equations
 
@@ -541,7 +545,101 @@ Here:
 
 ### **4. Solved Example – Spring/Bar Element**
 
-**Example 1:** A steel bar is composed of **two segments** joined in series.
+### Example 1: Two-Element Spring System — Solve for \(U_2\) and \(U_3\)
+
+
+<img width="464" height="157" alt="image" src="https://github.com/user-attachments/assets/7b055322-8f26-4520-95e1-5cfd178fdf54" />
+
+
+**Given:**
+- Node 1 fixed: \(U_1 = 0\)
+- Spring stiffnesses: \(k_1 = 50\ \text{lb/in},\quad k_2 = 75\ \text{lb/in}\)
+- External forces: \(F_2 = 75\ \text{lb},\quad F_3 = 75\ \text{lb}\)
+- Arrangement: Node 1 —( \(k_1\) )— Node 2 —( \(k_2\) )— Node 3
+
+#### 1) Element and Global Equations
+
+For two axial spring elements in series, the assembled global equation with DOFs \((U_1,U_2,U_3)\) is:
+$$
+\begin{bmatrix}
+F_1\\[2pt]
+F_2\\[2pt]
+F_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+k_1 & -k_1 & 0\\
+-k_1 & k_1+k_2 & -k_2\\
+0 & -k_2 & k_2
+\end{bmatrix}
+\begin{bmatrix}
+U_1\\[2pt]
+U_2\\[2pt]
+U_3
+\end{bmatrix}
+$$
+
+Apply the boundary condition \(U_1=0\) and the given nodal loads \(F_2=75\), \(F_3=75\):
+- Row 2:
+  $$
+  (k_1+k_2)U_2 - k_2 U_3 = F_2
+  $$
+- Row 3:
+  $$
+  -k_2 U_2 + k_2 U_3 = F_3
+  \;\;\Rightarrow\;\;
+  k_2(U_3 - U_2) = F_3
+  \;\;\Rightarrow\;\;
+  U_3 = U_2 + \frac{F_3}{k_2}
+  $$
+
+#### 2) Solve for \(U_2\) and \(U_3\)
+
+Substitute \(U_3 = U_2 + \dfrac{F_3}{k_2}\) into Row 2:
+$$
+(k_1+k_2)U_2 - k_2\!\left(U_2 + \frac{F_3}{k_2}\right) = F_2
+\;\;\Rightarrow\;\;
+k_1 U_2 - F_3 = F_2
+\;\;\Rightarrow\;\;
+U_2 = \frac{F_2 + F_3}{k_1}
+$$
+
+Now back-substitute for \(U_3\):
+$$
+U_3 = U_2 + \frac{F_3}{k_2}
+= \frac{F_2 + F_3}{k_1} + \frac{F_3}{k_2}
+$$
+
+Plug in numbers \(k_1=50,\ k_2=75,\ F_2=75,\ F_3=75\):
+$$
+U_2 = \frac{75 + 75}{50} = \frac{150}{50} = 3\ \text{in}
+$$
+$$
+U_3 = 3 + \frac{75}{75} = 3 + 1 = 4\ \text{in}
+$$
+
+**Result:**
+- \( \boxed{U_2 = 3\ \text{in}} \)
+- \( \boxed{U_3 = 4\ \text{in}} \)
+
+
+#### (Optional) Reaction at Node 1
+
+From Row 1:
+$$
+F_1 = k_1 U_1 - k_1 U_2 = -k_1 U_2 = -50 \times 3 = -150\ \text{lb}
+$$
+
+Check global equilibrium:
+$$
+F_1 + F_2 + F_3 = (-150) + 75 + 75 = 0 \quad \checkmark
+$$
+
+**Interpretation:** The negative sign on \(F_1\) indicates a reaction at Node 1 opposing the applied loads at Nodes 2 and 3, satisfying equilibrium.
+
+---
+
+**Example 2:** A steel bar is composed of **two segments** joined in series.
 
 * **Segment 1:** $L_1 = 600 \ \text{mm}$, $A_1 = 250 \ \text{mm}^2$, $E_1 = 200 \ \text{GPa}$
 * **Segment 2:** $L_2 = 400 \ \text{mm}$, $A_2 = 300 \ \text{mm}^2$, $E_2 = 70 \ \text{GPa}$
@@ -722,6 +820,162 @@ $$
 * $F_1 = F_2 = 50 \ \text{kN}$
 * $\sigma_1 = 200 \ \text{MPa}$
 * $\sigma_2 \approx 166.67 \ \text{MPa}$
+
+---
+
+### Example 3: Three Springs Supporting Three Equal Weights
+
+**Problem statement:**  
+
+Figure depicts a system of three linearly elastic springs supporting three equal weights W suspended in a vertical plane. Treating the springs as finite elements, determine the vertical displacement of each weight.
+
+<img width="242" height="375" alt="image" src="https://github.com/user-attachments/assets/13bf0445-7b89-4604-80c8-caf2e5759508" />
+
+#### 1. Element stiffness matrices (local form)
+
+Each spring (1D axial) has an element stiffness matrix (2 × 2):
+$$
+[k_i] \;=\; k_i
+\begin{bmatrix}
+1 & -1\\
+-1 & 1
+\end{bmatrix}
+\qquad (i=1,2,3)
+$$
+where \(k_i = \dfrac{E_i A_i}{L_i}\) for each spring (or simply the spring constant if given).
+
+#### 2. Global assembly (DOFs and connectivity)
+
+We take the unknown displacements as the nodal DOFs:
+\[
+\mathbf{U} = \begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
+\]
+The fixed support above spring 1 is not a DOF (its displacement = 0).
+
+Assembling contributions from the three springs gives the global stiffness matrix \([K]\) for the 3 DOFs:
+
+$$
+[K] \;=\;
+\begin{bmatrix}
+k_1 + k_2 & -k_2      & 0       \\
+-k_2       & k_2 + k_3 & -k_3    \\
+0          & -k_3      & k_3
+\end{bmatrix}
+$$
+
+(Each diagonal entry is the sum of stiffnesses of springs meeting the node; off-diagonals are negative stiffnesses between connected nodes.)
+
+The external load vector (downward positive) is:
+$$
+\mathbf{F} \;=\; \begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}
+$$
+
+Thus the equilibrium equations are:
+$$
+[K]\mathbf{U} = \mathbf{F}
+$$
+
+#### 3. Solve symbolically for equal springs (special case)
+
+If all three springs are identical, \(k_1 = k_2 = k_3 = k\), the global matrix simplifies to:
+
+$$
+[K] = k
+\begin{bmatrix}
+2 & -1 & 0 \\
+-1 & 2 & -1 \\
+0 & -1 & 1
+\end{bmatrix}
+$$
+
+We solve
+$$
+k
+\begin{bmatrix}
+2 & -1 & 0 \\
+-1 & 2 & -1 \\
+0 & -1 & 1
+\end{bmatrix}
+\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
+=
+\begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}
+$$
+
+Divide both sides by \(k\):
+$$
+\begin{bmatrix}
+2 & -1 & 0 \\
+-1 & 2 & -1 \\
+0 & -1 & 1
+\end{bmatrix}
+\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
+=
+\frac{W}{k}
+\begin{bmatrix} 1 \\[4pt] 1 \\[4pt] 1 \end{bmatrix}
+$$
+
+Solving this linear system (by elimination or matrix inverse) yields:
+$$
+U_1 = \frac{3W}{k},\qquad
+U_2 = \frac{5W}{k},\qquad
+U_3 = \frac{6W}{k}.
+$$
+
+So each displacement is proportional to \(W/k\); note \(U_3>U_2>U_1\) as expected because lower nodes experience cumulative extension.
+
+#### 4. General solution (unequal springs)
+
+If the springs are not identical, solve the 3×3 linear system:
+
+$$
+\begin{bmatrix}
+k_1 + k_2 & -k_2      & 0       \\
+-k_2       & k_2 + k_3 & -k_3    \\
+0          & -k_3      & k_3
+\end{bmatrix}
+\begin{bmatrix} U_1 \\[4pt] U_2 \\[4pt] U_3 \end{bmatrix}
+=
+\begin{bmatrix} W \\[4pt] W \\[4pt] W \end{bmatrix}.
+$$
+
+You can solve this directly (Gaussian elimination or symbolic algebra). For completeness, the solution by elimination sequence is:
+
+From row 3:
+\[
+k_3(U_3 - U_2) = W \quad\Rightarrow\quad U_3 = U_2 + \frac{W}{k_3}.
+\]
+
+Substitute into row 2:
+\[
+(k_2 + k_3)U_2 - k_3 U_3 = W
+\;\Rightarrow\;
+k_2 U_2 - W = W
+\;\Rightarrow\;
+k_2 U_2 = 2W \quad\text{(this simplification is valid only when following algebraic substitution carefully; in general keep symbolic steps)}
+\]
+
+(The above shows the substitution idea — for full general algebra carry out exact substitution with given \(k_i\).)
+
+#### 5. Numerical check (example)
+
+Take a quick numeric example for identical springs:
+- \(k = 1000\ \text{N/m}\)
+- \(W = 200\ \text{N}\)
+
+Then
+\[
+U_1 = \frac{3\times 200}{1000} = 0.6\ \text{m},\quad
+U_2 = \frac{5\times 200}{1000} = 1.0\ \text{m},\quad
+U_3 = \frac{6\times 200}{1000} = 1.2\ \text{m}.
+\]
+
+(Units consistent: W in N, k in N/m → U in m.)
+
+#### 6. Remarks
+
+* The assembled matrix is symmetric and banded (tridiagonal) — a common pattern for 1D chains.  
+* If the top support were free (no fixed support), the global stiffness would be singular (no unique solution) — always ensure boundary conditions are applied.  
+* The same procedure applies when springs represent bar elements with stiffness \(k_i = E_i A_i / L_i\).
 
 ---
 
