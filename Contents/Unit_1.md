@@ -714,8 +714,8 @@ This principle provides an **energy-based route** to deriving equilibrium equati
 
 The **total potential energy** of a deformable body is the sum of:
 
-1. **Strain Energy (U or U_e)** – stored in the body due to deformation.
-2. **Potential Energy of External Loads (V or U_f)** – work done by external forces.
+1. **Strain Energy (U or U<sub>e</sub>)** – stored in the body due to deformation.
+2. **Potential Energy of External Loads (V or U<sub>f</sub>)** – work done by external forces.
 
 $$
 \Pi = U + V
@@ -724,8 +724,8 @@ $$
 Where:
 
 * $\Pi$ = total potential energy of the system
-* $U$ = strain energy stored in elements
-* $V$ = potential energy of applied forces (negative if loads do positive work)
+* $U$ or U<sub>e</sub> = strain energy stored in elements
+* $V$ or U<sub>f</sub> = potential energy of applied forces (negative if loads do positive work)
 
 ---
 
@@ -844,23 +844,16 @@ This is exactly the **stiffness matrix equation** for the bar element derived ea
 
 ---
 
-### **5. Figure Placeholders (from Hutton’s book)**
-
-* *(Insert Figure from Hutton: Fig. 2.17 — Bar element for potential energy derivation)*
-* *(Insert Figure from Hutton: Fig. 2.18 — Work done by external nodal forces)*
-* *(Insert Figure from Hutton: Fig. 2.19 — Flowchart of minimum potential energy application in FEM)*
-
----
-
 ## **Worked Example: Minimum Potential Energy Principle**
 
 ---
 
 **Problem:**
 A uniform steel bar of length $L = 2.0 \ \mathrm{m}$, cross-sectional area $A = 1.0 \times 10^{-4} \ \mathrm{m}^2$, and modulus of elasticity $E = 200 \ \mathrm{GPa}$ is fixed at the left end (Node 1) and subjected to an axial load $P = 10 \ \mathrm{kN}$ at the free end (Node 2).
-Using the **principle of minimum potential energy**, determine the displacement at Node 2.
 
-*(Insert Figure from Hutton: Fig. 2.17 — Bar element showing displacement and forces for energy approach)*
+<img width="1184" height="201" alt="image" src="https://github.com/user-attachments/assets/0aaa5018-b2a0-4f37-8d5d-1163b99b71c4" />
+
+Using the **principle of minimum potential energy**, determine the displacement at Node 2.
 
 ---
 
@@ -960,16 +953,7 @@ The free end of the bar displaces **1 mm** under the given load.
 
 ---
 
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure from Hutton: Fig. 2.17 — Bar element for potential energy derivation)*
-* *(Insert Figure from Hutton: Fig. 2.18 — Work done by external nodal forces)*
-
----
-
 ## **Generalization of the Minimum Potential Energy Principle to Multiple Degrees of Freedom**
-
----
 
 ### **1. Concept**
 
@@ -1117,8 +1101,6 @@ k_1 & -k_1 & 0 \\
 \end{bmatrix}
 $$
 
-*(Insert Figure from Hutton: Fig. 2.20 — Two-bar system for multi-DOF energy derivation)*
-
 ---
 
 ### **8. Advantages of the Multi-DOF Energy Approach**
@@ -1126,18 +1108,6 @@ $$
 * Same stiffness equations as direct stiffness method.
 * Easier for **complex boundary conditions** and **variable material properties**.
 * Naturally extends to **beams, frames, shells** using appropriate strain energy expressions.
-
----
-
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure from Hutton: Fig. 2.20 — Multi-element bar system)*
-* *(Insert Figure from Hutton: Fig. 2.21 — Assembly of strain energy contributions)*
-* *(Insert Figure from Hutton: Fig. 2.22 — Global stiffness matrix from energy principle)*
-
----
-
-Here’s **Part 4 of Topic 3 — Summary Table + Key Points**, matching the style we used to wrap up Topic 2.
 
 ---
 
@@ -1174,8 +1144,6 @@ Here’s **Part 4 of Topic 3 — Summary Table + Key Points**, matching the styl
 
 ## **Direct Stiffness Method**
 
----
-
 ### **1. Introduction**
 
 The **Direct Stiffness Method** is the most widely used computational technique for solving structural mechanics problems in FEM.
@@ -1211,7 +1179,8 @@ The global system is assembled by combining all element equations according to t
 
 * Divide the structure into finite elements.
 * Assign node numbers and element numbers.
-* *(Insert Figure from Hutton: Fig. 2.23 — Example structure with node and element numbering)*
+
+<img width="470" height="163" alt="image" src="https://github.com/user-attachments/assets/eaeda008-9c61-4c26-bd9e-8d99de110afa" />
 
 ---
 
@@ -1220,6 +1189,8 @@ The global system is assembled by combining all element equations according to t
 * Material properties: $E$, $A$, $I$, etc.
 * Element geometry: length $L$, orientation $\theta$ (if 2D/3D).
 * Cross-section details.
+
+<img width="494" height="278" alt="image" src="https://github.com/user-attachments/assets/7dba01c6-ca43-40ed-9514-588ffcbb64cf" />
 
 ---
 
@@ -1253,8 +1224,6 @@ k_1 & -k_1 & 0 \\
 0 & -k_2 & k_2
 \end{bmatrix}
 $$
-
-*(Insert Figure from Hutton: Fig. 2.24 — Assembly of global stiffness matrix)*
 
 ---
 
@@ -1318,18 +1287,10 @@ $$
 
 ---
 
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure: Fig. 2.23 — Node/element numbering example)*
-* *(Insert Figure: Fig. 2.24 — Assembly of global stiffness matrix)*
-* *(Insert Figure: Fig. 2.25 — Application of boundary conditions)*
-
----
-
 ## **Detailed Worked Example (Direct Stiffness Method)**
 
 **Problem**
-A prismatic steel bar is modeled with **three axial (bar) elements** in series: Nodes $1\!-\!2\!-\!3\!-\!4$.
+A prismatic steel bar is modeled with **three axial (bar) elements** in series: Nodes 1-2-3-4.
 
 * Modulus: $E = 200{,}000 \ \text{MPa} = 200{,}000 \ \text{N/mm}^2$
 * Area: $A = 100 \ \text{mm}^2$ (constant)
