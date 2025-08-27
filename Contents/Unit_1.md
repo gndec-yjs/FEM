@@ -1168,22 +1168,6 @@ The displacements increase linearly with the node number since each spring carri
 
 ### **A. Summary Table**
 
-### **A. Summary Table**
-
-| Feature / Formula     | **Spring Element**                                    | **Bar Element (1D)**                                          |
-| --------------------- | ----------------------------------------------------- | ------------------------------------------------------------- |
-| **DOFs per node**     | 1 (axial displacement)                                | 1 (axial displacement)                                        |
-| **Material law**      | Hooke’s law: \(\; f = k \,(u\_2 - u\_1) \;\)          | Hooke’s law: \(\; \sigma = E \varepsilon \;\)                 |
-| **Strain relation**   | Not defined (spring elongation only)                  | \(\; \varepsilon = \dfrac{u\_2 - u\_1}{L} \;\)                |
-| **Stress relation**   | Not applicable                                        | \(\; \sigma = E \dfrac{u\_2 - u\_1}{L} \;\)                   |
-| **Element stiffness** | \( k \) (given or computed)                           | \(\; \dfrac{EA}{L} \;\)                                       |
-| **Stiffness matrix**  | \(\; \begin{bmatrix} k & -k \\ -k & k \end{bmatrix} \;\) | \(\; \dfrac{EA}{L} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} \;\) |
-| **Typical units**     | N/m                                                   | N/m                                                           |
-| **Application areas** | Springs, supports, connectors                         | Truss members, axially loaded bars                            |
-| **Assumptions**       | Linear elastic, small deformation                     | Linear elastic, uniform cross-section, small deformation      |
-| **Main output**       | Nodal forces and displacements                        | Nodal displacements, element forces, and stresses             |
-
-
 | Feature / Formula     | **Spring Element**                               | **Bar Element (1D)**                                          |
 | --------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
 | **DOFs per node**     | 1 (axial displacement)                           | 1 (axial displacement)                                        |
