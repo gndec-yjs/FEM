@@ -1309,25 +1309,25 @@ This condition ensures that total potential energy is stationary (minimum for st
 
 #### **For a 2-Node Bar Element:**
 
-1. **Strain energy:**
+1) **Strain energy:**
 
 $$
 U = \frac{1}{2} \frac{EA}{L} (u_2 - u_1)^2
 $$
 
-2. **Potential of external loads:**
+2) **Potential of external loads:**
 
 $$
 V = -F_1 u_1 - F_2 u_2
 $$
 
-3. **Total potential energy:**
+3) **Total potential energy:**
 
 $$
 \Pi = \frac{1}{2} \frac{EA}{L} (u_2 - u_1)^2 - F_1 u_1 - F_2 u_2
 $$
 
-4. **Apply minimum energy condition:**
+4) **Apply minimum energy condition:**
 
    * Differentiate $\Pi$ with respect to $u_1$ and $u_2$ and set to zero:
 
@@ -1339,7 +1339,7 @@ $$
 \frac{\partial \Pi}{\partial u_2} = \frac{EA}{L}(u_2 - u_1) - F_2 = 0
 $$
 
-5. **Matrix form:**
+5) **Matrix form:**
 
 $$
 \begin{bmatrix}
