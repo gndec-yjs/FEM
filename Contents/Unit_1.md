@@ -1278,7 +1278,8 @@ $$
 u(x) = N_1(x)u_1 + N_2(x)u_2
 $$
 
-where $N_1, N_2$ are shape functions.
+where $N_1, N_2$ are 
+<span class="hover-term" title=" In the context of the Finite Element Method (FEM), shape functions are mathematical tools used to interpolate unknown field variables—like displacement, temperature, or stress—within an element based on values at its nodes."> **_shape functions_**.</span>
 
 ---
 
