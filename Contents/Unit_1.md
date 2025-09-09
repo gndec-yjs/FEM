@@ -2028,77 +2028,6 @@ $$
 **Flow:**
 Discretize → Define Properties → Form $[k]^{(e)}$ → Assemble $[K]$ → Apply BCs → Solve $\{u\}$ → Post-process
 
-+-----------------------------------------------------+
-|                DIRECT STIFFNESS METHOD              |
-+-----------------------------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 1) DISCRETIZE STRUCTURE                              |
-|    - Define nodes & elements                         |
-|    - Number nodes (global DOFs)                      |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 2) DEFINE PROPERTIES                                 |
-|    - E, A, I, geometry (L), orientation (if 2D/3D)   |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 3) ELEMENT STIFFNESS [k] (LOCAL)                     |
-|    - Bars: (EA/L)[[1,-1],[-1,1]]                    |
-|    - Beams/Frames: appropriate [k]_local             |
-+----------------------+------------------------------+
-                       |
-            +----------+-----------+
-            |                      |
-            v                      v
-+----------------------+   +--------------------------+
-| (if 2D/3D)           |   | (if 1D axial)            |
-| 3a) TRANSFORM TO     |   | 3a) SKIP TRANSFORM       |
-|     GLOBAL: [k]_g =  |   |     [k]_g = [k]_local    |
-|     T^T [k]_local T  |   +--------------------------+
-+----------------------+
-            |
-            v
-+----------------------+------------------------------+
-| 4) ASSEMBLE GLOBAL [K]                               |
-|    - Scatter/gather element [k]_g into [K]           |
-|    - Sum overlaps at shared DOFs                     |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 5) APPLY BOUNDARY CONDITIONS                         |
-|    - Essential (prescribed u): modify [K], {F}       |
-|    - Record constrained DOFs                         |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 6) SOLVE FOR {u}                                      |
-|    - [K]{u} = {F}                                    |
-|    - Use linear solver                               |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 7) POST-PROCESS                                       |
-|    - Element forces: {f} = [k]_e {u}_e               |
-|    - Stresses (bars): σ = F/A                        |
-|    - Reactions: {R} = [K]{u} - {F}                   |
-+----------------------+------------------------------+
-                       |
-                       v
-+----------------------+------------------------------+
-| 8) CHECKS                                             |
-|    - Equilibrium (ΣF = 0)                            |
-|    - BCs satisfied                                   |
-|    - Sanity: trends, units, magnitudes               |
-+----------------------+------------------------------+
-
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="1080" viewBox="0 0 920 1080" role="img" aria-labelledby="title desc">
   <title id="title">Direct Stiffness Method Flowchart</title>
   <desc id="desc">Flowchart showing DSM steps from discretization to checks.</desc>
@@ -2186,7 +2115,7 @@ Discretize → Define Properties → Form $[k]^{(e)}$ → Assemble $[K]$ → App
   <rect class="box" x="140" y="1005" width="640" height="140"/>
   <text class="text head" x="160" y="1035">7) Post-process  &  8) Checks</text>
   <text class="text" x="160" y="1060">• Element forces: {f} = [k]_e {u}_e;  Stresses: σ = F/A</text>
-  <text class="text" x="160" y="1083">• Reactions: {R} = [K]{u} − {F};  Equilibrium & BC verification</text>
+  <text class="text" x="160" y="1083">• Reactions: {R} = [K]{u} − {F};  Equilibrium & BC verification </text>
 </svg>
 
 ---
