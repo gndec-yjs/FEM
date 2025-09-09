@@ -2028,7 +2028,7 @@ $$
 **Flow:**
 Discretize → Define Properties → Form $[k]^{(e)}$ → Assemble $[K]$ → Apply BCs → Solve $\{u\}$ → Post-process
 
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="1080" viewBox="0 0 920 1080" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1200" role="img" aria-labelledby="title desc" style="max-width:100%; height:auto;">
   <title id="title">Direct Stiffness Method Flowchart</title>
   <desc id="desc">Flowchart showing DSM steps from discretization to checks.</desc>
   <style>
