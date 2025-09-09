@@ -2313,23 +2313,54 @@ Alright — here’s the **summary table** and an **ASCII “at a glance” diag
 | **Result of solving**    | Nodal displacements, element forces, reactions   | —                                                         |
 
 ---
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 420" style="max-width:100%; height:auto;" role="img" aria-labelledby="title desc">
+  <title id="title">Nodal Equilibrium — At a Glance</title>
+  <desc id="desc">Diagram showing node, internal forces, external loads, and equilibrium equations.</desc>
 
-## **Nodal Equilibrium — At a Glance (ASCII Diagram)**
+  <style>
+    .box{fill:#fff;stroke:#222;stroke-width:2;rx:8;ry:8}
+    .arrow{stroke:#222;stroke-width:2;marker-end:url(#arrow)}
+    .text{font-family:system-ui,Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;fill:#111}
+    .head{font-weight:700;font-size:18px}
+    .math{font-family:ui-monospace,Consolas,Monaco,monospace}
+  </style>
 
-         ┌─────────────┐
-         │   Node k    │
-         └─────┬───────┘
-               │
-   Internal    │    External
-   Forces      │    Loads
-   from all    │    (Given)
- connected     │
- elements      │
-     ↓         ↓
-   ΣF_internal + ΣF_external = 0
-               │
-               ↓
-       [K]{u} = {F}
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#222"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text class="head" x="250" y="30" text-anchor="middle">Nodal Equilibrium — At a Glance</text>
+
+  <!-- Node -->
+  <rect class="box" x="180" y="60" width="140" height="60"/>
+  <text class="text" x="250" y="95" text-anchor="middle">Node k</text>
+
+  <!-- Arrow down -->
+  <line class="arrow" x1="250" y1="120" x2="250" y2="150"/>
+
+  <!-- Left (Internal Forces) -->
+  <text class="text" x="80" y="170" text-anchor="middle">Internal Forces</text>
+  <text class="text" x="80" y="190" text-anchor="middle">from all</text>
+  <text class="text" x="80" y="210" text-anchor="middle">connected elements</text>
+  <line class="arrow" x1="120" y1="180" x2="200" y2="180"/>
+
+  <!-- Right (External Loads) -->
+  <text class="text" x="420" y="170" text-anchor="middle">External Loads</text>
+  <text class="text" x="420" y="190" text-anchor="middle">(Given)</text>
+  <line class="arrow" x1="300" y1="180" x2="380" y2="180"/>
+
+  <!-- Middle Equation -->
+  <text class="math" x="250" y="250" text-anchor="middle">ΣF_internal + ΣF_external = 0</text>
+
+  <!-- Arrow down -->
+  <line class="arrow" x1="250" y1="260" x2="250" y2="290"/>
+
+  <!-- Final Equation -->
+  <text class="math" x="250" y="330" text-anchor="middle">[K]{u} = {F}</text>
+</svg>
 
 ---
 
