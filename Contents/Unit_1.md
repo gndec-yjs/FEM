@@ -2701,8 +2701,9 @@ $$
 * FEM post-processing checks performance against material limits.
 
 ---
+## 📚 Reference
 
-
+- [*Fundamentals of Finite Element Analysis - (Unit 1 - Chapter 1 to 3)*](Resources/Unit1_Ch_1_to_3_FEM_Hutton.pdf) – Hutton David, McGraw-Hill 
 
 
 
