@@ -116,7 +116,7 @@ Consider the **two-element truss** shown below:
 
 #### Free-Body Equilibrium at Nodes
 
-<img width="887" height="760" alt="image" src="https://github.com/user-attachments/assets/d505864e-d8d8-4e85-a3ee-5af5b6f889c8" />
+<img width="925" height="758" alt="image" src="https://github.com/user-attachments/assets/924e5d09-896c-491d-ba62-e162f1547d5d" />
 
 Writing equilibrium at each node (Figure 3.3):
 
