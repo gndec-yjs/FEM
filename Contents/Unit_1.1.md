@@ -576,11 +576,11 @@ Using the correspondence, the **global stiffness matrix** is assembled term by t
 
 - $K_{44} = 0 + k^{(2)}_{22}$  
 - $K_{45} = 0 + k^{(2)}_{23}$  
-- $K_{46} = 0 + k^{(2)}_{24}$  
+- $K_{46} = 0 + k^{(2)}_{24}$
 
 - $K_{55} = k^{(1)}_{33} + k^{(2)}_{33}$  
-- $K_{56} = k^{(1)}_{34} + k^{(2)}_{34}$  
-
+- $K_{56} = k^{(1)}_{34} + k^{(2)}_{34}$
+  
 - $K_{66} = k^{(1)}_{44} + k^{(2)}_{44}$  
 
 The **symmetry** of the stiffness matrix has been used to avoid repetition.
