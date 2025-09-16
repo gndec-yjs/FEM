@@ -7,7 +7,7 @@
 
 📌 **[Assignment 1]()**
 
-2) **[Beam Elements](Unit_2.md):** Flexure element, Element stiffness matrix, Element load vector  
+2) **[Beam Elements]():** Flexure element, Element stiffness matrix, Element load vector  
 
 📌 **[Assignment 2]()**
 
