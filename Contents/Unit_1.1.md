@@ -11,7 +11,7 @@
         src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
-### Direct Stiffness Method
+## Direct Stiffness Method
 
 #### 1. Introduction
 
@@ -85,7 +85,7 @@ This ensures:
 
 ---
 
-### Nodal Equilibrium Equations
+## Nodal Equilibrium Equations
 
 To illustrate how element properties are converted to the global coordinate system,  
 consider a **1D bar element** as a structural member of a **2D truss**.  
@@ -466,7 +466,7 @@ Thus, the **global element stiffness matrix** (Eq. 3.28) can be constructed **di
 
 ---
 
-### Direct Assembly of Global Stiffness Matrix
+## Assembly of Global Stiffness Matrix
 
 Having derived how to transform the element stiffness matrix into the **global coordinate system**, we now describe the **direct assembly procedure**.  
 This method constructs the **global stiffness matrix** element by element, using **connectivity relations**.
@@ -949,7 +949,7 @@ $$
 
 ---
 
-### Element Strain and Stress  
+## Element Strain and Stress  
 
 The final step in the finite element analysis of a truss is to compute the **strain** and **stress** in each element using the global displacements obtained from the solution step.  
 
