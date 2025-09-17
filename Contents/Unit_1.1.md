@@ -749,3 +749,302 @@ You may now apply boundary conditions (known displacements) to reduce the system
 
 ---
 
+### Streamlined Assembly Procedure in the Direct Stiffness Method  
+
+The previous worked example illustrated the **direct stiffness method** by explicitly computing each entry of the global stiffness matrix. While conceptually clear, this approach becomes **cumbersome and inefficient** for large systems.  
+
+A more efficient method, especially suited for **computer implementation**, proceeds as follows:  
+
+1. Each element stiffness matrix is first transformed into the **global coordinate system**.  
+2. The terms of this element matrix are then **added directly** to the appropriate entries of the global stiffness matrix using a **nodal connectivity table**.  
+3. Once an element’s contributions are added, that element is no longer revisited.  
+
+#### Element stiffness matrices with global DOF labels  
+
+To illustrate, consider the two-element truss from **Figure 3.2** again. The element stiffness matrices in global form are written as:
+
+For **Element 1** (connected at global DOFs 1, 2, 5, 6):  
+
+$$
+K^{(1)} =
+\begin{bmatrix}
+k^{(1)}_{11} & k^{(1)}_{12} & k^{(1)}_{13} & k^{(1)}_{14} \\
+k^{(1)}_{21} & k^{(1)}_{22} & k^{(1)}_{23} & k^{(1)}_{24} \\
+k^{(1)}_{31} & k^{(1)}_{32} & k^{(1)}_{33} & k^{(1)}_{34} \\
+k^{(1)}_{41} & k^{(1)}_{42} & k^{(1)}_{43} & k^{(1)}_{44}
+\end{bmatrix}
+\quad
+\text{with rows/cols mapped to } [1,2,5,6]
+\tag{3.37}
+$$
+
+For **Element 2** (connected at global DOFs 3, 4, 5, 6):  
+
+$$
+K^{(2)} =
+\begin{bmatrix}
+k^{(2)}_{11} & k^{(2)}_{12} & k^{(2)}_{13} & k^{(2)}_{14} \\
+k^{(2)}_{21} & k^{(2)}_{22} & k^{(2)}_{23} & k^{(2)}_{24} \\
+k^{(2)}_{31} & k^{(2)}_{32} & k^{(2)}_{33} & k^{(2)}_{34} \\
+k^{(2)}_{41} & k^{(2)}_{42} & k^{(2)}_{43} & k^{(2)}_{44}
+\end{bmatrix}
+\quad
+\text{with rows/cols mapped to } [3,4,5,6]
+\tag{3.38}
+$$  
+
+Here, the indices to the right of each row and above each column indicate the **global displacement number** associated with that row/column of the element stiffness matrix.  
+
+#### Example of placement  
+
+From Eq. (3.38), the entry \(k^{(2)}_{24}\) corresponds to global DOFs (row = 4, col = 6).  
+Thus it contributes to the global entry:  
+
+$$
+K_{46} \quad \text{(and by symmetry, also } K_{64}\text{).}
+$$  
+
+This systematic allocation ensures that **all element contributions are assembled consistently** into the global matrix.
+
+#### Element-node connectivity  
+
+For computer implementation, the **element-node connectivity table** is used. It lists each element and the two global nodes it connects. For the two-element truss in Figure 3.2:  
+
+**Table 3.2 – Element-Node Connectivity**  
+
+| Element | Node \(i\) | Node \(j\) |
+|---------|------------|------------|
+| 1       | 1          | 3          |
+| 2       | 2          | 3          |
+
+From this, the **element displacement location vector** is defined as:  
+
+$$
+L^{(e)} = [2i-1,\; 2i,\; 2j-1,\; 2j]
+\tag{3.39}
+$$  
+
+For the two elements:  
+
+- \(L^{(1)} = [1, 2, 5, 6]\)  
+- \(L^{(2)} = [3, 4, 5, 6]\)  
+
+This vector indicates the **global DOFs** associated with the element stiffness matrix.  
+
+#### Interpretation  
+
+Think of the global stiffness matrix as a **6×6 grid of mailboxes**, initially empty (all zero).  
+Each element stiffness matrix is like a bundle of values with **addresses** specified by the displacement location vector.  
+When processing an element, each of its stiffness entries is dropped into the correct mailbox.  
+
+Once all elements are processed, the mailbox grid contains the **assembled global stiffness matrix**, ready for applying boundary conditions and solving:  
+
+$$
+[K]\{U\} = \{F\}.
+$$
+
+---
+
+### Boundary Conditions and Constraint Forces  
+
+Once the global stiffness matrix has been assembled, the system equilibrium equations can be expressed in compact form as:  
+
+$$
+[K]\{U\} = \{F\}
+\tag{3.42}
+$$  
+
+where:  
+- \([K]\) is the global stiffness matrix (singular before applying constraints),  
+- \(\{U\}\) is the vector of global nodal displacements,  
+- \(\{F\}\) is the vector of applied nodal forces.  
+
+#### Role of Boundary Conditions  
+
+Because the global stiffness matrix includes rigid body motion, it is **singular** unless support constraints are imposed. These boundary conditions specify certain nodal displacements as known values (usually zero for supports).  
+
+For the two-element truss of Figure 3.2, the support conditions enforce:  
+
+$$
+U_1 = U_2 = U_3 = U_4 = 0
+\tag{3.43}
+$$  
+
+leaving only \(U_5\) and \(U_6\) as unknown displacements.  
+
+#### Reduced System of Equations  
+
+Substituting the boundary conditions into Eq. (3.42), the equations reduce to:  
+
+\[
+\begin{aligned}
+K_{15}U_5 + K_{16}U_6 &= F_1 \\
+K_{25}U_5 + K_{26}U_6 &= F_2 \\
+K_{35}U_5 + K_{36}U_6 &= F_3 \\
+K_{45}U_5 + K_{46}U_6 &= F_4 \\
+K_{55}U_5 + K_{56}U_6 &= F_5 \\
+K_{56}U_5 + K_{66}U_6 &= F_6
+\end{aligned}
+\tag{3.44}
+\]
+
+Here:  
+- \(F_1, F_2, F_3, F_4\) = **reaction forces** at the constrained nodes (supports),  
+- \(F_5, F_6\) = **applied external forces** at node 3.  
+
+Thus, the last two equations can be solved for displacements \(U_5, U_6\).  
+Substituting these values back into the first four equations provides the corresponding reaction forces.  
+
+#### General Matrix Formulation  
+
+In the general case, we partition the global system into **constrained** (\(c\)) and **active/unconstrained** (\(a\)) displacement sets:  
+
+$$
+\begin{bmatrix}
+K_{cc} & K_{ca} \\
+K_{ac} & K_{aa}
+\end{bmatrix}
+\begin{Bmatrix}
+U_c \\
+U_a
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+F_c \\
+F_a
+\end{Bmatrix}
+\tag{3.45}
+$$  
+
+where:  
+- \(U_c\): known (prescribed) displacements,  
+- \(U_a\): unknown displacements,  
+- \(F_c\): unknown reaction forces,  
+- \(F_a\): applied external forces.  
+
+From the lower partition:  
+
+\[
+[K_{ac}]\{U_c\} + [K_{aa}]\{U_a\} = \{F_a\}
+\]
+
+so that:  
+
+$$
+\{U_a\} = [K_{aa}]^{-1}\left( \{F_a\} - [K_{ac}]\{U_c\} \right)
+\tag{3.46}
+$$  
+
+Once the active displacements are determined, the **reaction forces** follow from the upper partition:  
+
+$$
+\{F_c\} = [K_{cc}]\{U_c\} + [K_{ca}]\{U_a\}
+$$  
+
+where the symmetry condition ensures:  
+
+$$
+[K_{ca}] = [K_{ac}]^T
+$$  
+
+---
+
+### Element Strain and Stress  
+
+The final step in the finite element analysis of a truss is to compute the **strain** and **stress** in each element using the global displacements obtained from the solution step.  
+
+#### Element Nodal Displacements  
+
+For an element connecting nodes \(i\) and \(j\), the displacements in the **element coordinate system** are:  
+
+\[
+\begin{aligned}
+u^{(e)}_1 &= U^{(e)}_1 \cos\theta + U^{(e)}_2 \sin\theta \\
+u^{(e)}_2 &= U^{(e)}_3 \cos\theta + U^{(e)}_4 \sin\theta
+\end{aligned}
+\tag{3.48}
+\]
+
+Here:  
+- \(u^{(e)}_1, u^{(e)}_2\) = element nodal displacements along the element axis,  
+- \(U^{(e)}_1, U^{(e)}_2, U^{(e)}_3, U^{(e)}_4\) = global nodal displacements,  
+- \(\theta\) = element orientation angle.  
+
+#### Element Strain  
+
+Using the displacement interpolation functions, the **axial strain** in the element is:  
+
+\[
+\varepsilon^{(e)} = \frac{du^{(e)}(x)}{dx} = \frac{u^{(e)}_2 - u^{(e)}_1}{L^{(e)}}
+\tag{3.49}
+\]
+
+where \(L^{(e)}\) is the length of the element.  
+
+#### Element Stress  
+
+Applying Hooke’s Law, the **axial stress** in the element is:  
+
+\[
+\sigma^{(e)} = E \, \varepsilon^{(e)}
+\tag{3.50}
+\]
+
+with \(E\) being the modulus of elasticity of the element material.  
+
+#### Strain and Stress in Global Displacement Form  
+
+The global finite element solution provides **global displacements**, not element displacements directly. To connect the two, the transformation relations (Equations 3.21–3.22) are used. In terms of global nodal displacements, the strain becomes:  
+
+\[
+\varepsilon^{(e)} = \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\tag{3.51}
+\]
+
+and the corresponding stress is:  
+
+\[
+\sigma^{(e)} = E \, \varepsilon^{(e)} = E \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\tag{3.52}
+\]
+
+Here:  
+- \([R]\) = transformation matrix,  
+- \(N_1(x), N_2(x)\) = shape functions,  
+- Positive \(\sigma^{(e)}\) → element is in **tension**,  
+- Negative \(\sigma^{(e)}\) → element is in **compression**.  
+
+#### Element Forces  
+
+Finally, the **element axial force** can also be obtained as:  
+
+\[
+\{f^{(e)}\} =
+\begin{bmatrix}
+-1 & 1 \\
+\end{bmatrix}
+\frac{AE}{L^{(e)}}
+\begin{Bmatrix}
+u^{(e)}_1 \\ u^{(e)}_2
+\end{Bmatrix}
+\tag{3.23 revisited}
+\]
+
+This provides the internal force carried by each truss member, consistent with the sign convention for stress.  
+
+---
+
+✅ With this step, the finite element procedure for a truss structure is complete:  
+1. Assemble the global stiffness matrix,  
+2. Apply boundary conditions and solve for global displacements,  
+3. Back-substitute displacements to compute element strains, stresses, and internal forces.
+
+---
+
+
