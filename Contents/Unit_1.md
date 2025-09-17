@@ -2519,13 +2519,13 @@ F_1 \\ F_2 \\ F_3 \\ F_4 \\ F_5 \\ F_6
 $$  
 
 Here,  
-- \([K]\) is the global stiffness matrix (singular before boundary conditions),  
-- \(\{U\}\) is the vector of global nodal displacements,  
-- \(\{F\}\) is the vector of applied nodal forces.  
+- $[K]$ is the global stiffness matrix (singular before boundary conditions),  
+- $\{U\}$ is the vector of global nodal displacements,  
+- $\{F\}$ is the vector of applied nodal forces.  
 
 #### Role of boundary conditions  
 
-The stiffness matrix \([K]\) is **singular**, so Equation (3.42) does not have a unique solution unless boundary conditions are applied. These boundary conditions represent the **support constraints** that prevent rigid body motion.  
+The stiffness matrix $[K]$ is **singular**, so Equation (3.42) does not have a unique solution unless boundary conditions are applied. These boundary conditions represent the **support constraints** that prevent rigid body motion.  
 
 For the truss in Figure 3.2, the supports imply:  
 
@@ -2534,13 +2534,13 @@ U_1 = U_2 = U_3 = U_4 = 0
 \tag{3.43}
 $$  
 
-leaving only the displacements \(U_5\) and \(U_6\) as unknowns.  
+leaving only the displacements $U_5$ and $U_6$ as unknowns.  
 
 #### Reduced system equations  
 
 Substituting these constraints into Equation (3.42), the system reduces to:  
 
-\[
+$$
 \begin{aligned}
 K_{15}U_5 + K_{16}U_6 &= F_1 \\
 K_{25}U_5 + K_{26}U_6 &= F_2 \\
@@ -2550,12 +2550,10 @@ K_{55}U_5 + K_{56}U_6 &= F_5 \\
 K_{56}U_5 + K_{66}U_6 &= F_6
 \end{aligned}
 \tag{3.44}
-\]
+$$  
 
 - The first four equations correspond to **reaction forces** at the constrained supports (nodes 1 and 2).  
-- The last two equations form the **active system**, which can be solved directly for the unknown displacements \(U_5, U_6\).  
-
-Once \(U_5, U_6\) are obtained, they can be substituted back into the first four equations to determine the **support reactions**.  
+- The last two equations form the **active system**, which can be solved directly for the unknown displacements $U_5, U_6$.  
 
 #### General partitioned form  
 
@@ -2576,18 +2574,18 @@ F_c \\ F_a
 \tag{3.45}
 $$  
 
-- \(\{U_c\}\): constrained (known) displacements, usually supports  
-- \(\{U_a\}\): active (unknown) displacements  
-- \(\{F_c\}\): reaction forces at supports  
-- \(\{F_a\}\): applied external loads  
+- $\{U_c\}$: constrained (known) displacements, usually supports  
+- $\{U_a\}$: active (unknown) displacements  
+- $\{F_c\}$: reaction forces at supports  
+- $\{F_a\}$: applied external loads  
 
 #### Solution procedure  
 
-From the **active partition**,  
+From the **active partition**:  
 
-\[
+$$
 [K_{ac}]\{U_c\} + [K_{aa}]\{U_a\} = \{F_a\}
-\]
+$$  
 
 which gives:  
 
@@ -2610,11 +2608,11 @@ $$
 [K_{ca}] = [K_{ac}]^T
 $$  
 
-
 ✅ **Summary:**  
 - Boundary conditions eliminate rigid body modes.  
 - Unknown displacements are solved from the reduced active system.  
 - Reactions are recovered afterward using the constrained equations.  
+
 This systematic procedure applies to **all FEM models**, not just trusses.  
 
 ---
