@@ -1666,1041 +1666,1042 @@ $$
 
 ---
 
-## **Direct Stiffness Method**
+### Direct Stiffness Method
 
-### **1. Introduction**
+#### 1. Introduction
 
-The **Direct Stiffness Method** is the most widely used computational technique for solving structural mechanics problems in FEM.
-It is a **systematic matrix-based procedure** that directly relates **nodal forces** to **nodal displacements** through the **stiffness matrix**.
+The simple line elements discussed earlier introduced the concepts of **nodes, nodal displacements, and element stiffness matrices**.  
+In this section, we extend these ideas to create a **finite element model of a structure** composed of many elements.
 
-It is the method implemented in almost all commercial finite element software.
+We focus on **truss structures**, defined as assemblies of straight elastic members connected by pin joints, subjected only to **axial forces**.  
+Even though the bar element is inherently one-dimensional, it can effectively be used in analyzing both **2D** and **3D trusses**.
+
+
+#### 2. Global Coordinate System
+
+The **global coordinate system (X–Y or X–Y–Z)** is the reference frame in which structural displacements are expressed. It is usually chosen for convenience, aligned with the geometry of the structure.
+
+<img width="1033" height="386" alt="image" src="https://github.com/user-attachments/assets/e33b41e0-6056-44b8-9a1e-1dfdbde387a2" />
+
+Consider the **cantilever truss** in Figure (3.1 a). If we isolate a **single joint** (Figure 3.1 b), we observe:
+
+- Multiple element nodes connect at a single global node.  
+- The local **element axes (x)** generally do not align with the global axes (X, Y).  
+
+This leads to key FEM premises:
+
+1. **Displacement compatibility**:  
+   The displacement of each connected element at a joint must equal the global nodal displacement.
+
+2. **Transformation requirement**:  
+   Each element’s stiffness matrix and forces must be transformed from **local element coordinates** to the **global coordinate system** for consistent assembly.
+
+3. **Post-processing**:  
+   After solving for nodal displacements in the global system, element stresses and strains are obtained by transforming results back to the element’s local coordinates.
+
+#### 3. Why Base the Formulation on Displacements?
+
+In engineering practice, the **final quantity of interest is stress**, since stresses are compared with material strength (e.g., yield stress).  
+However, it is **easier to prescribe external loads** than to predict displacements.  
+
+Therefore:
+- The FEM equations are formulated in terms of **nodal displacements**.  
+- From nodal displacements, **strains** and then **stresses** are computed by back-substitution.  
+
+This is the essence of the **stiffness method**.
+
+In contrast, the **flexibility method** takes forces as primary unknowns and computes displacements afterwards. But displacement compatibility at nodes becomes algebraically tedious.  
+Thus, FEM universally prefers the **stiffness (displacement-based) approach**.
+
+#### 4. Assembly in the Direct Stiffness Method
+
+Returning to Figure 3.1b, where multiple elements meet at a node:
+
+- Elements contribute stiffness to the global system depending on their **orientation**.  
+- Example (by intuition):  
+  - Elements aligned with the X axis → stiffness contribution in X direction only.  
+  - Elements aligned with the Y axis → stiffness in Y direction only.  
+  - Inclined elements → contributions in both X and Y directions.
+
+The **Direct Stiffness Method** involves:
+
+1. Transforming each element stiffness matrix into the global coordinate system.  
+2. Assembling all transformed element matrices directly into the **global stiffness matrix**, using element connectivity.  
+
+This ensures:
+- **Displacement compatibility** at nodes is automatically enforced.  
+- The assembled global system is equivalent to what would be obtained by a formal equilibrium approach (joint equilibrium equations), but simpler to handle computationally.  
+
+#### 5. Key Advantage
+
+- The **Direct Stiffness Method** guarantees compatibility at connections.  
+- Stresses are obtained by back-substitution after solving for displacements.  
+- It is systematic and lends itself to **automation in computer programs**.
 
 ---
 
-### **2. Basic Concept**
+### Nodal Equilibrium Equations
 
-For an element:
+To illustrate how element properties are converted to the global coordinate system,  
+consider a **1D bar element** as a structural member of a **2D truss**.  
+
+This simple example demonstrates the **general FEM assembly procedure**:
+
+1. Select the element type (here: bar element).  
+2. Define geometry and element connectivity.  
+3. Formulate governing equations (static equilibrium).  
+4. Apply **boundary conditions** (supports and external forces).  
+5. Solve for **global nodal displacements**.  
+6. Back-substitute to compute **secondary variables** (strain, stress, reactions).  
+
+> 🔎 *Note:* In FEM terminology, strain and stress are called **secondary variables** only because they are computed after displacement solution. In design, they are of **primary importance**.
+
+#### Two-Element Truss Example
+
+Consider the **two-element truss** shown below:
+
+- Nodes are numbered (circled).  
+- Elements are numbered (boxed).  
+- Global displacements use the convention:  
+  - $U_{2i-1}$ → displacement of node *i* in global X.  
+  - $U_{2i}$ → displacement of node *i* in global Y.  
+
+<img width="1058" height="590" alt="image" src="https://github.com/user-attachments/assets/8900e111-401a-47db-b74d-8a2b34e1d621" />
+
+
+#### Free-Body Equilibrium at Nodes
+
+<img width="925" height="758" alt="image" src="https://github.com/user-attachments/assets/924e5d09-896c-491d-ba62-e162f1547d5d" />
+
+Writing equilibrium at each node (Figure 3.3):
+
+**Node 1:**
+$$
+F_1 - f_1^{(1)} \cos\theta_1 = 0
+\tag{3.1a}
+$$
 
 $$
-\{f^{(e)}\} = [k]^{(e)} \{u^{(e)}\}
+F_2 - f_1^{(1)} \sin\theta_1 = 0
+\tag{3.1b}
 $$
 
-Where:
-
-* $\{f^{(e)}\}$ = element nodal force vector
-* $[k]^{(e)}$ = element stiffness matrix in **global coordinates**
-* $\{u^{(e)}\}$ = element nodal displacement vector in **global coordinates**
-
-The global system is assembled by combining all element equations according to their node connectivity.
-
----
-
-### **3. Steps in the Direct Stiffness Method**
-
----
-
-#### **Step 1 — Discretize the Structure**
-
-* Divide the structure into finite elements.
-* Assign node numbers and element numbers.
-
-<img width="470" height="163" alt="image" src="https://github.com/user-attachments/assets/eaeda008-9c61-4c26-bd9e-8d99de110afa" />
-
----
-
-#### **Step 2 — Define Element Properties**
-
-* Material properties: $E$, $A$, $I$, etc.
-* Element geometry: length $L$, orientation $\theta$ (if 2D/3D).
-* Cross-section details.
-
-<img width="494" height="278" alt="image" src="https://github.com/user-attachments/assets/7dba01c6-ca43-40ed-9514-588ffcbb64cf" />
-
----
-
-#### **Step 3 — Determine Element Stiffness Matrices**
-
-For a **1D bar element** in global coordinates:
+**Node 2:**
+$$
+F_3 - f_2^{(2)} \cos\theta_2 = 0
+\tag{3.2a}
+$$
 
 $$
-[k]^{(e)} = \frac{EA}{L}
+F_4 - f_2^{(2)} \sin\theta_2 = 0
+\tag{3.2b}
+$$
+
+**Node 3:**
+$$
+F_5 - f_3^{(1)} \cos\theta_1 - f_3^{(2)} \cos\theta_2 = 0
+\tag{3.3a}
+$$
+
+$$
+F_6 - f_3^{(1)} \sin\theta_1 - f_3^{(2)} \sin\theta_2 = 0
+\tag{3.3b}
+$$
+
+#### Element Displacements and Transformation
+
+<img width="1149" height="524" alt="image" src="https://github.com/user-attachments/assets/daef1cad-fdeb-406f-b9b0-8280252f4d70" />
+
+Consider a bar element oriented at angle $\theta$ (Figure 3.4):
+
+- Local element displacements ($u_1^{(e)}, v_1^{(e)}, u_2^{(e)}, v_2^{(e)}$).  
+- Global displacements ($U_1^{(e)}, U_2^{(e)}, U_3^{(e)}, U_4^{(e)}$).  
+
+Relation between **local** and **global** displacements:
+
+$$
+u_1^{(e)} = U_1^{(e)} \cos\theta + U_2^{(e)} \sin\theta
+\tag{3.4a}
+$$
+
+$$
+v_1^{(e)} = -U_1^{(e)} \sin\theta + U_2^{(e)} \cos\theta
+\tag{3.4b}
+$$
+
+$$
+u_2^{(e)} = U_3^{(e)} \cos\theta + U_4^{(e)} \sin\theta
+\tag{3.4c}
+$$
+
+$$
+v_2^{(e)} = -U_3^{(e)} \sin\theta + U_4^{(e)} \cos\theta
+\tag{3.4d}
+$$
+
+#### Axial Deformation and Element Force
+
+The axial deformation of element $e$ is:
+
+$$
+\delta^{(e)} = u_2^{(e)} - u_1^{(e)}
+= (U_3^{(e)} - U_1^{(e)}) \cos\theta + (U_4^{(e)} - U_2^{(e)}) \sin\theta
+\tag{3.5}
+$$
+
+The corresponding axial force:
+
+$$
+f^{(e)} = k^{(e)} \, \delta^{(e)}
+\tag{3.6}
+$$
+
+#### Element Forces for 2-Bar Truss
+
+For **Element 1** (nodes 1–3):
+
+$$
+f_3^{(1)} = -f_1^{(1)} =
+k^{(1)}\Big[(U_5 - U_1)\cos\theta_1 + (U_6 - U_2)\sin\theta_1\Big]
+\tag{3.7}
+$$
+
+For **Element 2** (nodes 2–3):
+
+$$
+f_3^{(2)} = -f_2^{(2)} =
+k^{(2)}\Big[(U_5 - U_3)\cos\theta_2 + (U_6 - U_4)\sin\theta_2\Big]
+\tag{3.8}
+$$
+
+#### Substituting into Nodal Equilibrium
+
+Now substituting Eqs. (3.7) and (3.8) into equilibrium equations (3.1–3.3):
+
+$$
+-k^{(1)}\Big[(U_5-U_1)\cos\theta_1 + (U_6-U_2)\sin\theta_1\Big]\cos\theta_1 = F_1
+\tag{3.9}
+$$
+
+$$
+-k^{(1)}\Big[(U_5-U_1)\cos\theta_1 + (U_6-U_2)\sin\theta_1\Big]\sin\theta_1 = F_2
+\tag{3.10}
+$$
+
+$$
+-k^{(2)}\Big[(U_5-U_3)\cos\theta_2 + (U_6-U_4)\sin\theta_2\Big]\cos\theta_2 = F_3
+\tag{3.11}
+$$
+
+$$
+-k^{(2)}\Big[(U_5-U_3)\cos\theta_2 + (U_6-U_4)\sin\theta_2\Big]\sin\theta_2 = F_4
+\tag{3.12}
+$$
+
+$$
+k^{(1)}\Big[(U_5-U_1)\cos\theta_1 + (U_6-U_2)\sin\theta_1\Big]\cos\theta_1 +
+k^{(2)}\Big[(U_5-U_3)\cos\theta_2 + (U_6-U_4)\sin\theta_2\Big]\cos\theta_2 = F_5
+\tag{3.13}
+$$
+
+$$
+k^{(1)}\Big[(U_5-U_1)\cos\theta_1 + (U_6-U_2)\sin\theta_1\Big]\sin\theta_1 +
+k^{(2)}\Big[(U_5-U_3)\cos\theta_2 + (U_6-U_4)\sin\theta_2\Big]\sin\theta_2 = F_6
+\tag{3.14}
+$$
+
+
+#### Matrix Form
+
+The six equilibrium equations can be written compactly as:
+
+$$
+[K]\{U\} = \{F\}
+\tag{3.15}
+$$
+
+where:  
+- $[K]$ = global stiffness matrix (symmetric, $6\times6$).  
+- $\{U\}$ = global displacement vector.  
+- $\{F\}$ = applied nodal force vector.  
+
+This is the standard FEM system of equations:
+
+$$
+[K]\{U\} = \{F\}
+\tag{3.16}
+$$
+
+Application of boundary conditions and solution steps follow in subsequent sections.
+
+---
+
+### Element Transformation
+
+In the previous section, we obtained the global equilibrium equations by **directly writing nodal equilibrium conditions**.  
+However, this approach becomes **cumbersome** for systems with many elements.  
+
+A more systematic method is to transform each **element stiffness matrix** from the **local element coordinates** to the **global coordinate system**.  
+This allows for direct assembly of the global stiffness matrix.
+
+#### Local Element Stiffness Equations
+
+For a bar element in its **local (element) coordinate system**, the equilibrium equations are:
+
+$$
 \begin{bmatrix}
-1 & -1 \\
--1 & 1
+k_e & -k_e \\
+-k_e & k_e
 \end{bmatrix}
-$$
-
-For a **2D/3D element**, transformation matrices are applied.
-
----
-
-#### **Step 4 — Assemble the Global Stiffness Matrix**
-
-Place each $[k]^{(e)}$ into the correct position of the global stiffness matrix $[K]$ according to **node connectivity**.
-
-Example (two elements in series):
-
-$$
-[K] =
-\begin{bmatrix}
-k_1 & -k_1 & 0 \\
--k_1 & k_1 + k_2 & -k_2 \\
-0 & -k_2 & k_2
-\end{bmatrix}
-$$
-
----
-
-#### **Step 5 — Apply Boundary Conditions**
-
-* For fixed supports: set corresponding displacement DOFs to zero and modify the system.
-* For rollers or partial restraints: constrain only certain DOFs.
-
----
-
-#### **Step 6 — Solve for Nodal Displacements**
-
-The governing equation is:
-
-$$
-[K]\{u\} = \{F\}
-$$
-
-Where:
-
-* $[K]$ = global stiffness matrix
-* $\{u\}$ = unknown nodal displacements
-* $\{F\}$ = known global nodal forces
-
----
-
-#### **Step 7 — Compute Element Forces and Reactions**
-
-After finding $\{u\}$:
-
-1. **Element forces** in global coordinates:
-
-$$
-\{f^{(e)}\} = [k]^{(e)} \{u^{(e)}\}
-$$
-
-2. **Support reactions** from:
-
-$$
-\{R\} = [K] \{u\} - \{F\}
-$$
-
----
-
-### **4. Advantages of the Direct Stiffness Method**
-
-* **Systematic** — easily programmable.
-* Handles **complex geometries** and multiple load cases.
-* Works directly in **matrix form** — ideal for computer implementation.
-* Compatible with both **linear** and **nonlinear** analysis.
-
----
-
-### **5. Comparison to Minimum Potential Energy Method**
-
-| Direct Stiffness Method                     | Minimum Potential Energy Method      |
-| ------------------------------------------- | ------------------------------------ |
-| Based on **force equilibrium** at each node | Based on **energy minimization**     |
-| Straightforward assembly of matrices        | Requires strain energy expressions   |
-| Common in software packages                 | Used more in theoretical derivations |
-
----
-
-## **Detailed Worked Example (Direct Stiffness Method)**
-
-**Problem**
-A prismatic steel bar is modeled with **three axial (bar) elements** in series: Nodes 1-2-3-4.
-
-* Modulus: $E = 200{,}000 \ \text{MPa} = 200{,}000 \ \text{N/mm}^2$
-* Area: $A = 100 \ \text{mm}^2$ (constant)
-* Lengths: $L_1 = 500 \ \text{mm}, \quad L_2 = 500 \ \text{mm}, \quad L_3 = 1000 \ \text{mm}$
-* Boundary condition: **Node 1 fixed**, $u_1 = 0$
-* Loads: $F_3 = 30 \ \text{kN}$ (tension), $F_4 = 20 \ \text{kN}$ (tension), $F_2 = 0$
-
-*(Insert Figure from Hutton — **Direct Stiffness example**: node & element numbering, axial bar with loads; Chapter 2 near “Direct Stiffness Method”)*
-
-### **1) Element Stiffness Matrices**
-
-For a 1D bar element,
-
-$$
-[k]^{(e)}=\frac{EA}{L_e}
-\begin{bmatrix}
-1 & -1\\
--1 & 1
-\end{bmatrix}
-\quad\Rightarrow\quad
-k_e=\frac{EA}{L_e}
-$$
-
-Compute $k_e$ (units N/mm):
-
-$$
-EA = (200{,}000)(100)=20{,}000{,}000 \ \text{N}
-$$
-
-$$
-k_1=\frac{20{,}000{,}000}{500}=40{,}000,\quad
-k_2=\frac{20{,}000{,}000}{500}=40{,}000,\quad
-k_3=\frac{20{,}000{,}000}{1000}=20{,}000
-$$
-
-*(Insert Figure from Hutton — **Local 2-node bar stiffness** and sign convention)*
-
-### **2) Assemble the Global Stiffness Matrix**
-
-Connectivity (global DOFs are nodal displacements $u_1,u_2,u_3,u_4$):
-
-$$
-[K]=
-\begin{bmatrix}
-k_1 & -k_1 & 0 & 0\\
--k_1 & k_1{+}k_2 & -k_2 & 0\\
-0 & -k_2 & k_2{+}k_3 & -k_3\\
-0 & 0 & -k_3 & k_3
-\end{bmatrix}
+\begin{Bmatrix}
+u_1^{(e)} \\
+u_2^{(e)}
+\end{Bmatrix}
 =
-\begin{bmatrix}
-40000 & -40000 & 0 & 0\\
--40000 & 80000 & -40000 & 0\\
-0 & -40000 & 60000 & -20000\\
-0 & 0 & -20000 & 20000
-\end{bmatrix}
+\begin{Bmatrix}
+f_1^{(e)} \\
+f_2^{(e)}
+\end{Bmatrix}
+\tag{3.17}
 $$
 
-*(Insert Figure from Hutton — **Assembly diagram** showing overlapping stiffness contributions into $[K]$)*
+where:
 
-### **3) Apply Boundary Conditions and Loads**
+- $k_e = \dfrac{AE}{L}$ = axial stiffness of the element  
+- $u_1^{(e)}, u_2^{(e)}$ = element nodal displacements (local coordinates)  
+- $f_1^{(e)}, f_2^{(e)}$ = element nodal forces (local coordinates)  
 
-* Essential BC: $u_1=0$
-* Load vector: $\{F\}=[0,\;0,\;30000,\;20000]^T \ \text{N}$
+#### Target Form in Global Coordinates
 
-Reduce the system by removing row/column for $u_1$:
-
-$$
-[K_r]=
-\begin{bmatrix}
-80000 & -40000 & 0\\
--40000 & 60000 & -20000\\
-0 & -20000 & 20000
-\end{bmatrix},\quad
-\{u_r\}=
-\begin{bmatrix}
-u_2\\u_3\\u_4
-\end{bmatrix},\quad
-\{F_r\}=
-\begin{bmatrix}
-0\\30000\\20000
-\end{bmatrix}
-$$
-
-*(Insert Figure from Hutton — **Boundary condition imposition** & reduced system depiction)*
-
-### **4) Solve for Nodal Displacements**
+We want to express the equilibrium equations in the **global coordinate system** as:
 
 $$
-[K_r]\{u_r\}=\{F_r\}
-\quad\Rightarrow\quad
-\{u_r\}=
-\begin{bmatrix}
-1.25\\[2pt]
-2.50\\[2pt]
-3.50
-\end{bmatrix}\ \text{mm}
-$$
-
-Hence:
-
-$$
-u_1=0,\quad u_2=1.25\ \text{mm},\quad u_3=2.50\ \text{mm},\quad u_4=3.50\ \text{mm}
-$$
-
-### **5) Element Forces and Stresses (Post-processing)**
-
-Element axial forces (tension positive):
-
-$$
-F_1 = k_1(u_2-u_1)=40000(1.25-0)=50{,}000\ \text{N}=50\ \text{kN}
-$$
-
-$$
-F_2 = k_2(u_3-u_2)=40000(2.50-1.25)=50\ \text{kN}
-$$
-
-$$
-F_3 = k_3(u_4-u_3)=20000(3.50-2.50)=20\ \text{kN}
-$$
-
-Element stresses $\sigma_e=F_e/A$ (with $A=100\ \text{mm}^2$):
-
-$$
-\sigma_1=\frac{50{,}000}{100}=500\ \text{MPa},\quad
-\sigma_2=500\ \text{MPa},\quad
-\sigma_3=\frac{20{,}000}{100}=200\ \text{MPa}
-$$
-
-*(Insert Figure from Hutton — **Element force directions & sign convention**; **stress distribution** sketch)*
-
-### **6) Support Reaction Check**
-
-Compute reactions via $\{R\}=[K]\{u\}-\{F\}$ (using the full system):
-
-$$
-R_1 = 50 \ \text{kN},\quad R_2=R_3=R_4=0
-$$
-
-**Equilibrium check:** $R_1 = F_3+F_4 = 30+20=50\ \text{kN}$ ✓
-
-*(Insert Figure from Hutton — **Support reaction extraction** illustration)*
-
-### **7) What This Example Demonstrates**
-
-1. Clean **DSM workflow**: element $k_e$ → assemble $[K]$ → apply BCs → solve $\{u\}$ → recover forces/stresses → reactions.
-2. **Physical consistency**: internal element forces match applied nodal loads; reactions satisfy global equilibrium.
-3. **Scalability**: the exact same steps extend to 2D/3D trusses, frames (with rotation DOFs), and beyond.
-
----
-
-### **Figure Placeholders from Hutton (drop where indicated above)**
-
-* *Insert Hutton figure: Node & element numbering for a multi-element bar (Ch. 2, Direct Stiffness section).*
-* *Insert Hutton figure: Local 2-node bar stiffness & sign conventions (Ch. 2).*
-* *Insert Hutton figure: Global assembly illustration for serial bar elements (Ch. 2).*
-* *Insert Hutton figure: Imposing boundary conditions / reduced system (Ch. 2).*
-* *Insert Hutton figure: Reaction recovery and equilibrium check (Ch. 2).*
-
----
-
-## **Direct Stiffness Method — At a Glance**
-
-### **Step-by-Step Checklist**
-
-1. **Discretize the Structure**
-
-   * Define nodes and elements
-   * Assign numbers and connectivity
-     *(Insert Figure Placeholder: simple bar/truss with nodes labeled)*
-
-2. **Define Element Properties**
-
-   * $E$, $A$, $I$, length $L$, and orientation (if 2D/3D)
-
-3. **Form Local Element Stiffness Matrices**
-
-   * For 1D bar:
-
-     $$
-     [k]^{(e)}=\frac{EA}{L_e}
-     \begin{bmatrix}
-     1 & -1\\
-     -1 & 1
-     \end{bmatrix}
-     $$
-   * Apply transformation if needed (2D/3D)
-
-4. **Assemble Global Stiffness Matrix**
-
-   * Place element matrices into the correct positions in $[K]$ using node connectivity
-
-5. **Apply Boundary Conditions**
-
-   * Modify $[K]$ and $\{F\}$ for prescribed displacements
-
-6. **Solve for Nodal Displacements**
-
-   * $[K]\{u\}=\{F\}$
-
-7. **Post-process**
-
-   * **Element forces**: $\{f^{(e)}\}=[k]^{(e)}\{u^{(e)}\}$
-   * **Stresses**: $\sigma = F/A$
-   * **Reactions**: $\{R\}=[K]\{u\}-\{F\}$
-
----
-
-### **Direct Stiffness Method (DSM) Flowchart**
-
-**Flow:**
-Discretize → Define Properties → Form $[k]^{(e)}$ → Assemble $[K]$ → Apply BCs → Solve $\{u\}$ → Post-process
-
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1200" role="img" aria-labelledby="title desc" style="max-width:100%; height:auto;">
-  <title id="title">Direct Stiffness Method Flowchart</title>
-  <desc id="desc">Flowchart showing DSM steps from discretization to checks.</desc>
-  <style>
-    .box{fill:#ffffff;stroke:#222;stroke-width:2;rx:8;ry:8}
-    .arrow{stroke:#222;stroke-width:2;marker-end:url(#arrow)}
-    .text{font-family:system-ui,Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;fill:#111}
-    .head{font-weight:700;font-size:18px}
-    .code{font-family:ui-monospace,Consolas,Monaco,monospace}
-  </style>
-  <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#222"/>
-    </marker>
-  </defs>
-
-  <!-- Header -->
-  <rect class="box" x="160" y="20" width="600" height="60"/>
-  <text class="text head" x="460" y="58" text-anchor="middle">DIRECT STIFFNESS METHOD</text>
-
-  <!-- 1 Discretize -->
-  <rect class="box" x="140" y="110" width="640" height="90"/>
-  <text class="text head" x="160" y="140">1) Discretize Structure</text>
-  <text class="text" x="160" y="165">• Define nodes & elements; number nodes (global DOFs)</text>
-
-  <!-- Arrow -->
-  <line class="arrow" x1="460" y1="200" x2="460" y2="230"/>
-
-  <!-- 2 Properties -->
-  <rect class="box" x="140" y="230" width="640" height="90"/>
-  <text class="text head" x="160" y="260">2) Define Properties</text>
-  <text class="text" x="160" y="285">• E, A, I, geometry (L), orientation (2D/3D)</text>
-
-  <line class="arrow" x1="460" y1="320" x2="460" y2="350"/>
-
-  <!-- 3 Element stiffness (local) -->
-  <rect class="box" x="140" y="350" width="640" height="110"/>
-  <text class="text head" x="160" y="380">3) Element Stiffness [k] (local)</text>
-  <text class="text code" x="160" y="405">Bars: [k] = (EA/L) [[1,-1],[-1,1]]</text>
-  <text class="text" x="160" y="428">Beams/Frames: use appropriate local matrices</text>
-
-  <!-- Split arrows to transform / skip -->
-  <line class="arrow" x1="460" y1="460" x2="300" y2="490"/>
-  <line class="arrow" x1="460" y1="460" x2="620" y2="490"/>
-
-  <!-- 3a Transform (left) -->
-  <rect class="box" x="80" y="490" width="360" height="90"/>
-  <text class="text head" x="100" y="520">3a) Transform to Global (if 2D/3D)</text>
-  <text class="text code" x="100" y="545">[k]_g = Tᵀ [k]_local T</text>
-
-  <!-- 3a Skip (right) -->
-  <rect class="box" x="480" y="490" width="360" height="90"/>
-  <text class="text head" x="500" y="520">3a) Skip Transform (1D axial)</text>
-  <text class="text code" x="500" y="545">[k]_g = [k]_local</text>
-
-  <!-- Merge to Assemble -->
-  <line class="arrow" x1="260" y1="580" x2="260" y2="610"/>
-  <line class="arrow" x1="700" y1="580" x2="700" y2="610"/>
-  <line class="arrow" x1="260" y1="610" x2="460" y2="640"/>
-  <line class="arrow" x1="700" y1="610" x2="460" y2="640"/>
-
-  <!-- 4 Assemble -->
-  <rect class="box" x="140" y="640" width="640" height="100"/>
-  <text class="text head" x="160" y="670">4) Assemble Global [K]</text>
-  <text class="text" x="160" y="695">• Scatter/gather each [k]_g into [K] using connectivity</text>
-  <text class="text" x="160" y="718">• Sum overlapping entries at shared DOFs</text>
-
-  <line class="arrow" x1="460" y1="740" x2="460" y2="770"/>
-
-  <!-- 5 BCs -->
-  <rect class="box" x="140" y="770" width="640" height="90"/>
-  <text class="text head" x="160" y="800">5) Apply Boundary Conditions</text>
-  <text class="text" x="160" y="825">• Prescribed displacements → modify [K], {F}</text>
-
-  <line class="arrow" x1="460" y1="860" x2="460" y2="890"/>
-
-  <!-- 6 Solve -->
-  <rect class="box" x="140" y="890" width="640" height="85"/>
-  <text class="text head" x="160" y="920">6) Solve for {u}</text>
-  <text class="text code" x="160" y="945">[K]{u} = {F}</text>
-
-  <line class="arrow" x1="460" y1="975" x2="460" y2="1005"/>
-
-  <!-- 7 Post-process + 8 Checks (merged) -->
-  <rect class="box" x="140" y="1005" width="640" height="140"/>
-  <text class="text head" x="160" y="1035">7) Post-process  &  8) Checks</text>
-  <text class="text" x="160" y="1060">• Element forces: {f} = [k]_e {u}_e;  Stresses: σ = F/A</text>
-  <text class="text" x="160" y="1083">• Reactions: {R} = [K]{u} − {F};  Equilibrium & BC verification </text>
-</svg>
-
----
-
-## **Practice Problems**
-
-**Problem 1 — Single Bar Element**
-A steel rod of length $L = 2 \ \mathrm{m}$, $E = 210 \ \mathrm{GPa}$, $A = 150 \ \mathrm{mm}^2$ is fixed at one end and subjected to a tensile load of $25 \ \mathrm{kN}$ at the free end.
-
-* (a) Form the element stiffness matrix.
-* (b) Find the displacement at the free end.
-* (c) Find the axial stress in the bar.
-
----
-
-**Problem 2 — Two Elements in Series**
-Two steel bars ($E = 200 \ \mathrm{GPa}$, $A = 100 \ \mathrm{mm}^2$) are connected in series:
-
-* $L_1 = 400 \ \mathrm{mm}$
-* $L_2 = 600 \ \mathrm{mm}$
-  Node 1 is fixed, a load of $20 \ \mathrm{kN}$ is applied at Node 3.
-* (a) Write the global stiffness matrix.
-* (b) Determine nodal displacements $u_2$ and $u_3$.
-* (c) Find element forces.
-
----
-
-**Problem 3 — Three-Bar Truss (Axial only)**
-A triangular truss has nodes at coordinates:
-
-* Node 1: (0, 0) — fixed
-* Node 2: (3 m, 0) — roller (vertical displacement free)
-* Node 3: (3 m, 4 m) — loaded with $40 \ \mathrm{kN}$ downwards
-
-Members: (1–2), (2–3), (1–3), all with $E = 210 \ \mathrm{GPa}$, $A = 250 \ \mathrm{mm}^2$.
-
-* (a) Form transformation matrices for each member.
-* (b) Assemble the global stiffness matrix.
-* (c) Solve for all displacements and element forces.
-
----
-
-**Tip for Students:** Always draw:
-
-1. Node/element diagram with DOFs
-2. Connectivity table
-3. Step-by-step stiffness assembly table
-
----
-
-## **Nodal Equilibrium Equations**
-
-Nodal equilibrium equations form the mathematical core of the finite element method. They express the condition that, at each node of a discretized structure, the algebraic sum of all forces (external and internal) must be zero for the system to be in static equilibrium.
-
-### 1. Concept and Physical Meaning
-
-In structural mechanics, equilibrium means that the **sum of forces and moments** acting on a body (or a node) is zero.
-For a finite element model, this equilibrium condition is applied **at discrete nodal points**.
-
-* **Internal forces** come from the deformation of connected elements (given by stiffness × displacement).
-* **External forces** are the loads applied at the nodes (point loads, equivalent nodal loads from distributed forces, thermal effects, etc.).
-
-At each free degree of freedom (DOF), equilibrium is expressed as:
-
-$$
-\sum F_{\text{internal}} + \sum F_{\text{external}} = 0
-$$
-
-Or, in FEM matrix form:
-
-$$
-[K] \{u\} = \{F\}
-$$
-
-Where:
-
-* $[K]$ = global stiffness matrix (assembled from element stiffness matrices)
-* $\{u\}$ = vector of unknown nodal displacements
-* $\{F\}$ = vector of known external nodal loads
-
-*(Insert Figure: Node connected to multiple elements showing internal and external forces — from Hutton Fig. 2.xx)*
-
-### 2. Mathematical Formulation
-
-For a single 1D bar element between nodes $i$ and $j$:
-
-Element stiffness equation:
-
-$$
-\begin{bmatrix}
-f_i \\
-f_j
-\end{bmatrix}
+[K^{(e)}]
+\begin{Bmatrix}
+U_1^{(e)} \\ U_2^{(e)} \\ U_3^{(e)} \\ U_4^{(e)}
+\end{Bmatrix}
 =
-\frac{EA}{L}
-\begin{bmatrix}
-1 & -1 \\
--1 & 1
-\end{bmatrix}
-\begin{bmatrix}
-u_i \\
-u_j
-\end{bmatrix}
+\begin{Bmatrix}
+F_1^{(e)} \\ F_2^{(e)} \\ F_3^{(e)} \\ F_4^{(e)}
+\end{Bmatrix}
+\tag{3.18}
 $$
 
-Here, $f_i$ and $f_j$ are **internal nodal forces** — they are not applied loads but the forces the element exerts on its nodes due to deformation.
+Here:
 
-When several elements meet at a node, their contributions are summed algebraically:
+- $[K^{(e)}]$ = element stiffness matrix in **global coordinates**  
+- $\{U^{(e)}\}$ = element nodal displacements in **global X, Y** directions  
+- $\{F^{(e)}\}$ = element nodal forces in **global X, Y** directions  
 
-$$
-F_{\text{ext},k} = \sum_{e \in \text{connected to node k}} f_k^{(e)}
-$$
+#### Transformation of Displacements
 
-This yields the **global nodal equilibrium equation** for node $k$.
-
-In compact matrix form for the whole structure:
+From geometry (see Figure 3.4), the relation between **local axial displacements** and **global displacements** is:
 
 $$
-[K] \{u\} = \{F\}
+u_1^{(e)} = U_1^{(e)} \cos\theta + U_2^{(e)} \sin\theta
+\tag{3.19}
 $$
 
-Boundary conditions (prescribed displacements) are then applied to reduce and solve the system.
-
-*(Insert Figure: Global equilibrium at a node showing multiple connecting elements — from Hutton Fig. 2.xx)*
-
-### 3. Connection with DSM and MPE
-
-* **Direct Stiffness Method (DSM)** assembles the $[K]$ matrix directly from element stiffnesses, then applies nodal equilibrium.
-* **Minimum Potential Energy Principle (MPE)** arrives at the same equations by minimizing total potential energy.
-* Both lead to the same governing equation $[K]\{u\} = \{F\}$, but via different reasoning — **force balance** vs. **energy minimization**.
-
-### 4. Simple Numerical Illustration
-
-Consider two bar elements in series: nodes 1–2–3, with stiffnesses $k_1$ and $k_2$. Node 1 is fixed, a load $P$ is applied at node 3.
-
-Element stiffness matrices:
-
 $$
-[k^{(1)}] =
-\begin{bmatrix}
-k_1 & -k_1 \\
--k_1 & k_1
-\end{bmatrix},
-\quad
-[k^{(2)}] =
-\begin{bmatrix}
-k_2 & -k_2 \\
--k_2 & k_2
-\end{bmatrix}
-$$
-
-Global stiffness after assembly:
-
-$$
-[K] =
-\begin{bmatrix}
-k_1 & -k_1 & 0 \\
--k_1 & k_1+k_2 & -k_2 \\
-0 & -k_2 & k_2
-\end{bmatrix}
-$$
-
-Global equilibrium equation:
-
-$$
-[K] \{u_1, u_2, u_3\}^T = \{0, 0, P\}^T
-$$
-
-Apply BC: $u_1 = 0$, solve for $u_2, u_3$.
-
-*(Insert Figure: Two-element bar system with loads and supports — from Hutton Fig. 2.xx)*
-
-### 5. Key Points
-
-* Nodal equilibrium is simply **ΣF = 0 applied at discrete points**.
-* The FEM equation $[K]\{u\} = \{F\}$ is the algebraic form of nodal equilibrium.
-* Internal forces are not the same as applied loads — they arise from deformation.
-* Proper **assembly** and **sign conventions** are essential for correct results.
-* This concept is valid for any structural type — trusses, beams, frames, solids.
-
----
-
-Alright — here’s the **summary table** and an **ASCII “at a glance” diagram** that will drop cleanly into your `.md` file without breaking MathJax or GitHub rendering.
-
----
-
-## **Nodal Equilibrium Equations — Summary Table**
-
-| **Term**                 | **Meaning**                                      | **Expression**                                            |
-| ------------------------ | ------------------------------------------------ | --------------------------------------------------------- |
-| **Nodal equilibrium**    | Force balance at each node                       | $\sum F_{\text{internal}} + \sum F_{\text{external}} = 0$ |
-| **Internal nodal force** | Force developed in an element due to deformation | $\{f^{(e)}\} = [k]^{(e)} \{u^{(e)}\}$                     |
-| **Global equilibrium**   | Force balance for all nodes                      | $[K]\{u\} = \{F\}$                                        |
-| **Boundary conditions**  | Known displacements or reactions                 | Applied to modify $[K]$ and $\{F\}$                       |
-| **Result of solving**    | Nodal displacements, element forces, reactions   | —                                                         |
-
----
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 420" style="max-width:100%; height:auto;" role="img" aria-labelledby="title desc">
-  <title id="title">Nodal Equilibrium — At a Glance</title>
-  <desc id="desc">Diagram showing node, internal forces, external loads, and equilibrium equations.</desc>
-
-  <style>
-    .box{fill:#fff;stroke:#222;stroke-width:2;rx:8;ry:8}
-    .arrow{stroke:#222;stroke-width:2;marker-end:url(#arrow)}
-    .text{font-family:system-ui,Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;fill:#111}
-    .head{font-weight:700;font-size:18px}
-    .math{font-family:ui-monospace,Consolas,Monaco,monospace}
-  </style>
-
-  <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#222"/>
-    </marker>
-  </defs>
-
-  <!-- Title -->
-  <text class="head" x="250" y="30" text-anchor="middle">Nodal Equilibrium — At a Glance</text>
-
-  <!-- Node -->
-  <rect class="box" x="180" y="60" width="140" height="60"/>
-  <text class="text" x="250" y="95" text-anchor="middle">Node k</text>
-
-  <!-- Arrow down -->
-  <line class="arrow" x1="250" y1="120" x2="250" y2="150"/>
-
-  <!-- Left (Internal Forces) -->
-  <text class="text" x="80" y="170" text-anchor="middle">Internal Forces</text>
-  <text class="text" x="80" y="190" text-anchor="middle">from all</text>
-  <text class="text" x="80" y="210" text-anchor="middle">connected elements</text>
-  <line class="arrow" x1="120" y1="180" x2="200" y2="180"/>
-
-  <!-- Right (External Loads) -->
-  <text class="text" x="420" y="170" text-anchor="middle">External Loads</text>
-  <text class="text" x="420" y="190" text-anchor="middle">(Given)</text>
-  <line class="arrow" x1="300" y1="180" x2="380" y2="180"/>
-
-  <!-- Middle Equation -->
-  <text class="math" x="250" y="250" text-anchor="middle">ΣF_internal + ΣF_external = 0</text>
-
-  <!-- Arrow down -->
-  <line class="arrow" x1="250" y1="260" x2="250" y2="290"/>
-
-  <!-- Final Equation -->
-  <text class="math" x="250" y="330" text-anchor="middle">[K]{u} = {F}</text>
-</svg>
-
----
-
-**Figure Placeholders (from Hutton’s book):**
-
-* *(Insert Figure: Free-body diagram of a node with connected element forces — Hutton Fig. 2.xx)*
-* *(Insert Figure: Assembled nodal equilibrium equations for a multi-element system — Hutton Fig. 2.xx)*
-
----
-
-## **Assembly of Global Stiffness Matrix**
-
-The **global stiffness matrix** $[K]$ represents the stiffness relationship for the entire structure, assembled from the **local stiffness matrices** $[k]^{(e)}$ of individual elements. It allows us to relate all nodal displacements to all applied nodal loads in a single system of equations.
-
-$$
-[K] \{u\} = \{F\}
-$$
-
-Where:
-
-* $[K]$ = global stiffness matrix (size: total DOFs × total DOFs)
-* $\{u\}$ = global nodal displacement vector
-* $\{F\}$ = global nodal force vector
-
----
-
-### 1. Concept
-
-Each element has its own **local stiffness matrix** defined for its own node numbering (local coordinates). To analyze the entire structure:
-
-1. **Map local DOFs to global DOFs** using an **element connectivity table**.
-2. **Place each local stiffness matrix** into the correct position within the global matrix, adding contributions if multiple elements share a DOF.
-
-*(Insert Figure: Example showing element local node numbering and global node numbering — from Hutton Fig. 2.xx)*
-
----
-
-### 2. Assembly Procedure
-
-**Step 1 — Number the nodes**
-Assign a unique global DOF number to each displacement variable in the structure.
-
-**Step 2 — Prepare the connectivity table**
-The table lists, for each element, the correspondence between local node numbers and global DOF numbers.
-
-| Element | Local Node 1 | Local Node 2 | Global DOF 1 | Global DOF 2 |
-| ------- | ------------ | ------------ | ------------ | ------------ |
-| 1       | 1            | 2            | 1            | 2            |
-| 2       | 2            | 3            | 2            | 3            |
-
-**Step 3 — Form each element stiffness matrix** in local coordinates.
-
-For a 1D bar element:
-
-$$
-[k]^{(e)} = \frac{EA}{L}
-\begin{bmatrix}
-1 & -1 \\
--1 & 1
-\end{bmatrix}
-$$
-
-**Step 4 — Insert local matrices into global matrix** according to the connectivity table.
-
-If an element’s local DOFs correspond to global DOFs $i$ and $j$, place:
-
-* $k_{11}$ into $[K]_{ii}$
-* $k_{12}$ into $[K]_{ij}$
-* $k_{21}$ into $[K]_{ji}$
-* $k_{22}$ into $[K]_{jj}$
-
-Add contributions if another element already has entries in those locations.
-
-**Step 5 — Continue until all elements are assembled** into $[K]$.
-
-*(Insert Figure: Bar elements in series and parallel, showing stiffness contribution in the global matrix — from Hutton Fig. 2.xx)*
-
----
-
-### 3. Example — Two Bar Elements in Series
-
-**Given:**
-
-* Element 1: Nodes 1–2, stiffness $k_1$
-* Element 2: Nodes 2–3, stiffness $k_2$
-
-**Element stiffness matrices:**
-
-$$
-[k]^{(1)} =
-\begin{bmatrix}
-k_1 & -k_1 \\
--k_1 & k_1
-\end{bmatrix}
-\quad
-[k]^{(2)} =
-\begin{bmatrix}
-k_2 & -k_2 \\
--k_2 & k_2
-\end{bmatrix}
-$$
-
-**Global stiffness matrix assembly:**
-
-* From $k^{(1)}$:
-  $[K]_{11} += k_1,\ [K]_{12} += -k_1,\ [K]_{21} += -k_1,\ [K]_{22} += k_1$
-* From $k^{(2)}$:
-  $[K]_{22} += k_2,\ [K]_{23} += -k_2,\ [K]_{32} += -k_2,\ [K]_{33} += k_2$
-
-Final global stiffness matrix:
-
-$$
-[K] =
-\begin{bmatrix}
-k_1 & -k_1 & 0 \\
--k_1 & k_1 + k_2 & -k_2 \\
-0 & -k_2 & k_2
-\end{bmatrix}
-$$
-
----
-
-### 4. Key Points
-
-* Assembly is **additive** — stiffness contributions from different elements connected at a node are summed.
-* The **size of $[K]$** equals the total number of global DOFs.
-* **Connectivity tables** are essential for mapping local DOFs to global DOFs.
-* After assembly, $[K]$ is **symmetric** for linear elastic problems.
-* Boundary conditions are applied after the full global matrix is assembled.
-
----
-
-## **Assembly of Global Stiffness Matrix — Summary Table**
-
-| **Step**                     | **Description**                                                                 | **Key Formula / Note**                                                    |
-| ---------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 1. Node numbering            | Assign unique global DOF numbers to all displacement variables                  | —                                                                         |
-| 2. Connectivity table        | Map element local nodes to global DOFs                                          | Essential for correct placement                                           |
-| 3. Local stiffness matrix    | Compute $[k]^{(e)}$ for each element in local coordinates                       | For 1D bar: $\frac{EA}{L} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}$ |
-| 4. Insert into global matrix | Place local stiffness terms into $[K]$ at positions given by connectivity table | Add contributions if entries already exist                                |
-| 5. Complete $[K]$            | Repeat for all elements until global stiffness is fully assembled               | $[K]$ is symmetric for linear elastic problems                            |
-| 6. Apply BCs                 | Impose known displacements or forces                                            | Modify $[K]$ and $\{F\}$ before solving                                   |
-
-**Key Points:**
-
-* Assembly is **additive** at shared DOFs.
-* Global matrix size = total global DOFs × total global DOFs.
-* Symmetry of $[K]$ simplifies computation.
-* Assembly is independent of the solution method — it’s purely a bookkeeping step.
-
----
-
-## **Element Strain and Stress**
-
-Once the nodal displacements are determined from
-
-$$
-[K]\{u\} = \{F\}
-$$
-
-the next step is to compute **element strains** and **stresses**. These are essential for checking the structural performance against strength and serviceability requirements.
-
----
-
-### 1. Concept
-
-* **Strain** is a measure of deformation — how much an element elongates or contracts relative to its original length.
-* **Stress** is the internal force per unit area developed in the material to resist deformation.
-
-The displacement solution $\{u\}$ from the FEM analysis provides all the information needed to calculate these quantities for each element.
-
-*(Insert Figure: 1D bar element showing original length $L$, cross-section $A$, nodal displacements $u_1, u_2$ — Hutton Fig. 2.xx)*
-
----
-
-### 2. Strain–Displacement Relation (1D Bar)
-
-For a 1D bar element between nodes $1$ and $2$:
-
-$$
-\varepsilon = \frac{\Delta L}{L} = \frac{u_2 - u_1}{L}
+u_2^{(e)} = U_3^{(e)} \cos\theta + U_4^{(e)} \sin\theta
+\tag{3.20}
 $$
 
 In **matrix form**:
 
 $$
-\varepsilon = [B] \{u_e\}
+\begin{Bmatrix}
+u_1^{(e)} \\ u_2^{(e)}
+\end{Bmatrix}
+=
+[R]
+\begin{Bmatrix}
+U_1^{(e)} \\ U_2^{(e)} \\ U_3^{(e)} \\ U_4^{(e)}
+\end{Bmatrix}
+\tag{3.21}
 $$
 
-where:
+where the **transformation matrix** $[R]$ is:
 
 $$
-[B] = \begin{bmatrix} -\frac{1}{L} & \frac{1}{L} \end{bmatrix}
-$$
-
-and:
-
-$$
-\{u_e\} =
+[R] =
 \begin{bmatrix}
-u_1 \\
-u_2
+\cos\theta & \sin\theta & 0 & 0 \\
+0 & 0 & \cos\theta & \sin\theta
+\end{bmatrix}
+\tag{3.22}
+$$
+
+#### Transformation of Forces and Stiffness
+
+Substituting Eq. (3.21) into Eq. (3.17):
+
+$$
+[k^{(e)}][R]
+\begin{Bmatrix}
+U_1^{(e)} \\ U_2^{(e)} \\ U_3^{(e)} \\ U_4^{(e)}
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+f_1^{(e)} \\ f_2^{(e)}
+\end{Bmatrix}
+\tag{3.23}
+$$
+
+Premultiplying by $[R]^T$:
+
+$$
+[R]^T [k^{(e)}][R]
+\begin{Bmatrix}
+U_1^{(e)} \\ U_2^{(e)} \\ U_3^{(e)} \\ U_4^{(e)}
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+F_1^{(e)} \\ F_2^{(e)} \\ F_3^{(e)} \\ F_4^{(e)}
+\end{Bmatrix}
+\tag{3.26}
+$$
+
+Thus, the **global element stiffness matrix** is:
+
+$$
+[K^{(e)}] = [R]^T [k^{(e)}] [R]
+\tag{3.27}
+$$
+
+#### Expanded Form of Global Stiffness Matrix
+
+With $c = \cos\theta$, $s = \sin\theta$, we obtain:
+
+$$
+[K^{(e)}] = k_e
+\begin{bmatrix}
+c^2 & cs & -c^2 & -cs \\
+cs & s^2 & -cs & -s^2 \\
+-c^2 & -cs & c^2 & cs \\
+-cs & -s^2 & cs & s^2
+\end{bmatrix}
+\tag{3.28}
+$$
+
+#### Direction Cosines
+
+For an element connecting nodes $i$ and $j$ with global coordinates:
+
+- Node $i: (X_i, Y_i)$  
+- Node $j: (X_j, Y_j)$  
+
+The **element length** is:
+
+$$
+L = \sqrt{(X_j - X_i)^2 + (Y_j - Y_i)^2}
+\tag{3.29}
+$$
+
+The **unit vector** along the element is:
+
+$$
+\vec{l} = \dfrac{1}{L} \big[(X_j - X_i)\mathbf{i} + (Y_j - Y_i)\mathbf{j}\big]
+\tag{3.30}
+$$
+
+The **direction cosines** are:
+
+$$
+\cos\theta = \dfrac{X_j - X_i}{L}
+\tag{3.31}
+$$
+
+$$
+\sin\theta = \dfrac{Y_j - Y_i}{L}
+\tag{3.32}
+$$
+
+Thus, the **global element stiffness matrix** (Eq. 3.28) can be constructed **directly from nodal coordinates**, along with $A$, $E$, and $L$.
+
+---
+
+### Direct Assembly of Global Stiffness Matrix
+
+Having derived how to transform the element stiffness matrix into the **global coordinate system**, we now describe the **direct assembly procedure**.  
+This method constructs the **global stiffness matrix** element by element, using **connectivity relations**.
+
+#### Step 1: Element Stiffness Matrices in Global Coordinates
+
+For a two-element truss (Figure 3.2), the **global element stiffness matrices** are obtained using Equation (3.28).  
+
+For **element 1**:
+
+$$
+[K^{(1)}] =
+\begin{bmatrix}
+k^{(1)}_{11} & k^{(1)}_{12} & k^{(1)}_{13} & k^{(1)}_{14} \\
+k^{(1)}_{21} & k^{(1)}_{22} & k^{(1)}_{23} & k^{(1)}_{24} \\
+k^{(1)}_{31} & k^{(1)}_{32} & k^{(1)}_{33} & k^{(1)}_{34} \\
+k^{(1)}_{41} & k^{(1)}_{42} & k^{(1)}_{43} & k^{(1)}_{44}
+\end{bmatrix}
+\tag{3.33}
+$$
+
+For **element 2**:
+
+$$
+[K^{(2)}] =
+\begin{bmatrix}
+k^{(2)}_{11} & k^{(2)}_{12} & k^{(2)}_{13} & k^{(2)}_{14} \\
+k^{(2)}_{21} & k^{(2)}_{22} & k^{(2)}_{23} & k^{(2)}_{24} \\
+k^{(2)}_{31} & k^{(2)}_{32} & k^{(2)}_{33} & k^{(2)}_{34} \\
+k^{(2)}_{41} & k^{(2)}_{42} & k^{(2)}_{43} & k^{(2)}_{44}
+\end{bmatrix}
+\tag{3.34}
+$$
+
+#### Step 2: Connectivity Relations
+
+Each **element displacement vector** must be expressed in terms of the **global displacement vector**.
+
+For **element 1**:
+
+$$
+\{U^{(1)}\} =
+\begin{Bmatrix}
+U^{(1)}_1 \\ U^{(1)}_2 \\ U^{(1)}_3 \\ U^{(1)}_4
+\end{Bmatrix}
+\;\;\Rightarrow\;\;
+\begin{Bmatrix}
+U_1 \\ U_2 \\ U_5 \\ U_6
+\end{Bmatrix}
+\tag{3.35}
+$$
+
+For **element 2**:
+
+$$
+\{U^{(2)}\} =
+\begin{Bmatrix}
+U^{(2)}_1 \\ U^{(2)}_2 \\ U^{(2)}_3 \\ U^{(2)}_4
+\end{Bmatrix}
+\;\;\Rightarrow\;\;
+\begin{Bmatrix}
+U_3 \\ U_4 \\ U_5 \\ U_6
+\end{Bmatrix}
+\tag{3.36}
+$$
+
+These equations describe **element-to-global displacement mapping**.
+
+#### Step 3: Nodal Displacement Correspondence Table
+
+To organize connectivity, we use a **correspondence table**:
+
+| **Global Displacement** | **Element 1 Displacement** | **Element 2 Displacement** |
+| ------------------------ | -------------------------- | -------------------------- |
+| $U_1$                   | $u^{(1)}_1$               | 0                          |
+| $U_2$                   | $u^{(1)}_2$               | 0                          |
+| $U_3$                   | 0                         | $u^{(2)}_1$               |
+| $U_4$                   | 0                         | $u^{(2)}_2$               |
+| $U_5$                   | $u^{(1)}_3$               | $u^{(2)}_3$               |
+| $U_6$                   | $u^{(1)}_4$               | $u^{(2)}_4$               |
+
+**Interpretation:**  
+- A **zero entry** means that the element does not contribute stiffness for that displacement.  
+- For example, element 1 has no contribution to $U_3$ and $U_4$, since it is not connected to global node 2.  
+
+#### Step 4: Assembly of Global Stiffness Matrix
+
+Using the correspondence, the **global stiffness matrix** is assembled term by term:
+
+- $$K_{11} = k^{(1)}_{11} + 0$$
+- $$K_{12} = k^{(1)}_{12} + 0$$
+- $$K_{13} = 0 + 0$$
+- $$K_{14} = 0 + 0$$
+- $$K_{15} = k^{(1)}_{13} + 0$$
+- $$K_{16} = k^{(1)}_{14} + 0$$
+
+- $$K_{22} = k^{(1)}_{22} + 0$$
+- $$K_{23} = 0 + 0$$
+- $$K_{24} = 0 + 0$$
+- $$K_{25} = k^{(1)}_{23} + 0$$
+- $$K_{26} = k^{(1)}_{24} + 0$$
+
+- $$K_{33} = 0 + k^{(2)}_{11}$$
+- $$K_{34} = 0 + k^{(2)}_{12}$$
+- $$K_{35} = 0 + k^{(2)}_{13}$$
+- $$K_{36} = 0 + k^{(2)}_{14}$$
+
+- $$K_{44} = 0 + k^{(2)}_{22}$$
+- $$K_{45} = 0 + k^{(2)}_{23}$$
+- $$K_{46} = 0 + k^{(2)}_{24}$$
+
+- $$K_{55} = k^{(1)}_{33} + k^{(2)}_{33}$$
+- $$K_{56} = k^{(1)}_{34} + k^{(2)}_{34}$$
+- $$K_{66} = k^{(1)}_{44} + k^{(2)}_{44}$$
+
+
+The **symmetry** of the stiffness matrix has been used to avoid repetition.
+
+
+#### Step 5: Global Stiffness Matrix
+
+The final **global stiffness matrix** $[K]$ is identical to that obtained earlier by the equilibrium method (Section 3.2).  
+
+This confirms the **Direct Stiffness Method**:  
+
+- Transform each element stiffness matrix to the global system  
+- Assemble them using connectivity relations  
+- Form the complete global stiffness matrix  
+
+$$
+[K]\{U\} = \{F\}
+$$
+
+where  
+
+- $[K]$ = global stiffness matrix  
+- $\{U\}$ = global nodal displacement vector  
+- $\{F\}$ = global nodal force vector  
+
+---
+
+### Example 3.1: Assembly of Global Stiffness Matrix for a Two-Element Truss
+
+**Problem Statement:**  
+Consider the two-element truss shown in Figure 3.2.  
+- Element 1 is oriented at $\theta_1 = \pi/4$  
+- Element 2 is oriented at $\theta_2 = 0$  
+- The element stiffness values are:  
+  $$
+  k_1 = \frac{A_1 E_1}{L_1}, 
+  \quad
+  k_2 = \frac{A_2 E_2}{L_2}
+  $$
+  
+<img width="1010" height="567" alt="image" src="https://github.com/user-attachments/assets/04de1061-9be3-46b0-a6d9-f4c062053960" />
+
+Transform the stiffness matrix of each element into the **global coordinate system** and assemble the **global stiffness matrix** for the complete truss.
+
+---
+
+### Solution:
+
+#### Step 1 — Element 1: transform to global frame
+
+For element 1, $$\theta_1 = \dfrac{\pi}{4}\Rightarrow
+\cos\theta_1=\sin\theta_1=\dfrac{\sqrt{2}}{2}.$$  
+Thus
+
+$$
+\cos^2\theta_1=\sin^2\theta_1=\cos\theta_1\sin\theta_1=\dfrac{1}{2}.
+$$
+
+Use the general transformed element stiffness (Eq. 3.28):
+
+$$
+[K^{(e)}] = k_e
+\begin{bmatrix}
+c^2 & cs & -c^2 & -cs \\
+cs & s^2 & -cs & -s^2 \\
+- c^2 & -cs & c^2 & cs \\
+- cs & -s^2 & cs & s^2
 \end{bmatrix}
 $$
 
-*(Insert Figure: Diagram illustrating element elongation and sign convention for tensile strain — Hutton Fig. 2.xx)*
+Substituting \(c=s=\dfrac{\sqrt{2}}{2}\) and \(k_e=k_1\) gives
+
+$$
+[K^{(1)}]
+= k_1
+\begin{bmatrix}
+\tfrac12 & \tfrac12 & -\tfrac12 & -\tfrac12 \\
+\tfrac12 & \tfrac12 & -\tfrac12 & -\tfrac12 \\
+-\tfrac12 & -\tfrac12 & \tfrac12 & \tfrac12 \\
+-\tfrac12 & -\tfrac12 & \tfrac12 & \tfrac12
+\end{bmatrix}
+=
+\frac{k_1}{2}
+\begin{bmatrix}
+1 & 1 & -1 & -1 \\
+1 & 1 & -1 & -1 \\
+-1 & -1 & 1 & 1 \\
+-1 & -1 & 1 & 1
+\end{bmatrix}.
+$$
+
+#### Step 2 — Element 2: transform to global frame
+
+For element 2, $$\theta_2 = 0\Rightarrow \cos\theta_2=1,\; \sin\theta_2=0.$$
+
+Substitute into Eq. (3.28) with \(k_e=k_2\):
+
+$$
+[K^{(2)}]
+= k_2
+\begin{bmatrix}
+1 & 0 & -1 & 0 \\
+0 & 0 & 0 & 0 \\
+-1 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix}.
+$$
+
+#### Step 3 — Element ↔ Global displacement mapping (connectivity)
+
+From the element-to-global mapping (Eqs. 3.35–3.36):
+
+- Element 1 local displacement vector corresponds to global displacements:
+  $$
+  \{U^{(1)}\} \Rightarrow \{U_1,\,U_2,\,U_5,\,U_6\}
+  $$
+- Element 2 local displacement vector corresponds to global displacements:
+  $$
+  \{U^{(2)}\} \Rightarrow \{U_3,\,U_4,\,U_5,\,U_6\}
+  $$
+
+Use the correspondence table to place each element's stiffness terms into the appropriate positions of the global \(6\times6\) matrix.
+
+#### Step 4 — Assemble each global \(K_{ij}\) (including zeros)
+
+Let us list every assembled global stiffness entry \(K_{ij}\) (indices 1..6), including those that are zero.
+
+$$
+\begin{aligned}
+K_{11} &= \tfrac{k_1}{2}, &\qquad K_{12} &= \tfrac{k_1}{2}, &\qquad K_{13} &= 0, &\qquad K_{14} &= 0, &\qquad K_{15} &= -\tfrac{k_1}{2}, &\qquad K_{16} &= -\tfrac{k_1}{2},\\[6pt]
+K_{21} &= \tfrac{k_1}{2}, &\qquad K_{22} &= \tfrac{k_1}{2}, &\qquad K_{23} &= 0, &\qquad K_{24} &= 0, &\qquad K_{25} &= -\tfrac{k_1}{2}, &\qquad K_{26} &= -\tfrac{k_1}{2},\\[6pt]
+K_{31} &= 0, &\qquad K_{32} &= 0, &\qquad K_{33} &= k_2, &\qquad K_{34} &= 0, &\qquad K_{35} &= -k_2, &\qquad K_{36} &= 0,\\[6pt]
+K_{41} &= 0, &\qquad K_{42} &= 0, &\qquad K_{43} &= 0, &\qquad K_{44} &= 0, &\qquad K_{45} &= 0, &\qquad K_{46} &= 0,\\[6pt]
+K_{51} &= -\tfrac{k_1}{2}, &\qquad K_{52} &= -\tfrac{k_1}{2}, &\qquad K_{53} &= -k_2, &\qquad K_{54} &= 0, &\qquad K_{55} &= \tfrac{k_1}{2} + k_2, &\qquad K_{56} &= \tfrac{k_1}{2},\\[6pt]
+K_{61} &= -\tfrac{k_1}{2}, &\qquad K_{62} &= -\tfrac{k_1}{2}, &\qquad K_{63} &= 0, &\qquad K_{64} &= 0, &\qquad K_{65} &= \tfrac{k_1}{2}, &\qquad K_{66} &= \tfrac{k_1}{2}.
+\end{aligned}
+$$
+
+*(Matrix symmetry implies \(K_{ij}=K_{ji}\); both upper and lower parts are listed for clarity.)*
+
+#### Step 5 — Final global stiffness matrix
+
+The assembled global stiffness matrix for the two-element truss is
+
+$$
+[K] =
+\begin{bmatrix}
+\; \tfrac{k_1}{2} & \; \tfrac{k_1}{2} & 0 & 0 & -\tfrac{k_1}{2} & -\tfrac{k_1}{2} \\
+\; \tfrac{k_1}{2} & \; \tfrac{k_1}{2} & 0 & 0 & -\tfrac{k_1}{2} & -\tfrac{k_1}{2} \\
+0 & 0 & k_2 & 0 & -k_2 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+-\,\tfrac{k_1}{2} & -\,\tfrac{k_1}{2} & -k_2 & 0 & \tfrac{k_1}{2} + k_2 & \tfrac{k_1}{2} \\
+-\,\tfrac{k_1}{2} & -\,\tfrac{k_1}{2} & 0 & 0 & \tfrac{k_1}{2} & \tfrac{k_1}{2}
+\end{bmatrix}.
+$$
+
+#### Comment
+
+This global stiffness matrix is identical to the matrix obtained earlier by writing nodal equilibrium directly (Section 3.2). The Direct Stiffness Method therefore provides a systematic element-by-element route to the same global system:
+
+$$
+[K]\{U\}=\{F\}.
+$$
+
+You may now apply boundary conditions (known displacements) to reduce the system and solve for the unknown nodal displacements, then back-substitute to compute element axial forces, strains and stresses.
 
 ---
 
-### 3. Stress–Strain Relation
+### Streamlined Assembly Procedure in the Direct Stiffness Method  
 
-Using **Hooke’s law** for a linearly elastic material:
+The previous worked example illustrated the **direct stiffness method** by explicitly computing each entry of the global stiffness matrix. While conceptually clear, this approach becomes **cumbersome and inefficient** for large systems.  
 
-$$
-\sigma = E \cdot \varepsilon
-$$
+A more efficient method, especially suited for **computer implementation**, proceeds as follows:  
 
-Substitute $\varepsilon$ from above:
+1. Each element stiffness matrix is first transformed into the **global coordinate system**.  
+2. The terms of this element matrix are then **added directly** to the appropriate entries of the global stiffness matrix using a **nodal connectivity table**.  
+3. Once an element’s contributions are added, that element is no longer revisited.  
 
-$$
-\sigma = E \cdot \frac{u_2 - u_1}{L}
-$$
+#### Element stiffness matrices with global DOF labels  
 
-In matrix form:
+To illustrate, consider the two-element truss from **Figure 3.2** again. The element stiffness matrices in global form are written as:
 
-$$
-\sigma = [D] \, [B] \, \{u_e\}
-$$
-
-where:
+For **Element 1** (connected at global DOFs 1, 2, 5, 6):  
 
 $$
-[D] = [E] \quad \text{(scalar in 1D)}
+K^{(1)} =
+\begin{bmatrix}
+k^{(1)}_{11} & k^{(1)}_{12} & k^{(1)}_{13} & k^{(1)}_{14} \\
+k^{(1)}_{21} & k^{(1)}_{22} & k^{(1)}_{23} & k^{(1)}_{24} \\
+k^{(1)}_{31} & k^{(1)}_{32} & k^{(1)}_{33} & k^{(1)}_{34} \\
+k^{(1)}_{41} & k^{(1)}_{42} & k^{(1)}_{43} & k^{(1)}_{44}
+\end{bmatrix}
+\quad
+\text{with rows/cols mapped to } [1,2,5,6]
+\tag{3.37}
 $$
 
-*(Insert Figure: Stress distribution in a bar element under tension — Hutton Fig. 2.xx)*
-
----
-
-### 4. Internal Element Force
-
-The **axial force** in the element is:
+For **Element 2** (connected at global DOFs 3, 4, 5, 6):  
 
 $$
-F_{\text{int}} = \sigma \cdot A
-= E \cdot A \cdot \frac{u_2 - u_1}{L}
-$$
+K^{(2)} =
+\begin{bmatrix}
+k^{(2)}_{11} & k^{(2)}_{12} & k^{(2)}_{13} & k^{(2)}_{14} \\
+k^{(2)}_{21} & k^{(2)}_{22} & k^{(2)}_{23} & k^{(2)}_{24} \\
+k^{(2)}_{31} & k^{(2)}_{32} & k^{(2)}_{33} & k^{(2)}_{34} \\
+k^{(2)}_{41} & k^{(2)}_{42} & k^{(2)}_{43} & k^{(2)}_{44}
+\end{bmatrix}
+\quad
+\text{with rows/cols mapped to } [3,4,5,6]
+\tag{3.38}
+$$  
 
-In matrix form:
+Here, the indices to the right of each row and above each column indicate the **global displacement number** associated with that row/column of the element stiffness matrix.  
 
-$$
-\{f_e\} =
-[k] \{u_e\}
-$$
+#### Example of placement  
 
-where $[k] = \frac{EA}{L} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}$.
-
-*(Insert Figure: Axial force diagram for a bar element — Hutton Fig. 2.xx)*
-
----
-
-### 5. Generalization to Multiple DOFs
-
-For **multi-DOF or 2D/3D elements**, the same basic steps apply:
-
-1. Extract the element displacement vector $\{u_e\}$ from the global solution $\{u\}$ using connectivity.
-2. Compute strains using:
+From Eq. (3.38), the entry \(k^{(2)}_{24}\) corresponds to global DOFs (row = 4, col = 6).  
+Thus it contributes to the global entry:  
 
 $$
-\{\varepsilon\} = [B] \{u_e\}
-$$
+K_{46} \quad \text{(and by symmetry, also } K_{64}\text{).}
+$$  
 
-where $[B]$ is the **strain–displacement matrix** for the element.
-3\. Compute stresses using:
+This systematic allocation ensures that **all element contributions are assembled consistently** into the global matrix.
 
-$$
-\{\sigma\} = [D] \{\varepsilon\}
-$$
+#### Element-node connectivity  
 
-where $[D]$ is the **material property matrix**.
+For computer implementation, the **element-node connectivity table** is used. It lists each element and the two global nodes it connects. For the two-element truss in Figure 3.2:  
 
----
+**Table 3.2 – Element-Node Connectivity**  
 
-### 6. Worked Mini-Example (1D Bar)
+| Element | Node \(i\) | Node \(j\) |
+|---------|------------|------------|
+| 1       | 1          | 3          |
+| 2       | 2          | 3          |
 
-**Given:**
-
-* $E = 210 \ \text{GPa}$
-* $A = 300 \ \text{mm}^2$
-* $L = 2.0 \ \text{m}$
-* $u_1 = 0$, $u_2 = 0.001 \ \text{m}$
-
-**Step 1 — Strain:**
+From this, the **element displacement location vector** is defined as:  
 
 $$
-\varepsilon = \frac{0.001 - 0}{2.0} = 0.0005
-$$
+L^{(e)} = [2i-1,\; 2i,\; 2j-1,\; 2j]
+\tag{3.39}
+$$  
 
-**Step 2 — Stress:**
+For the two elements:  
+
+- \(L^{(1)} = [1, 2, 5, 6]\)  
+- \(L^{(2)} = [3, 4, 5, 6]\)  
+
+This vector indicates the **global DOFs** associated with the element stiffness matrix.  
+
+#### Interpretation  
+
+Think of the global stiffness matrix as a **6×6 grid of mailboxes**, initially empty (all zero).  
+Each element stiffness matrix is like a bundle of values with **addresses** specified by the displacement location vector.  
+When processing an element, each of its stiffness entries is dropped into the correct mailbox.  
+
+Once all elements are processed, the mailbox grid contains the **assembled global stiffness matrix**, ready for applying boundary conditions and solving:  
 
 $$
-\sigma = (210 \times 10^9) (0.0005) = 105 \ \text{MPa}
-$$
-
-**Step 3 — Internal Force:**
-
-$$
-F_{\text{int}} = 105 \times 10^6 \times 300 \times 10^{-6} = 31.5 \ \text{kN}
+[K]\{U\} = \{F\}.
 $$
 
 ---
 
-### 7. Key Points
+### Boundary Conditions and Constraint Forces  
 
-* Displacements → Strains → Stresses → Internal Forces.
-* $[B]$ matrix links displacements to strains; $[D]$ matrix links strains to stresses.
-* Sign conventions are critical (tension = positive strain).
-* Post-processing in FEM is where physical performance checks happen.
-* The accuracy of strain/stress results depends heavily on **mesh refinement** and **element type**.
+Once the global stiffness matrix has been assembled, the system equilibrium equations can be expressed in compact form as:  
+
+$$
+[K]\{U\} = \{F\}
+\tag{3.42}
+$$  
+
+where:  
+- \([K]\) is the global stiffness matrix (singular before applying constraints),  
+- \(\{U\}\) is the vector of global nodal displacements,  
+- \(\{F\}\) is the vector of applied nodal forces.  
+
+#### Role of Boundary Conditions  
+
+Because the global stiffness matrix includes rigid body motion, it is **singular** unless support constraints are imposed. These boundary conditions specify certain nodal displacements as known values (usually zero for supports).  
+
+For the two-element truss of Figure 3.2, the support conditions enforce:  
+
+$$
+U_1 = U_2 = U_3 = U_4 = 0
+\tag{3.43}
+$$  
+
+leaving only \(U_5\) and \(U_6\) as unknown displacements.  
+
+#### Reduced System of Equations  
+
+Substituting the boundary conditions into Eq. (3.42), the equations reduce to:  
+
+\[
+\begin{aligned}
+K_{15}U_5 + K_{16}U_6 &= F_1 \\
+K_{25}U_5 + K_{26}U_6 &= F_2 \\
+K_{35}U_5 + K_{36}U_6 &= F_3 \\
+K_{45}U_5 + K_{46}U_6 &= F_4 \\
+K_{55}U_5 + K_{56}U_6 &= F_5 \\
+K_{56}U_5 + K_{66}U_6 &= F_6
+\end{aligned}
+\tag{3.44}
+\]
+
+Here:  
+- \(F_1, F_2, F_3, F_4\) = **reaction forces** at the constrained nodes (supports),  
+- \(F_5, F_6\) = **applied external forces** at node 3.  
+
+Thus, the last two equations can be solved for displacements \(U_5, U_6\).  
+Substituting these values back into the first four equations provides the corresponding reaction forces.  
+
+#### General Matrix Formulation  
+
+In the general case, we partition the global system into **constrained** (\(c\)) and **active/unconstrained** (\(a\)) displacement sets:  
+
+$$
+\begin{bmatrix}
+K_{cc} & K_{ca} \\
+K_{ac} & K_{aa}
+\end{bmatrix}
+\begin{Bmatrix}
+U_c \\
+U_a
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+F_c \\
+F_a
+\end{Bmatrix}
+\tag{3.45}
+$$  
+
+where:  
+- \(U_c\): known (prescribed) displacements,  
+- \(U_a\): unknown displacements,  
+- \(F_c\): unknown reaction forces,  
+- \(F_a\): applied external forces.  
+
+From the lower partition:  
+
+\[
+[K_{ac}]\{U_c\} + [K_{aa}]\{U_a\} = \{F_a\}
+\]
+
+so that:  
+
+$$
+\{U_a\} = [K_{aa}]^{-1}\left( \{F_a\} - [K_{ac}]\{U_c\} \right)
+\tag{3.46}
+$$  
+
+Once the active displacements are determined, the **reaction forces** follow from the upper partition:  
+
+$$
+\{F_c\} = [K_{cc}]\{U_c\} + [K_{ca}]\{U_a\}
+$$  
+
+where the symmetry condition ensures:  
+
+$$
+[K_{ca}] = [K_{ac}]^T
+$$  
 
 ---
 
-## **Element Strain and Stress — Summary Table**
+### Element Strain and Stress  
 
-| **Step**                    | **Formula**                                                                                      | **Notes**                            |
-| --------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------ |
-| **1. Strain**               | $\varepsilon = \frac{u_2 - u_1}{L}$                                                              | 1D bar; sign convention: tension $+$ |
-| **2. Matrix form (strain)** | $\varepsilon = [B] \{u_e\},\quad [B] = \begin{bmatrix} -\frac{1}{L} & \frac{1}{L} \end{bmatrix}$ | $[B]$ = strain–displacement matrix   |
-| **3. Stress**               | $\sigma = E \cdot \varepsilon$                                                                   | Hooke’s law (linear elasticity)      |
-| **4. Matrix form (stress)** | $\sigma = [D][B]\{u_e\}$                                                                         | $[D] = E$ in 1D                      |
-| **5. Internal force**       | $F_{\text{int}} = \sigma \cdot A = E A \frac{u_2 - u_1}{L}$                                      | Also from $[k]\{u_e\}$               |
-| **6. Generalization**       | $\{\varepsilon\} = [B]\{u_e\}, \quad \{\sigma\} = [D]\{\varepsilon\}$                            | Works for multi-DOF 2D/3D elements   |
+The final step in the finite element analysis of a truss is to compute the **strain** and **stress** in each element using the global displacements obtained from the solution step.  
 
-**Key Points:**
+#### Element Nodal Displacements  
 
-* Displacement solution drives all strain/stress calculations.
-* Use correct element $[B]$ and $[D]$ matrices.
-* FEM post-processing checks performance against material limits.
+For an element connecting nodes \(i\) and \(j\), the displacements in the **element coordinate system** are:  
+
+\[
+\begin{aligned}
+u^{(e)}_1 &= U^{(e)}_1 \cos\theta + U^{(e)}_2 \sin\theta \\
+u^{(e)}_2 &= U^{(e)}_3 \cos\theta + U^{(e)}_4 \sin\theta
+\end{aligned}
+\tag{3.48}
+\]
+
+Here:  
+- \(u^{(e)}_1, u^{(e)}_2\) = element nodal displacements along the element axis,  
+- \(U^{(e)}_1, U^{(e)}_2, U^{(e)}_3, U^{(e)}_4\) = global nodal displacements,  
+- \(\theta\) = element orientation angle.  
+
+#### Element Strain  
+
+Using the displacement interpolation functions, the **axial strain** in the element is:  
+
+\[
+\varepsilon^{(e)} = \frac{du^{(e)}(x)}{dx} = \frac{u^{(e)}_2 - u^{(e)}_1}{L^{(e)}}
+\tag{3.49}
+\]
+
+where \(L^{(e)}\) is the length of the element.  
+
+#### Element Stress  
+
+Applying Hooke’s Law, the **axial stress** in the element is:  
+
+\[
+\sigma^{(e)} = E \, \varepsilon^{(e)}
+\tag{3.50}
+\]
+
+with \(E\) being the modulus of elasticity of the element material.  
+
+#### Strain and Stress in Global Displacement Form  
+
+The global finite element solution provides **global displacements**, not element displacements directly. To connect the two, the transformation relations (Equations 3.21–3.22) are used. In terms of global nodal displacements, the strain becomes:  
+
+\[
+\varepsilon^{(e)} = \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\tag{3.51}
+\]
+
+and the corresponding stress is:  
+
+\[
+\sigma^{(e)} = E \, \varepsilon^{(e)} = E \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\tag{3.52}
+\]
+
+Here:  
+- \([R]\) = transformation matrix,  
+- \(N_1(x), N_2(x)\) = shape functions,  
+- Positive \(\sigma^{(e)}\) → element is in **tension**,  
+- Negative \(\sigma^{(e)}\) → element is in **compression**.  
+
+#### Element Forces  
+
+Finally, the **element axial force** can also be obtained as:  
+
+\[
+\{f^{(e)}\} =
+\begin{bmatrix}
+-1 & 1 \\
+\end{bmatrix}
+\frac{AE}{L^{(e)}}
+\begin{Bmatrix}
+u^{(e)}_1 \\ u^{(e)}_2
+\end{Bmatrix}
+\tag{3.23 revisited}
+\]
+
+This provides the internal force carried by each truss member, consistent with the sign convention for stress.  
 
 ---
+
+✅ With this step, the finite element procedure for a truss structure is complete:  
+1. Assemble the global stiffness matrix,  
+2. Apply boundary conditions and solve for global displacements,  
+3. Back-substitute displacements to compute element strains, stresses, and internal forces.
+
+---
+
 ## 📚 Reference
 
 - [*Fundamentals of Finite Element Analysis - (Unit 1 - Chapter 1 to 3)*](Resources/Unit1_Ch_1_to_3_FEM_Hutton.pdf) – Hutton David, McGraw-Hill 
