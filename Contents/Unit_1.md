@@ -2502,34 +2502,43 @@ $$
 
 ### Boundary Conditions and Constraint Forces  
 
-Once the global stiffness matrix has been assembled, the system equilibrium equations can be expressed in compact form as:  
+<img width="1053" height="566" alt="image" src="https://github.com/user-attachments/assets/4f408adc-8d87-4dc7-9e83-a3003bba3a42" />
+
+Once the **global stiffness matrix** has been assembled, the governing system of equations for the example truss of Figure 3.2 can be expressed as:  
 
 $$
-[K]\{U\} = \{F\}
+[K]
+\begin{Bmatrix}
+U_1 \\ U_2 \\ U_3 \\ U_4 \\ U_5 \\ U_6
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+F_1 \\ F_2 \\ F_3 \\ F_4 \\ F_5 \\ F_6
+\end{Bmatrix}
 \tag{3.42}
 $$  
 
-where:  
-- \([K]\) is the global stiffness matrix (singular before applying constraints),  
+Here,  
+- \([K]\) is the global stiffness matrix (singular before boundary conditions),  
 - \(\{U\}\) is the vector of global nodal displacements,  
 - \(\{F\}\) is the vector of applied nodal forces.  
 
-#### Role of Boundary Conditions  
+#### Role of boundary conditions  
 
-Because the global stiffness matrix includes rigid body motion, it is **singular** unless support constraints are imposed. These boundary conditions specify certain nodal displacements as known values (usually zero for supports).  
+The stiffness matrix \([K]\) is **singular**, so Equation (3.42) does not have a unique solution unless boundary conditions are applied. These boundary conditions represent the **support constraints** that prevent rigid body motion.  
 
-For the two-element truss of Figure 3.2, the support conditions enforce:  
+For the truss in Figure 3.2, the supports imply:  
 
 $$
 U_1 = U_2 = U_3 = U_4 = 0
 \tag{3.43}
 $$  
 
-leaving only \(U_5\) and \(U_6\) as unknown displacements.  
+leaving only the displacements \(U_5\) and \(U_6\) as unknowns.  
 
-#### Reduced System of Equations  
+#### Reduced system equations  
 
-Substituting the boundary conditions into Eq. (3.42), the equations reduce to:  
+Substituting these constraints into Equation (3.42), the system reduces to:  
 
 \[
 \begin{aligned}
@@ -2543,16 +2552,14 @@ K_{56}U_5 + K_{66}U_6 &= F_6
 \tag{3.44}
 \]
 
-Here:  
-- \(F_1, F_2, F_3, F_4\) = **reaction forces** at the constrained nodes (supports),  
-- \(F_5, F_6\) = **applied external forces** at node 3.  
+- The first four equations correspond to **reaction forces** at the constrained supports (nodes 1 and 2).  
+- The last two equations form the **active system**, which can be solved directly for the unknown displacements \(U_5, U_6\).  
 
-Thus, the last two equations can be solved for displacements \(U_5, U_6\).  
-Substituting these values back into the first four equations provides the corresponding reaction forces.  
+Once \(U_5, U_6\) are obtained, they can be substituted back into the first four equations to determine the **support reactions**.  
 
-#### General Matrix Formulation  
+#### General partitioned form  
 
-In the general case, we partition the global system into **constrained** (\(c\)) and **active/unconstrained** (\(a\)) displacement sets:  
+For larger systems, it is convenient to partition the equations into constrained (c) and active (a) sets:  
 
 $$
 \begin{bmatrix}
@@ -2560,147 +2567,430 @@ K_{cc} & K_{ca} \\
 K_{ac} & K_{aa}
 \end{bmatrix}
 \begin{Bmatrix}
-U_c \\
-U_a
+U_c \\ U_a
 \end{Bmatrix}
 =
 \begin{Bmatrix}
-F_c \\
-F_a
+F_c \\ F_a
 \end{Bmatrix}
 \tag{3.45}
 $$  
 
-where:  
-- \(U_c\): known (prescribed) displacements,  
-- \(U_a\): unknown displacements,  
-- \(F_c\): unknown reaction forces,  
-- \(F_a\): applied external forces.  
+- \(\{U_c\}\): constrained (known) displacements, usually supports  
+- \(\{U_a\}\): active (unknown) displacements  
+- \(\{F_c\}\): reaction forces at supports  
+- \(\{F_a\}\): applied external loads  
 
-From the lower partition:  
+#### Solution procedure  
+
+From the **active partition**,  
 
 \[
 [K_{ac}]\{U_c\} + [K_{aa}]\{U_a\} = \{F_a\}
 \]
 
-so that:  
+which gives:  
 
 $$
-\{U_a\} = [K_{aa}]^{-1}\left( \{F_a\} - [K_{ac}]\{U_c\} \right)
+\{U_a\} = [K_{aa}]^{-1} \big( \{F_a\} - [K_{ac}]\{U_c\} \big)
 \tag{3.46}
 $$  
 
-Once the active displacements are determined, the **reaction forces** follow from the upper partition:  
+This step yields the **active displacements**.  
+
+Then, the **reactions** are obtained from the constrained partition:  
 
 $$
 \{F_c\} = [K_{cc}]\{U_c\} + [K_{ca}]\{U_a\}
 $$  
 
-where the symmetry condition ensures:  
+where symmetry ensures:  
 
 $$
 [K_{ca}] = [K_{ac}]^T
 $$  
 
+
+✅ **Summary:**  
+- Boundary conditions eliminate rigid body modes.  
+- Unknown displacements are solved from the reduced active system.  
+- Reactions are recovered afterward using the constrained equations.  
+This systematic procedure applies to **all FEM models**, not just trusses.  
+
 ---
 
-## Element Strain and Stress  
+### Element Strain and Stress  
 
-The final step in the finite element analysis of a truss is to compute the **strain** and **stress** in each element using the global displacements obtained from the solution step.  
-
-#### Element Nodal Displacements  
-
-For an element connecting nodes \(i\) and \(j\), the displacements in the **element coordinate system** are:  
+The final computational step in finite element analysis of a truss structure is to utilize the global displacements obtained in the solution step to determine the strain and stress in each element of the truss. For an element connecting nodes *i* and *j*, the element nodal displacements in the element coordinate system are given by Equations (3.19) and (3.20) as:  
 
 \[
-\begin{aligned}
-u^{(e)}_1 &= U^{(e)}_1 \cos\theta + U^{(e)}_2 \sin\theta \\
-u^{(e)}_2 &= U^{(e)}_3 \cos\theta + U^{(e)}_4 \sin\theta
-\end{aligned}
-\tag{3.48}
+u^{(e)}_1 = U^{(e)}_1 \cos\theta + U^{(e)}_2 \sin\theta
+\]  
+
+\[
+u^{(e)}_2 = U^{(e)}_3 \cos\theta + U^{(e)}_4 \sin\theta
 \]
+*(3.48)*  
 
-Here:  
-- \(u^{(e)}_1, u^{(e)}_2\) = element nodal displacements along the element axis,  
-- \(U^{(e)}_1, U^{(e)}_2, U^{(e)}_3, U^{(e)}_4\) = global nodal displacements,  
-- \(\theta\) = element orientation angle.  
-
-#### Element Strain  
-
-Using the displacement interpolation functions, the **axial strain** in the element is:  
+The element axial strain (utilizing Equation 2.29 and the discretization and interpolation functions of Equation 2.25) is then:  
 
 \[
-\varepsilon^{(e)} = \frac{du^{(e)}(x)}{dx} = \frac{u^{(e)}_2 - u^{(e)}_1}{L^{(e)}}
-\tag{3.49}
-\]
-
-where \(L^{(e)}\) is the length of the element.  
-
-#### Element Stress  
-
-Applying Hooke’s Law, the **axial stress** in the element is:  
-
-\[
-\sigma^{(e)} = E \, \varepsilon^{(e)}
-\tag{3.50}
-\]
-
-with \(E\) being the modulus of elasticity of the element material.  
-
-#### Strain and Stress in Global Displacement Form  
-
-The global finite element solution provides **global displacements**, not element displacements directly. To connect the two, the transformation relations (Equations 3.21–3.22) are used. In terms of global nodal displacements, the strain becomes:  
-
-\[
-\varepsilon^{(e)} = \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
-\begin{Bmatrix}
-U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
-\end{Bmatrix}
-\tag{3.51}
-\]
-
-and the corresponding stress is:  
-
-\[
-\sigma^{(e)} = E \, \varepsilon^{(e)} = E \frac{d}{dx}[N_1(x) \; N_2(x)] [R] 
-\begin{Bmatrix}
-U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
-\end{Bmatrix}
-\tag{3.52}
-\]
-
-Here:  
-- \([R]\) = transformation matrix,  
-- \(N_1(x), N_2(x)\) = shape functions,  
-- Positive \(\sigma^{(e)}\) → element is in **tension**,  
-- Negative \(\sigma^{(e)}\) → element is in **compression**.  
-
-#### Element Forces  
-
-Finally, the **element axial force** can also be obtained as:  
-
-\[
-\{f^{(e)}\} =
-\begin{bmatrix}
--1 & 1 \\
-\end{bmatrix}
-\frac{AE}{L^{(e)}}
+\varepsilon^{(e)} = \frac{du^{(e)}(x)}{dx}
+= \frac{d}{dx}\,[N_1(x)\;N_2(x)]
 \begin{Bmatrix}
 u^{(e)}_1 \\ u^{(e)}_2
 \end{Bmatrix}
-\tag{3.23 revisited}
+= \frac{-1}{L^{(e)}}
+\begin{bmatrix}
+1 & -1
+\end{bmatrix}
+\begin{Bmatrix}
+u^{(e)}_1 \\ u^{(e)}_2
+\end{Bmatrix}
+= \frac{u^{(e)}_2 - u^{(e)}_1}{L^{(e)}}
+\]  
+
+*(3.49)*  
+
+where \(L^{(e)}\) is the element length.  
+
+The element axial stress is then obtained via Hooke’s law as:  
+
+\[
+\sigma^{(e)} = E \, \varepsilon^{(e)}
+\]  
+
+*(3.50)*  
+
+Note, however, that the global solution does not give the element axial displacement directly. Rather, the element displacements are obtained from the global displacements via Equations (3.48). Recalling Equations (3.21) and (3.22), the element strain in terms of global system displacements is:  
+
+\[
+\varepsilon^{(e)} = \frac{du^{(e)}(x)}{dx}
+= \frac{d}{dx}[N_1(x)\;N_2(x)][R]
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\]  
+
+*(3.51)*  
+
+where \([R]\) is the element transformation matrix defined by Equation (3.22).  
+
+Thus, the element stresses for the bar element in terms of global displacements are:  
+
+\[
+\sigma^{(e)} = E\,\varepsilon^{(e)}
+= E \frac{du^{(e)}(x)}{dx}
+= E \frac{d}{dx}[N_1(x)\;N_2(x)][R]
+\begin{Bmatrix}
+U^{(e)}_1 \\ U^{(e)}_2 \\ U^{(e)}_3 \\ U^{(e)}_4
+\end{Bmatrix}
+\]  
+
+*(3.52)*  
+
+As the bar element is formulated here:  
+- A **positive axial stress** indicates that the element is in **tension**,  
+- A **negative value** indicates **compression**,  
+per the usual structural convention.  
+
+⚠️ Note that the stress calculation indicated in Equation (3.52) must be performed **on an element-by-element basis** after the global displacements are determined. If desired, the element forces can be  obtained via Equation 3.23
+
+---
+
+### Example 3.2 – Two-Element Truss with External Loading  
+
+**Problem Statement**  
+The two-element truss in Figure 3.5 is subjected to external loading as shown. Using the same node and element numbering as in Figure 3.2, determine:  
+- The displacement components of node 3,  
+- The reaction force components at nodes 1 and 2,  
+- The element displacements, stresses, and forces.
+
+<img width="569" height="552" alt="image" src="https://github.com/user-attachments/assets/f6c2920a-76a4-42c1-b960-d9f1c85b9fc7" />
+
+The elements have modulus of elasticity:  
+\[
+E_1 = E_2 = 10 \times 10^6 \, \text{lb/in}^2, \quad A_1 = A_2 = 1.5 \, \text{in}^2
+\]  
+
+---
+
+**Solution:**  
+
+Nodal coordinates:  
+\[
+\theta_1 = \pi/4, \quad \theta_2 = 0
+\]  
+
+Element lengths:  
+\[
+L_1 = \sqrt{40^2 + 40^2} \approx 56.57 \, \text{in.}, \quad L_2 = 40 \, \text{in.}
+\]  
+
+Characteristic stiffnesses:  
+
+\[
+k_1 = \frac{A_1 E_1}{L_1} = 2.65 \times 10^5 \, \text{lb/in.}, \quad 
+k_2 = \frac{A_2 E_2}{L_2} = 3.75 \times 10^5 \, \text{lb/in.}
+\]  
+
+Global stiffness matrix:  
+
+\[
+[K] = 10^5
+\begin{bmatrix}
+1.325 & 1.325 & 0 & 0 & -1.325 & -1.325 \\
+1.325 & 1.325 & 0 & 0 & -1.325 & -1.325 \\
+0 & 0 & 3.75 & 0 & -3.75 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+-1.325 & -1.325 & -3.75 & 0 & 5.075 & 1.325 \\
+-1.325 & -1.325 & 0 & 0 & 1.325 & 1.325
+\end{bmatrix}
+\]  
+
+
+**Step 1: Apply Constraints**  
+\[
+U_1 = U_2 = U_3 = U_4 = 0
+\]  
+
+Reduced system:  
+
+\[
+10^5
+\begin{bmatrix}
+5.075 & 1.325 \\
+1.325 & 1.325
+\end{bmatrix}
+\begin{Bmatrix}
+U_5 \\ U_6
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+500 \\ 300
+\end{Bmatrix}
+\]  
+
+**Step 2: Solve Displacements**  
+
+\[
+U_5 = 5.333 \times 10^{-4} \, \text{in.}, \quad U_6 = 1.731 \times 10^{-3} \, \text{in.}
+\]  
+
+
+**Step 3: Reaction Forces**  
+
+\[
+\{F_c\} =
+\begin{Bmatrix}
+-300 \\ -300 \\ -200 \\ 0
+\end{Bmatrix} \, \text{lb}
+\]  
+
+**Step 4: Element 1 Results**  
+
+Element displacements:  
+\[
+\{u^{(1)}\} =
+\begin{Bmatrix}
+0 \\ 1.6 \times 10^{-3}
+\end{Bmatrix} \, \text{in.}
+\]  
+
+Stress:  
+\[
+\sigma^{(1)} \approx 283 \, \text{lb/in}^2 \, (\text{tension})
+\]  
+
+Element forces:  
+\[
+\{f^{(1)}\} =
+\begin{Bmatrix}
+-424 \\ 424
+\end{Bmatrix} \, \text{lb}
+\]  
+
+**Step 5: Element 2 Results**  
+
+Element displacements:  
+\[
+\{u^{(2)}\} =
+\begin{Bmatrix}
+0 \\ 0.5333 \times 10^{-3}
+\end{Bmatrix} \, \text{in.}
+\]  
+
+Stress:  
+\[
+\sigma^{(2)} \approx 133 \, \text{lb/in}^2 \, (\text{tension})
+\]  
+
+Element forces:  
+\[
+\{f^{(2)}\} =
+\begin{Bmatrix}
+-200 \\ 200
+\end{Bmatrix} \, \text{lb}
+\]  
+
+
+### ✅ Summary of Results  
+
+| Quantity | Result |
+|----------|--------|
+| **Displacements** | \( U_5 = 5.333 \times 10^{-4} \, \text{in.}, \; U_6 = 1.731 \times 10^{-3} \, \text{in.} \) |
+| **Reaction Forces** | \( F_1 = -300 \, \text{lb}, \; F_2 = -300 \, \text{lb}, \; F_3 = -200 \, \text{lb}, \; F_4 = 0 \) |
+| **Element 1 Displacements** | \( u^{(1)} = [0, \, 1.6 \times 10^{-3}] \, \text{in.} \) |
+| **Element 1 Stress** | \( \sigma^{(1)} = 283 \, \text{lb/in}^2 \, (\text{tension}) \) |
+| **Element 1 Forces** | \( f^{(1)} = [-424, \, 424] \, \text{lb} \) |
+| **Element 2 Displacements** | \( u^{(2)} = [0, \, 0.5333 \times 10^{-3}] \, \text{in.} \) |
+| **Element 2 Stress** | \( \sigma^{(2)} = 133 \, \text{lb/in}^2 \, (\text{tension}) \) |
+| **Element 2 Forces** | \( f^{(2)} = [-200, \, 200] \, \text{lb} \) |
+
+
+📌 Both elements are in **tension**, and the FEM results agree with the direct stress formula \( \sigma = F/A \).  
+
+---
+
+## Comprehensive Example  
+
+As a comprehensive example of two-dimensional truss analysis, the structure depicted in **Figure 3.6a** is analyzed to obtain displacements, reaction forces, strains, and stresses. While not all computational details are included, this example illustrates the sequence of required steps in a finite element analysis.  
+
+<img width="1170" height="500" alt="image" src="https://github.com/user-attachments/assets/81e8216f-4835-4137-91b8-982045cde155" />
+
+### Step 1: Define Geometry and Connectivity  
+
+- Global coordinate system specified.  
+- Node numbers and element connectivity shown in **Figure 3.6b**.  
+
+### Step 2: Compute Element Stiffness Values  
+
+\[
+k^{(1)} = k^{(3)} = k^{(4)} = k^{(5)} = k^{(7)} = k^{(8)} 
+= \frac{1.5 \times 10^7}{40} = 3.75 \times 10^5 \, \text{lb/in.}
 \]
 
-This provides the internal force carried by each truss member, consistent with the sign convention for stress.  
+\[
+k^{(2)} = k^{(6)} 
+= \frac{1.5 \times 10^7}{40 \sqrt{2}} 
+= 2.65 \times 10^5 \, \text{lb/in.}
+\]
+
+### Step 3: Transform Element Stiffness Matrices  
+
+Using Equation (3.28) with orientations:  
+\[
+\theta_1 = \theta_3 = \theta_5 = \theta_7 = 0, \quad
+\theta_4 = \theta_8 = \pi/2, \quad
+\theta_2 = \pi/4, \quad
+\theta_6 = 3\pi/4
+\]  
+
+For example:  
+
+\[
+K^{(1)} = 3.75 \times 10^5
+\begin{bmatrix}
+1 & 0 & -1 & 0 \\
+0 & 0 & 0 & 0 \\
+-1 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0
+\end{bmatrix}, \quad
+K^{(2)} = \frac{2.65 \times 10^5}{2}
+\begin{bmatrix}
+1 & 1 & -1 & -1 \\
+1 & 1 & -1 & -1 \\
+-1 & -1 & 1 & 1 \\
+-1 & -1 & 1 & 1
+\end{bmatrix}
+\]  
+
+(Similar forms for \(K^{(3)}\) through \(K^{(8)}\)).  
+
+### Step 4: Define Connectivity  
+
+#### (a) Correspondence Table (Table 3.3)  
+Maps element displacements to global degrees of freedom.  
+
+#### (b) Element-Node Connectivity (Table 3.4)  
+Each element is associated with nodes \(i, j\).  
+
+Example:  
+\[
+L^{(1)} = [1 \; 2 \; 5 \; 6], \quad
+L^{(2)} = [1 \; 2 \; 7 \; 8], \quad
+\ldots
+\]  
+
+### Step 5: Assemble Global Stiffness Matrix  
+
+Using the connectivity data, stiffness contributions from all 8 elements are assembled into the global 12×12 stiffness matrix \([K]\).  
+
+### Step 6: Apply Boundary Conditions  
+
+- Nodes 1 and 2 are **fixed**.  
+\[
+U_1 = U_2 = U_3 = U_4 = 0
+\]  
+
+This reduces the system to **8 active displacement equations**.  
+
+### Step 7: Solve for Active Displacements  
+
+Solving numerically (via spreadsheet, MATLAB, or FEM software):  
+
+\[
+\begin{Bmatrix}
+U_5 \\ U_6 \\ U_7 \\ U_8 \\ U_9 \\ U_{10} \\ U_{11} \\ U_{12}
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+0.02133 \\ 0.04085 \\ -0.01600 \\ 0.04619 \\ 
+0.04267 \\ 0.15014 \\ -0.00533 \\ 0.16614
+\end{Bmatrix} \, \text{in.}
+\]
+
+### Step 8: Compute Reaction Forces  
+
+Substituting displacements into the constraint equations:  
+
+\[
+\begin{Bmatrix}
+F_1 \\ F_2 \\ F_3 \\ F_4
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+-12{,}000 \\ -4{,}000 \\ 6{,}000 \\ 0
+\end{Bmatrix} \, \text{lb}
+\]  
+
+### Step 9: Compute Strain and Stress  
+
+For example, **Element 2**:  
+
+\[
+u^{(2)}_1 = 0, \quad 
+u^{(2)}_2 = -0.01600 + 0.04618 = 0.02134 \, \text{in.}
+\]
+
+\[
+\varepsilon^{(2)} = \frac{u^{(2)}_2 - u^{(2)}_1}{L^{(2)}} 
+= 3.77 \times 10^{-4}, \quad
+\sigma^{(2)} = E \varepsilon^{(2)} = 3771 \, \text{psi}
+\]
+
+### ✅ Final Results (Table 3.5)  
+
+| Element | Strain (\(\varepsilon\)) | Stress (psi) |
+|---------|--------------------------|--------------|
+| 1 | \(5.33 \times 10^{-4}\) | 5333 |
+| 2 | \(3.77 \times 10^{-4}\) | 3771 |
+| 3 | \(-4.0 \times 10^{-4}\) | -4000 |
+| 4 | \(1.33 \times 10^{-4}\) | 1333 |
+| 5 | \(5.33 \times 10^{-4}\) |
 
 ---
 
-✅ With this step, the finite element procedure for a truss structure is complete:  
-1. Assemble the global stiffness matrix,  
-2. Apply boundary conditions and solve for global displacements,  
-3. Back-substitute displacements to compute element strains, stresses, and internal forces.
-
----
 
 ## 📚 Reference
 
