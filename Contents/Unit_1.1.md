@@ -556,32 +556,32 @@ To organize connectivity, we use a **correspondence table**:
 
 Using the correspondence, the **global stiffness matrix** is assembled term by term:
 
-- $K_{11} = k^{(1)}_{11} + 0$  
-- $K_{12} = k^{(1)}_{12} + 0$  
-- $K_{13} = 0 + 0$  
-- $K_{14} = 0 + 0$  
-- $K_{15} = k^{(1)}_{13} + 0$  
-- $K_{16} = k^{(1)}_{14} + 0$  
+- $$K_{11} = k^{(1)}_{11} + 0$$
+- $$K_{12} = k^{(1)}_{12} + 0$$
+- $$K_{13} = 0 + 0$$
+- $$K_{14} = 0 + 0$$
+- $$K_{15} = k^{(1)}_{13} + 0$$
+- $$K_{16} = k^{(1)}_{14} + 0$$
 
-- $K_{22} = k^{(1)}_{22} + 0$  
-- $K_{23} = 0 + 0$  
-- $K_{24} = 0 + 0$  
-- $K_{25} = k^{(1)}_{23} + 0$  
-- $K_{26} = k^{(1)}_{24} + 0$  
+- $$K_{22} = k^{(1)}_{22} + 0$$
+- $$K_{23} = 0 + 0$$
+- $$K_{24} = 0 + 0$$
+- $$K_{25} = k^{(1)}_{23} + 0$$
+- $$K_{26} = k^{(1)}_{24} + 0$$
 
-- $K_{33} = 0 + k^{(2)}_{11}$  
-- $K_{34} = 0 + k^{(2)}_{12}$  
-- $K_{35} = 0 + k^{(2)}_{13}$  
-- $K_{36} = 0 + k^{(2)}_{14}$  
+- $$K_{33} = 0 + k^{(2)}_{11}$$
+- $$K_{34} = 0 + k^{(2)}_{12}$$
+- $$K_{35} = 0 + k^{(2)}_{13}$$
+- $$K_{36} = 0 + k^{(2)}_{14}$$
 
-- $K_{44} = 0 + k^{(2)}_{22}$  
-- $K_{45} = 0 + k^{(2)}_{23}$  
-- $K_{46} = 0 + k^{(2)}_{24}$  
+- $$K_{44} = 0 + k^{(2)}_{22}$$
+- $$K_{45} = 0 + k^{(2)}_{23}$$
+- $$K_{46} = 0 + k^{(2)}_{24}$$
 
-- $K_{55} = k^{(1)}_{33} + k^{(2)}_{33}$   
-- $K_{56} = k^{(1)}_{34} + k^{(2)}_{34}$  
-  
-- $K_{66} = k^{(1)}_{44} + k^{(2)}_{44}$    
+- $$K_{55} = k^{(1)}_{33} + k^{(2)}_{33}$$
+- $$K_{56} = k^{(1)}_{34} + k^{(2)}_{34}$$
+- $$K_{66} = k^{(1)}_{44} + k^{(2)}_{44}$$
+
 
 The **symmetry** of the stiffness matrix has been used to avoid repetition.
 
@@ -629,76 +629,123 @@ Transform the stiffness matrix of each element into the **global coordinate syst
 
 ### Solution:
 
-#### Step 1: Transformation for Element 1
+#### Step 1 — Element 1: transform to global frame
 
-For $\theta_1 = \pi/4$:  
-
-- $\cos\theta_1 = \sin\theta_1 = \tfrac{\sqrt{2}}{2}$  
-- Therefore: $\cos^2\theta_1 = \sin^2\theta_1 = \cos\theta_1\sin\theta_1 = \tfrac{1}{2}$  
-
-Substituting into Equation (3.28):  
+For element 1, $$\theta_1 = \dfrac{\pi}{4}\Rightarrow
+\cos\theta_1=\sin\theta_1=\dfrac{\sqrt{2}}{2}.$$  
+Thus
 
 $$
-[K^{(1)}] = \frac{k_1}{2}
+\cos^2\theta_1=\sin^2\theta_1=\cos\theta_1\sin\theta_1=\dfrac{1}{2}.
+$$
+
+Use the general transformed element stiffness (Eq. 3.28):
+
+$$
+[K^{(e)}] = k_e
+\begin{bmatrix}
+c^2 & cs & -c^2 & -cs \\
+cs & s^2 & -cs & -s^2 \\
+- c^2 & -cs & c^2 & cs \\
+- cs & -s^2 & cs & s^2
+\end{bmatrix}
+$$
+
+Substituting \(c=s=\dfrac{\sqrt{2}}{2}\) and \(k_e=k_1\) gives
+
+$$
+[K^{(1)}]
+= k_1
+\begin{bmatrix}
+\tfrac12 & \tfrac12 & -\tfrac12 & -\tfrac12 \\
+\tfrac12 & \tfrac12 & -\tfrac12 & -\tfrac12 \\
+-\tfrac12 & -\tfrac12 & \tfrac12 & \tfrac12 \\
+-\tfrac12 & -\tfrac12 & \tfrac12 & \tfrac12
+\end{bmatrix}
+=
+\frac{k_1}{2}
 \begin{bmatrix}
 1 & 1 & -1 & -1 \\
 1 & 1 & -1 & -1 \\
 -1 & -1 & 1 & 1 \\
 -1 & -1 & 1 & 1
-\end{bmatrix}
+\end{bmatrix}.
 $$
 
-#### Step 2: Transformation for Element 2
+#### Step 2 — Element 2: transform to global frame
 
-For $\theta_2 = 0$:  
+For element 2, $$\theta_2 = 0\Rightarrow \cos\theta_2=1,\; \sin\theta_2=0.$$
 
-- $\cos\theta_2 = 1$, $\sin\theta_2 = 0$  
-
-Hence:
+Substitute into Eq. (3.28) with \(k_e=k_2\):
 
 $$
-[K^{(2)}] = k_2
+[K^{(2)}]
+= k_2
 \begin{bmatrix}
 1 & 0 & -1 & 0 \\
 0 & 0 & 0 & 0 \\
 -1 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0
-\end{bmatrix}
+\end{bmatrix}.
 $$
 
-#### Step 3: Assembly Using Connectivity
+#### Step 3 — Element ↔ Global displacement mapping (connectivity)
 
-Using the connectivity relations (Eqs. 3.35–3.36), the element contributions are placed into the **6×6 global matrix**.  
+From the element-to-global mapping (Eqs. 3.35–3.36):
 
-The assembled terms are:  
+- Element 1 local displacement vector corresponds to global displacements:
+  $$
+  \{U^{(1)}\} \Rightarrow \{U_1,\,U_2,\,U_5,\,U_6\}
+  $$
+- Element 2 local displacement vector corresponds to global displacements:
+  $$
+  \{U^{(2)}\} \Rightarrow \{U_3,\,U_4,\,U_5,\,U_6\}
+  $$
 
-- $K_{11} = k_1/2$, $K_{12} = k_1/2$, $K_{15} = -k_1/2$, $K_{16} = -k_1/2$  
-- $K_{22} = k_1/2$, $K_{25} = -k_1/2$, $K_{26} = -k_1/2$  
-- $K_{33} = k_2$, $K_{35} = -k_2$  
-- $K_{55} = k_1/2 + k_2$, $K_{56} = k_1/2$  
-- $K_{66} = k_1/2$  
+Use the correspondence table to place each element's stiffness terms into the appropriate positions of the global \(6\times6\) matrix.
 
+#### Step 4 — Assemble each global \(K_{ij}\) (including zeros)
 
-#### Step 4: Final Global Stiffness Matrix
+Let us list every assembled global stiffness entry \(K_{ij}\) (indices 1..6), including those that are zero.
 
-Thus, the **assembled global stiffness matrix** is:
+$$
+\begin{aligned}
+K_{11} &= \tfrac{k_1}{2}, &\qquad K_{12} &= \tfrac{k_1}{2}, &\qquad K_{13} &= 0, &\qquad K_{14} &= 0, &\qquad K_{15} &= -\tfrac{k_1}{2}, &\qquad K_{16} &= -\tfrac{k_1}{2},\\[6pt]
+K_{21} &= \tfrac{k_1}{2}, &\qquad K_{22} &= \tfrac{k_1}{2}, &\qquad K_{23} &= 0, &\qquad K_{24} &= 0, &\qquad K_{25} &= -\tfrac{k_1}{2}, &\qquad K_{26} &= -\tfrac{k_1}{2},\\[6pt]
+K_{31} &= 0, &\qquad K_{32} &= 0, &\qquad K_{33} &= k_2, &\qquad K_{34} &= 0, &\qquad K_{35} &= -k_2, &\qquad K_{36} &= 0,\\[6pt]
+K_{41} &= 0, &\qquad K_{42} &= 0, &\qquad K_{43} &= 0, &\qquad K_{44} &= 0, &\qquad K_{45} &= 0, &\qquad K_{46} &= 0,\\[6pt]
+K_{51} &= -\tfrac{k_1}{2}, &\qquad K_{52} &= -\tfrac{k_1}{2}, &\qquad K_{53} &= -k_2, &\qquad K_{54} &= 0, &\qquad K_{55} &= \tfrac{k_1}{2} + k_2, &\qquad K_{56} &= \tfrac{k_1}{2},\\[6pt]
+K_{61} &= -\tfrac{k_1}{2}, &\qquad K_{62} &= -\tfrac{k_1}{2}, &\qquad K_{63} &= 0, &\qquad K_{64} &= 0, &\qquad K_{65} &= \tfrac{k_1}{2}, &\qquad K_{66} &= \tfrac{k_1}{2}.
+\end{aligned}
+$$
+
+*(Matrix symmetry implies \(K_{ij}=K_{ji}\); both upper and lower parts are listed for clarity.)*
+
+#### Step 5 — Final global stiffness matrix
+
+The assembled global stiffness matrix for the two-element truss is
 
 $$
 [K] =
 \begin{bmatrix}
-\;\; k_1/2 & \;\; k_1/2 & 0 & 0 & -k_1/2 & -k_1/2 \\
-\;\; k_1/2 & \;\; k_1/2 & 0 & 0 & -k_1/2 & -k_1/2 \\
+\; \tfrac{k_1}{2} & \; \tfrac{k_1}{2} & 0 & 0 & -\tfrac{k_1}{2} & -\tfrac{k_1}{2} \\
+\; \tfrac{k_1}{2} & \; \tfrac{k_1}{2} & 0 & 0 & -\tfrac{k_1}{2} & -\tfrac{k_1}{2} \\
 0 & 0 & k_2 & 0 & -k_2 & 0 \\
 0 & 0 & 0 & 0 & 0 & 0 \\
--\,k_1/2 & -\,k_1/2 & -k_2 & 0 & k_1/2 + k_2 & k_1/2 \\
--\,k_1/2 & -\,k_1/2 & 0 & 0 & k_1/2 & k_1/2
-\end{bmatrix}
+-\,\tfrac{k_1}{2} & -\,\tfrac{k_1}{2} & -k_2 & 0 & \tfrac{k_1}{2} + k_2 & \tfrac{k_1}{2} \\
+-\,\tfrac{k_1}{2} & -\,\tfrac{k_1}{2} & 0 & 0 & \tfrac{k_1}{2} & \tfrac{k_1}{2}
+\end{bmatrix}.
 $$
 
+#### Comment
 
-**Result:**  
-The global stiffness matrix obtained by the **Direct Stiffness Method** is identical to that obtained earlier by the **Nodal Equilibrium Equations** approach. This confirms the consistency of the two formulations.
+This global stiffness matrix is identical to the matrix obtained earlier by writing nodal equilibrium directly (Section 3.2). The Direct Stiffness Method therefore provides a systematic element-by-element route to the same global system:
+
+$$
+[K]\{U\}=\{F\}.
+$$
+
+You may now apply boundary conditions (known displacements) to reduce the system and solve for the unknown nodal displacements, then back-substitute to compute element axial forces, strains and stresses.
 
 ---
-
 
