@@ -27,7 +27,7 @@
 
 ## 📚 Reference
 
-- [*Fundamentals of Finite Element Analysis - (Unit 3 - Chapter 4)*](Resources/FEM_Hutton_Unit3_Ch4.pdf) – Hutton David, McGraw-Hill 
+- [*Fundamentals of Finite Element Analysis - (Unit 2 - Chapter 4)*](Resources/FEM_Hutton_Unit2_Ch4.pdf) – Hutton David, McGraw-Hill 
 
 
 
