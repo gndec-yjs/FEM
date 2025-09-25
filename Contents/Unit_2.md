@@ -21,41 +21,39 @@
 
 ---
 
-# Flexure Elements
+# Flexure Elements 
 
-## Introduction
+## 4.1 Introduction
 
-One-dimensional axial load-only elements are useful for analyzing simple structures. However, they **cannot transmit bending effects**, limiting their application in commonly encountered structures with welded or riveted joints.
+The one-dimensional, axial load-only elements discussed in earlier chapters are useful for analyzing many simple structures. However, they **cannot transmit bending effects**, which limits their application in structures with welded or riveted joints.
 
-To address this, **elementary beam theory** is applied to develop a **flexure (beam) element** capable of representing **transverse bending effects**.
+Elementary beam theory is applied here to develop a **flexure (beam) element** capable of properly representing **transverse bending effects**.
 
-* Initially, the element is presented as a **1D line element** capable of bending in a plane.
+* The element is first presented as a **1D line element** capable of bending in a plane.
 * Discretized equations are developed using **polynomial interpolation functions**.
-* Formulation can be extended to **two-plane bending**, and **axial loading and torsion** effects can be included.
+* Later, the formulation can be extended to **two-plane bending**, **axial loading**, and **torsion**.
 
----
+## 4.2 Elementary Beam Theory
 
-## Elementary Beam Theory
+Consider a **simply supported beam** subjected to a **distributed transverse load** $q(x)$, expressed in force per unit length.
 
-### Beam under Distributed Load
+*Coordinate system:*
 
-Consider a simply supported beam subjected to a distributed transverse load $q(x)$, expressed as force per unit length.
-
-**Coordinate system:**
-
-* $x$ → axial direction
-* $y$ → transverse direction
+* $x$ → axial coordinate
+* $y$ → transverse coordinate
 
 **Assumptions:**
 
-1. Beam loaded only in the $y$-direction.
+1. Beam loaded only in $y$-direction.
 2. Small deflections relative to beam dimensions.
-3. Material is linearly elastic, isotropic, and homogeneous.
-4. Beam is prismatic, with a cross-section symmetric about the plane of bending.
+3. Material is linearly elastic, isotropic, homogeneous.
+4. Beam is prismatic and the cross-section has an axis of symmetry in the plane of bending.
 
 <img width="866" height="429" alt="image" src="https://github.com/user-attachments/assets/08e0608e-b8a1-4378-8359-ccd7323dd0b1" />
 
-**Figure:** Simply supported beam under distributed load
+**Figure 4.1:** Simply supported beam under arbitrary distributed load
+*(a) Load, (b) deflected shape, (c) sign convention for shear force and bending moment)*
+
 
 ### Cross-Section Symmetry
 
@@ -63,173 +61,240 @@ Consider a simply supported beam subjected to a distributed transverse load $q(x
 * Asymmetric sections (L-shaped) bend **out-of-plane**.
 * Maximum deflection $\delta_{\max} < 0.1h$, where $h$ = cross-section depth.
 
-
 <img width="660" height="373" alt="image" src="https://github.com/user-attachments/assets/cdf4ff25-891e-4021-8f25-e7c3a0e2c0f5" />
 
-**Figure:** Beam cross-sections (symmetric vs. asymmetric)
-
+**Figure 4.2:** Beam cross sections:
+*(a) and (b) symmetric sections, (c) asymmetric L-shaped section)*
 
 ### Neutral Surface and Bending Strain
 
-* Top surface shortens, bottom elongates → **neutral surface** at $y=0$.
-* Differential length after bending:
+Considering a differential length $dx$ after bending, the neutral surface is defined at $y=0$.
+
+**Length after bending:**
 
 $$
-ds = (1 - y / \rho) dx
+ds = (1 - y/d) dx \tag{4.1}
 $$
 
-* Bending strain:
+**Bending strain:**
 
 $$
-\varepsilon_x = \frac{ds - dx}{dx} = -y \frac{1}{\rho}
+\varepsilon_x = \frac{ds - dx}{dx} = -y/d \tag{4.2}
 $$
 
-* For small deflections:
+**Radius of curvature:**
 
 $$
-\frac{1}{\rho} \approx \frac{d^2 v}{dx^2} \implies \varepsilon_x = -y \frac{d^2 v}{dx^2}
+\frac{1}{\rho} = \frac{d^2v/dx^2}{\left(1 + (dv/dx)^2\right)^{3/2}} \tag{4.3}
 $$
 
-**Normal stress:**
+For **small deflections**, slopes are small, giving:
 
 $$
-\sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2}
+\frac{1}{\rho} \approx \frac{d^2v}{dx^2} \tag{4.4}
 $$
 
-* Stress varies **linearly with distance from the neutral surface**.
-* Neutral surface passes through **centroid**:
+Thus, normal strain along the beam axis is:
 
 $$
-\int_A y \, dA = 0
+\varepsilon_x = -y \frac{d^2v}{dx^2} \tag{4.5}
+$$
+
+Normal stress:
+
+$$
+\sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2} \tag{4.6}
+$$
+
+Since no net axial force acts on the cross-section:
+
+$$
+F_x = \int_A \sigma_x \, dA = - \int_A E y \frac{d^2 v}{dx^2} \, dA = 0 \tag{4.7}
+$$
+
+This implies the neutral surface passes through the **centroid**:
+
+$$
+\int_A y \, dA = 0 \tag{4.8}
 $$
 
 ### Bending Moment
 
-* Internal bending moment:
+Internal bending moment:
 
 $$
-M(x) = \int_A y \sigma_x \, dA = E I_z \frac{d^2 v}{dx^2}
+M(x) = - \int_A y \sigma_x \, dA = E \int_A y^2 \frac{d^2 v}{dx^2} \, dA \tag{4.9}
 $$
 
-where $I_z = \int_A y^2 dA$ = moment of inertia.
-
-* Normal stress in terms of bending moment:
+Moment of inertia:
 
 $$
-\sigma_x = -\frac{M(x) y}{I_z}
+I_z = \int_A y^2 dA
 $$
 
----
+Hence:
 
-## Flexure Element
+$$
+M(x) = E I_z \frac{d^2 v}{dx^2} \tag{4.10}
+$$
 
-### Assumptions for Flexure Element
+Normal stress in terms of bending moment:
+
+$$
+\sigma_x = -\frac{M(x) y}{I_z} = -y E \frac{d^2 v}{dx^2} \tag{4.11}
+$$
+
+## 4.3 Flexure Element
+
+**Assumptions:**
 
 1. Length $L$ with **two nodes**.
 2. Connected to other elements **only at nodes**.
 3. Loading occurs **only at nodes**.
 
-* Field variable: transverse displacement $v(x)$ of neutral surface.
-* Both **displacement** and **slope (rotation)** at nodes are considered.
+Field variable: transverse displacement $v(x)$ of the neutral surface.
 
 ### Nodal Variables
 
 * Nodes 1 and 2 at element ends.
-* Variables: $v_1, v_2$ (displacements), $\theta_1, \theta_2$ (slopes in radians).
-* Boundary conditions:
+* Variables: $v_1, v_2$ (displacements), $\theta_1, \theta_2$ (slopes/rotations in radians).
+
+Boundary conditions:
 
 $$
-\begin{align}
-v(x_1) &= v_1, & v(x_2) &= v_2 \\
-\frac{dv}{dx}\big|_{x=x_1} &= \theta_1, & \frac{dv}{dx}\big|_{x=x_2} &= \theta_2
-\end{align}
+v(x_1) = v_1, \quad v(x_2) = v_2 \tag{4.12}
+$$
+
+$$
+\frac{dv}{dx}\Big|_{x=x_1} = \theta_1, \quad \frac{dv}{dx}\Big|_{x=x_2} = \theta_2 \tag{4.13}
+$$
+
+Or equivalently:
+
+$$
+v(0) = v_1, \quad v(L) = v_2 \tag{4.14}
+$$
+
+$$
+\frac{dv}{dx}(0) = \theta_1, \quad \frac{dv}{dx}(L) = \theta_2 \tag{4.15, 4.16}
 $$
 
 <img width="878" height="575" alt="image" src="https://github.com/user-attachments/assets/87b47b3a-7a18-4f39-961d-336f8bb554f2" />
 
 **Figure:** Beam element nodal variables and Beam element nodal displacements shown in a positive sense
 
+---
 
 ### Displacement Function
 
-* Use a **cubic polynomial**:
+Assume cubic polynomial:
 
 $$
-v(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3
+v(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3 \tag{4.17}
 $$
 
-* Apply boundary conditions to solve coefficients:
+Apply boundary conditions (4.14–4.16) to solve coefficients:
 
 $$
-\begin{align}
-a_0 &= v_1 \\
-a_1 &= \theta_1 \\
-a_2 &= \frac{3}{L^2} (v_2 - v_1) - \frac{1}{L}(2\theta_1 + \theta_2) \\
-a_3 &= \frac{2}{L^3}(v_1 - v_2) + \frac{1}{L^2}(\theta_1 + \theta_2)
-\end{align}
+a_0 = v_1 \tag{4.22}
 $$
 
-* Displacement in **shape function form**:
-
 $$
-v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2
+a_1 = \theta_1 \tag{4.23}
 $$
 
-* $N_1, N_2, N_3, N_4$ = **interpolation functions**.
-* Dimensionless coordinate: $\xi = x/L$.
+$$
+a_2 = \frac{3}{L^2} (v_2 - v_1) - \frac{1}{L}(2\theta_1 + \theta_2) \tag{4.24}
+$$
 
-<img width="599" height="612" alt="image" src="https://github.com/user-attachments/assets/955af7ed-453b-4029-90f2-9ae215a1e812" />
+$$
+a_3 = \frac{2}{L^3}(v_1 - v_2) + \frac{1}{L^2}(\theta_1 + \theta_2) \tag{4.25}
+$$
 
-**Figure:** Shape functions along element length
+Substitute into $v(x)$:
+
+$$
+v(x) = \left(1-3\frac{x^2}{L^2} + 2 \frac{x^3}{L^3}\right)v_1 + \left(x - 2\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_1 + \left(3\frac{x^2}{L^2} - 2\frac{x^3}{L^3}\right)v_2 + \left(-\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_2 \tag{4.26}
+$$
+
+Matrix form:
+
+$$
+v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2 \tag{4.27a}
+$$
+
+$$
+v(x) = [N_1 \ N_2 \ N_3 \ N_4]
+\begin{Bmatrix} v_1 \\ \theta_1 \\ v_2 \\ \theta_2 \end{Bmatrix} = [N]\{v\} \tag{4.27b}
+$$
+
+Dimensionless coordinate:
+
+$$
+\xi = \frac{x}{L} \tag{4.28}
+$$
+
+Alternative form:
+
+$$
+v(x) = (1-3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L^2(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
+$$
 
 ### Stress Computation
 
-* Normal stress at cross-section:
+Using Equation (4.11) and interpolation:
 
 $$
-\sigma_x(x, y) = -y E \frac{d^2[N]\{v_1, \theta_1, v_2, \theta_2\}}{dx^2}
+\sigma_x(x,y) = -y E \frac{d^2 [N]}{dx^2} \{v_1, \theta_1, v_2, \theta_2\} \tag{4.30}
 $$
 
-* Maximum stress occurs at outer fibers ($y_{\max}$):
+Maximum stress occurs at outer fibers $y_{\max}$:
 
 $$
-\sigma_x(x) = y_{\max} E \frac{d^2[N]\{v_1, \theta_1, v_2, \theta_2\}}{dx^2}
+\sigma_x(x) = y_{\max} E \frac{d^2 [N]}{dx^2} \{v_1, \theta_1, v_2, \theta_2\} \tag{4.31}
 $$
 
-* Nodal stresses:
+Expanded form:
 
 $$
-\begin{align}
-\sigma_x(0) &= \frac{6 y_{\max} E}{L^2} (v_2 - v_1) - \frac{2 y_{\max} E}{L} (2\theta_1 + \theta_2) \\
-\sigma_x(L) &= \frac{6 y_{\max} E}{L^2} (v_1 - v_2) + \frac{2 y_{\max} E}{L} (2\theta_2 + \theta_1)
-\end{align}
+\sigma_x(x) = y_{\max} E \left( \frac{12x}{L^3} - \frac{6}{L^2} v_1 + \frac{6x}{L^2} - \frac{4}{L} \theta_1 + \frac{6}{L^2} - \frac{12x}{L^3} v_2 + \frac{6x}{L^2} - \frac{2}{L} \theta_2 \right) \tag{4.32}
 $$
 
-* Stress varies **linearly along the element**, so only **nodal stresses** need calculation after nodal displacements are known.
+Nodal stresses:
 
-**Figure 6:** Stress distribution along a flexure element
-*(Placeholder: linear stress distribution along the beam with max tension/compression)*
+$$
+\sigma_x(x=0) = y_{\max} E \left[ \frac{6}{L^2}(v_2 - v_1) - \frac{2}{L}(2\theta_1 + \theta_2) \right] \tag{4.33}
+$$
+
+$$
+\sigma_x(x=L) = y_{\max} E \left[ \frac{6}{L^2}(v_1 - v_2) + \frac{2}{L}(2\theta_2 + \theta_1) \right] \tag{4.34}
+$$
+
+
+<img width="599" height="612" alt="image" src="https://github.com/user-attachments/assets/955af7ed-453b-4029-90f2-9ae215a1e812" />
+
+**Figure:** Bending moment diagram for a flexure element. Sign convention per the strength of materials theory.
 
 ---
 
 # Flexure Element Stiffness Matrix
 
-Having developed the **flexure element displacement approximation**, we now proceed to determine the **stiffness characteristics** of the element. The stiffness matrix establishes the relationship between nodal displacements and nodal forces, which is fundamental in finite element analysis.
+Having developed the **flexure element displacement approximation**, we now examine the **stiffness characteristics** of the element, which relate **nodal displacements** to **nodal forces**.
 
 ## Strain Energy of the Flexure Element
 
-The total **strain energy** stored in a beam element due to bending can be expressed as:
+The total **strain energy** stored in the element under bending is expressed as:
 
 $$
-U_e = \frac{1}{2} \int_V \sigma_x \varepsilon_x \, dV
+U_e = \frac{1}{2} \int_V \sigma_x \varepsilon_x \, dV \tag{4.35}
 $$
 
-where $V$ represents the total volume of the element, $\sigma_x$ is the longitudinal stress, and $\varepsilon_x$ is the corresponding strain.
+where $V$ is the total volume of the element.
 
-Substituting the expressions for stress and strain obtained earlier:
+Substituting the expressions for stress and strain from Equations 4.5 and 4.6:
 
 $$
-\varepsilon_x = -y \frac{d^2 v}{dx^2}, \quad \sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2}
+\varepsilon_x = -y \frac{d^2 v}{dx^2}, \quad \sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2} \tag{4.36}
 $$
 
 yields:
@@ -238,60 +303,60 @@ $$
 U_e = \frac{E}{2} \int_V y^2 \left(\frac{d^2 v}{dx^2}\right)^2 dV
 $$
 
-For a beam with constant cross-section, the volume integral can be separated into an area and a length integral:
+For a constant cross-section, the integral can be separated:
 
 $$
-U_e = \frac{E}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 \left(\int_A y^2 dA \right) dx
+U_e = \frac{E}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 \left( \int_A y^2 \, dA \right) dx \tag{4.37}
 $$
 
-The area integral is recognized as the **moment of inertia $I_z$** about the centroidal axis perpendicular to the bending plane, giving:
+Recognizing the area integral as the **moment of inertia $I_z$**:
 
 $$
-U_e = \frac{E I_z}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 dx
+U_e = \frac{E I_z}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 dx \tag{4.38}
 $$
-
-This expression represents the **strain energy of bending** for a beam element that satisfies the assumptions of elementary beam theory.
 
 ## Discretized Strain Energy Using Nodal Variables
 
-Using the **finite element approximation** for transverse displacement:
+Using the finite element approximation (Equation 4.27):
 
 $$
 v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2
 $$
 
-the strain energy can be written in terms of nodal variables as:
+the strain energy becomes:
 
 $$
-U_e = \frac{E I_z}{2} \int_0^L \left( \frac{d^2 N_1}{dx^2} v_1 + \frac{d^2 N_2}{dx^2} \theta_1 + \frac{d^2 N_3}{dx^2} v_2 + \frac{d^2 N_4}{dx^2} \theta_2 \right)^2 dx
+U_e = \frac{E I_z}{2} \int_0^L \left( \frac{d^2 N_1}{dx^2} v_1 + \frac{d^2 N_2}{dx^2} \theta_1 + \frac{d^2 N_3}{dx^2} v_2 + \frac{d^2 N_4}{dx^2} \theta_2 \right)^2 dx \tag{4.39}
 $$
 
-This integral is an **approximation**, as the discretized displacement function is generally not the exact solution for the beam bending problem. However, it provides a sufficiently accurate representation for finite element analysis.
+This is an **approximation**, since the discretized displacement is generally not the exact solution.
+
 
 ## Nodal Forces and Moments (Castigliano’s Theorem)
 
-By applying **Castigliano’s first theorem** to the strain energy, the **nodal forces and moments** can be obtained by differentiating $U_e$ with respect to the corresponding nodal displacement:
+By differentiating $U_e$ with respect to nodal displacements, we obtain the **nodal forces and moments**:
 
 $$
-F_1 = \frac{\partial U_e}{\partial v_1}, \quad M_1 = \frac{\partial U_e}{\partial \theta_1}, \quad F_2 = \frac{\partial U_e}{\partial v_2}, \quad M_2 = \frac{\partial U_e}{\partial \theta_2}
+F_1 = \frac{\partial U_e}{\partial v_1} = E I_z \int_0^L \left( \sum_{i=1}^{4} \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_1}{dx^2} dx \tag{4.40}
 $$
 
-Substituting the discretized displacement function:
+$$
+M_1 = \frac{\partial U_e}{\partial \theta_1} = E I_z \int_0^L \left( \sum_{i=1}^{4} \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_2}{dx^2} dx \tag{4.41}
+$$
 
 $$
-\begin{aligned}
-F_1 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_1}{dx^2} dx, \\
-M_1 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_2}{dx^2} dx, \\
-F_2 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_3}{dx^2} dx, \\
-M_2 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_4}{dx^2} dx,
-\end{aligned}
+F_2 = \frac{\partial U_e}{\partial v_2} = E I_z \int_0^L \left( \sum_{i=1}^{4} \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_3}{dx^2} dx \tag{4.42}
+$$
+
+$$
+M_2 = \frac{\partial U_e}{\partial \theta_2} = E I_z \int_0^L \left( \sum_{i=1}^{4} \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_4}{dx^2} dx \tag{4.43}
 $$
 
 where $q_i = \{v_1, \theta_1, v_2, \theta_2\}$.
 
 ## Element Stiffness Matrix
 
-These equations relate **nodal displacements** to **nodal forces** in the standard form:
+The nodal forces and moments can be written in matrix form:
 
 $$
 \begin{bmatrix}
@@ -306,44 +371,44 @@ v_1 \\ \theta_1 \\ v_2 \\ \theta_2
 =
 \begin{bmatrix}
 F_1 \\ M_1 \\ F_2 \\ M_2
-\end{bmatrix}
+\end{bmatrix} \tag{4.44}
 $$
 
 with the **stiffness coefficients**:
 
 $$
-k_{mn} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx, \quad m,n=1,4
+k_{mn} = k_{nm} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx, \quad m,n=1,4 \tag{4.45}
 $$
 
-### Transformation to Dimensionless Coordinate
+## Transformation to Dimensionless Coordinate
 
-To simplify integration, introduce the **dimensionless coordinate**:
-
-$$
-\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L \, d\xi, \quad \frac{d}{dx} = \frac{1}{L} \frac{d}{d\xi}
-$$
-
-The stiffness coefficients become:
+Introduce the dimensionless variable:
 
 $$
-k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi
+\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L \, d\xi, \quad \frac{d}{dx} = \frac{1}{L} \frac{d}{d\xi} \tag{4.46, 4.47}
 $$
 
-### Computed Stiffness Coefficients
+Then the stiffness coefficients become:
+
+$$
+k_{mn} = k_{nm} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.48}
+$$
+
+## Computed Stiffness Coefficients
 
 Direct integration yields:
 
 $$
 \begin{aligned}
 k_{11} &= 12 \frac{E I_z}{L^3}, & k_{12} &= 6 \frac{E I_z}{L^2}, & k_{13} &= -12 \frac{E I_z}{L^3}, & k_{14} &= 6 \frac{E I_z}{L^2}, \\
-k_{22} &= 4 \frac{E I_z}{L}, & k_{23} &= -6 \frac{E I_z}{L^2}, & k_{24} &= 2 \frac{E_z}{L}, \\
+k_{22} &= 4 \frac{E I_z}{L}, & k_{23} &= -6 \frac{E I_z}{L^2}, & k_{24} &= 2 \frac{E I_z}{L}, \\
 k_{33} &= 12 \frac{E I_z}{L^3}, & k_{34} &= -6 \frac{E I_z}{L^2}, & k_{44} &= 4 \frac{E I_z}{L}
 \end{aligned}
 $$
 
-The **stiffness matrix** is symmetric: $k_{mn} = k_{nm}$.
+The matrix is symmetric: $k_{mn} = k_{nm}$.
 
-### Final Flexure Element Stiffness Matrix
+## Final Flexure Element Stiffness Matrix
 
 $$
 [k_e] = \frac{E I_z}{L^3} 
@@ -352,18 +417,234 @@ $$
 6L & 4L^2 & -6L & 2L^2 \\
 -12 & -6L & 12 & -6L \\
 6L & 2L^2 & -6L & 4L^2
-\end{bmatrix}
+\end{bmatrix} \tag{4.49}
 $$
 
 **Remarks:**
 
-* Valid for any consistent unit system.
-* Rotational DOFs ($\theta_1, \theta_2$) must be expressed in **radians**.
+* Rotational DOFs ($\theta_1, \theta_2$) must be in **radians**.
 * The matrix is singular if the element is unconstrained due to **rigid body motion**.
-
-This concludes the derivation of the **flexure element stiffness matrix**, linking nodal displacements and applied forces/moments for bending analysis in finite element modeling.
+* Valid for any consistent unit system.
 
 ---
+
+# Element Load Vector
+
+In Equations 4.40–4.43, the **element forces and moments** were treated as per **Castigliano’s first theorem**, acting in the direction of the associated nodal displacements. These directions are consistent with the **assumed positive directions** of the nodal displacements.
+
+However, the usual **beam theory sign conventions** for shear force and bending moment differ, as shown in Figures 4.6a and 4.6b. This can be expressed as:
+
+$$
+\begin{bmatrix}
+F_1 \\ M_1 \\ F_2 \\ M_2
+\end{bmatrix}_{\text{FE}} 
+\quad \Rightarrow \quad
+\begin{bmatrix}
+- V_1 \\ - M_1 \\ V_2 \\ M_2
+\end{bmatrix}_{\text{beam theory}} \tag{4.50}
+$$
+
+Here:
+
+* The **left-hand side** represents positive nodal forces and moments according to finite element formulations.
+* The **right-hand side** contains the corresponding **signed shear forces and bending moments** per the **beam theory convention**.
+
+## Nodal Forces at Element Junctions
+
+<img width="901" height="341" alt="image" src="https://github.com/user-attachments/assets/446378bc-2278-46dc-973c-c4f68dbc1664" />
+
+* **Figure 4.6:** (a) Nodal load positive convention. (b) Positive convention from the strength of materials theory. (c) Shear and bending moment diagrams depicting nodal load effects
+
+If two flexure elements share a **common node**, the internal shear forces are **equal and opposite**, unless an **external force** is applied at that node. In such a case, the sum of the internal shear forces equals the applied load.
+
+Similarly, for **bending moments**:
+
+* Internal bending moments at a node are **equal and opposite**, self-equilibrating, unless a **concentrated moment** is applied.
+* In that event, the internal moments sum to the **applied external moment**.
+
+These observations are illustrated in **Figure 4.6c**, which shows a simply supported beam with:
+
+* A **concentrated force** at the midpoint
+* A **concentrated bending moment** at the midpoint
+
+The **shear force diagram** exhibits a **jump discontinuity** at the point of application of the concentrated force. The magnitude of this jump equals the magnitude of the applied force.
+
+Similarly, the **bending moment diagram** shows a **jump discontinuity** equal to the magnitude of the applied bending moment.
+
+## Element Load Vector in Finite Element Assembly
+
+If the beam is divided into **two finite elements** with a connecting node at the midpoint:
+
+* The **net force** at the connecting node is equal to the **applied external force**.
+* The **net moment** at the connecting node is equal to the **applied external moment**.
+
+This ensures that the finite element model accurately incorporates **external nodal loads** while maintaining equilibrium at shared nodes.
+
+---
+
+Here’s a fully formatted version of **Example 4.1** based on your text, preserving all calculations, tables, and results:
+
+---
+
+## Example 4.1: Midspan Deflection of a Statically Indeterminate Beam
+
+**Problem:**
+A statically indeterminate simply supported beam as shown in figure 4.7a  is subjected to a **transverse load** applied at midspan. Using **two flexure elements**, obtain the solution for the **midspan deflection**.
+
+**Solution:**
+
+Since **flexure elements require loading only at nodes**, the beam is divided into **two elements**, each of length $L/2$, as shown in **Figure 4.7b**.
+
+<img width="850" height="450" alt="image" src="https://github.com/user-attachments/assets/2b5672e5-65ec-4efe-8004-167d28cc7a4c" />
+
+
+### Step 1: Element Stiffness Matrices
+
+The individual element stiffness matrices are:
+
+$$
+k^{(1)} = k^{(2)} = \frac{E I_z}{(L/2)^3} 
+\begin{bmatrix}
+12 & 6(L/2) & -12 & 6(L/2) \\
+6(L/2) & 4(L/2)^2 & -6(L/2) & 2(L/2)^2 \\
+-12 & -6(L/2) & 12 & -6(L/2) \\
+6(L/2) & 2(L/2)^2 & -6(L/2) & 4(L/2)^2
+\end{bmatrix}
+$$
+
+Simplifying:
+
+$$
+k^{(1)} = k^{(2)} = \frac{8 E I_z}{L^3} 
+\begin{bmatrix}
+12 & 3L & -12 & 3L \\
+3L & L^2 & -3L & L^2/2 \\
+-12 & -3L & 12 & -3L \\
+3L & L^2/2 & -3L & L^2
+\end{bmatrix}
+$$
+
+**Note:** The length of each element is $L/2$.
+
+### Step 2: Displacement Correspondence
+
+Boundary conditions:
+
+$$
+v_1 = \theta_1 = v_3 = 0
+$$
+
+Element-to-system displacement correspondence is given in **Table 4.1**:
+
+| Global Displacement | Element 1 | Element 2 |
+| ------------------- | --------- | --------- |
+| 1                   | 1         | 0         |
+| 2                   | 2         | 0         |
+| 3                   | 3         | 1         |
+| 4                   | 4         | 2         |
+| 5                   | 0         | 3         |
+| 6                   | 0         | 4         |
+
+### Step 3: Assembling the Global Stiffness Matrix
+
+Using the displacement correspondence and **symmetry**, the global stiffness coefficients are:
+
+$$
+\begin{aligned}
+K_{11} &= k^{(1)}_{11} = \frac{96 E I_z}{L^3}, & K_{12} &= k^{(1)}_{12} = \frac{24 E I_z}{L^2}, & K_{13} &= k^{(1)}_{13} = -\frac{96 E I_z}{L^3}, & K_{14} &= k^{(1)}_{14} = \frac{24 E I_z}{L^2} \\
+K_{22} &= k^{(1)}_{22} = \frac{8 E I_z}{L}, & K_{23} &= k^{(1)}_{23} = -\frac{24 E I_z}{L^2}, & K_{24} &= k^{(1)}_{24} = \frac{4 E I_z}{L} \\
+K_{33} &= k^{(1)}_{33} + k^{(2)}_{11} = \frac{192 E I_z}{L^3}, & K_{34} &= k^{(1)}_{34} + k^{(2)}_{12} = 0, & K_{35} &= k^{(2)}_{13} = -\frac{96 E I_z}{L^3}, & K_{36} = k^{(2)}_{14} = \frac{24 E I_z}{L^2} \\
+K_{44} &= k^{(1)}_{44} + k^{(2)}_{22} = \frac{16 E I_z}{L}, & K_{45} &= k^{(2)}_{23} = -\frac{24 E I_z}{L^2}, & K_{46} = k^{(2)}_{24} = \frac{4 E I_z}{L} \\
+K_{55} &= k^{(2)}_{33} = \frac{96 E I_z}{L^3}, & K_{56} &= k^{(2)}_{34} = -\frac{24 E I_z}{L^2}, & K_{66} = k^{(2)}_{44} = \frac{8 E I_z}{L}
+\end{aligned}
+$$
+
+Thus, the global system is written as:
+
+$$
+[K]\{U\} = \{F\} 
+$$
+
+$$
+\frac{E I_z}{L^3}
+\begin{bmatrix}
+96 & 24L & -96 & 24L & 0 & 0 \\
+24L & 8L^2 & -24L & 4L^2 & 0 & 0 \\
+-96 & -24L & 192 & 0 & -96 & 24L \\
+24L & 4L^2 & 0 & 16L^2 & -24L & 4L^2 \\
+0 & 0 & -96 & -24L & 96 & 24L \\
+0 & 0 & 24L & 4L^2 & 24L & 8L^2
+\end{bmatrix}
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2 \\ v_3 \\ \theta_3
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+F_1 \\ M_1 \\ F_2 \\ M_2 \\ F_3 \\ M_3
+\end{Bmatrix}
+$$
+
+### Step 4: Apply Boundary Conditions
+
+Using $v_1 = \theta_1 = v_3 = 0$, the **reduced system** becomes:
+
+$$
+\frac{E I_z}{L^3}
+\begin{bmatrix}
+192 & 0 & 24L \\
+0 & 16 L^2 & 4L^2 \\
+24L & 4L^2 & 8 L^2
+\end{bmatrix}
+\begin{Bmatrix}
+v_2 \\ \theta_2 \\ \theta_3
+\end{Bmatrix}
+=
+\begin{Bmatrix}
+- P \\ 0 \\ 0
+\end{Bmatrix}
+$$
+
+### Step 5: Solve for Nodal Displacements
+
+$$
+v_2 = - \frac{7 P L^3}{768 E I_z} = - \frac{P L^2}{128 E I_z}, \quad 
+\theta_2 = 2 = \dots, \quad 
+v_3 = \frac{P L^2}{32 E I_z}
+$$
+
+The deformed shape of the beam is shown in **Figure 4.7c**, superimposed with the **undeformed shape**.
+
+
+### Step 6: Compute Reactions
+
+Substituting nodal displacements into constraint equations:
+
+$$
+\begin{aligned}
+F_1 &= \frac{E I_z}{L^3}(-96 v_2 + 24 L \theta_2) = \frac{11 P}{16} \\
+F_3 &= \frac{E I_z}{L^3}(-96 v_2 - 24 L \theta_2 - 24 L \theta_3) = \frac{5 P}{16} \\
+M_1 &= \frac{E I_z}{L^3}(-24 L v_2 + 4 L^2 \theta_2) = \frac{3 P L}{16}
+\end{aligned}
+$$
+
+### Step 7: Check Global Equilibrium
+
+**Sum of vertical forces:**
+
+$$
+F_y = \frac{11 P}{16} - P + \frac{5 P}{16} = 0
+$$
+
+**Sum of moments about node 1:**
+
+$$
+M = \frac{3 P L}{16} - \frac{P L}{2} + \frac{5 P}{16} L = 0
+$$
+
+Thus, the **finite element solution satisfies global equilibrium**.
+
+---
+
 ## 📚 Reference
 
 - [*Fundamentals of Finite Element Analysis - (Unit 2 - Chapter 4)*](Resources/FEM_Hutton_Unit2_Ch4.pdf) – Hutton David, McGraw-Hill 
