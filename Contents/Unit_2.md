@@ -16,7 +16,7 @@
 ## Unit 2: Beam Elements
 
 - [Flexure Element](#flexure-elements)  
-- [Element Stiffness Matrix](#element-stiffness-matrix)  
+- [Element Stiffness Matrix](#flexure-element-stiffness-matrix)  
 - [Element Load Vector](#element-load-vector)  
 
 ---
@@ -212,6 +212,158 @@ $$
 
 ---
 
+# Flexure Element Stiffness Matrix
+
+Having developed the **flexure element displacement approximation**, we now proceed to determine the **stiffness characteristics** of the element. The stiffness matrix establishes the relationship between nodal displacements and nodal forces, which is fundamental in finite element analysis.
+
+## Strain Energy of the Flexure Element
+
+The total **strain energy** stored in a beam element due to bending can be expressed as:
+
+$$
+U_e = \frac{1}{2} \int_V \sigma_x \varepsilon_x \, dV
+$$
+
+where $V$ represents the total volume of the element, $\sigma_x$ is the longitudinal stress, and $\varepsilon_x$ is the corresponding strain.
+
+Substituting the expressions for stress and strain obtained earlier:
+
+$$
+\varepsilon_x = -y \frac{d^2 v}{dx^2}, \quad \sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2}
+$$
+
+yields:
+
+$$
+U_e = \frac{E}{2} \int_V y^2 \left(\frac{d^2 v}{dx^2}\right)^2 dV
+$$
+
+For a beam with constant cross-section, the volume integral can be separated into an area and a length integral:
+
+$$
+U_e = \frac{E}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 \left(\int_A y^2 dA \right) dx
+$$
+
+The area integral is recognized as the **moment of inertia $I_z$** about the centroidal axis perpendicular to the bending plane, giving:
+
+$$
+U_e = \frac{E I_z}{2} \int_0^L \left(\frac{d^2 v}{dx^2}\right)^2 dx
+$$
+
+This expression represents the **strain energy of bending** for a beam element that satisfies the assumptions of elementary beam theory.
+
+## Discretized Strain Energy Using Nodal Variables
+
+Using the **finite element approximation** for transverse displacement:
+
+$$
+v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2
+$$
+
+the strain energy can be written in terms of nodal variables as:
+
+$$
+U_e = \frac{E I_z}{2} \int_0^L \left( \frac{d^2 N_1}{dx^2} v_1 + \frac{d^2 N_2}{dx^2} \theta_1 + \frac{d^2 N_3}{dx^2} v_2 + \frac{d^2 N_4}{dx^2} \theta_2 \right)^2 dx
+$$
+
+This integral is an **approximation**, as the discretized displacement function is generally not the exact solution for the beam bending problem. However, it provides a sufficiently accurate representation for finite element analysis.
+
+## Nodal Forces and Moments (Castigliano’s Theorem)
+
+By applying **Castigliano’s first theorem** to the strain energy, the **nodal forces and moments** can be obtained by differentiating $U_e$ with respect to the corresponding nodal displacement:
+
+$$
+F_1 = \frac{\partial U_e}{\partial v_1}, \quad M_1 = \frac{\partial U_e}{\partial \theta_1}, \quad F_2 = \frac{\partial U_e}{\partial v_2}, \quad M_2 = \frac{\partial U_e}{\partial \theta_2}
+$$
+
+Substituting the discretized displacement function:
+
+$$
+\begin{aligned}
+F_1 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_1}{dx^2} dx, \\
+M_1 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_2}{dx^2} dx, \\
+F_2 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_3}{dx^2} dx, \\
+M_2 &= E I_z \int_0^L \left( \sum_{i=1}^4 \frac{d^2 N_i}{dx^2} q_i \right) \frac{d^2 N_4}{dx^2} dx,
+\end{aligned}
+$$
+
+where $q_i = \{v_1, \theta_1, v_2, \theta_2\}$.
+
+## Element Stiffness Matrix
+
+These equations relate **nodal displacements** to **nodal forces** in the standard form:
+
+$$
+\begin{bmatrix}
+k_{11} & k_{12} & k_{13} & k_{14} \\
+k_{21} & k_{22} & k_{23} & k_{24} \\
+k_{31} & k_{32} & k_{33} & k_{34} \\
+k_{41} & k_{42} & k_{43} & k_{44}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+F_1 \\ M_1 \\ F_2 \\ M_2
+\end{bmatrix}
+$$
+
+with the **stiffness coefficients**:
+
+$$
+k_{mn} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx, \quad m,n=1,4
+$$
+
+### Transformation to Dimensionless Coordinate
+
+To simplify integration, introduce the **dimensionless coordinate**:
+
+$$
+\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L \, d\xi, \quad \frac{d}{dx} = \frac{1}{L} \frac{d}{d\xi}
+$$
+
+The stiffness coefficients become:
+
+$$
+k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi
+$$
+
+### Computed Stiffness Coefficients
+
+Direct integration yields:
+
+$$
+\begin{aligned}
+k_{11} &= 12 \frac{E I_z}{L^3}, & k_{12} &= 6 \frac{E I_z}{L^2}, & k_{13} &= -12 \frac{E I_z}{L^3}, & k_{14} &= 6 \frac{E I_z}{L^2}, \\
+k_{22} &= 4 \frac{E I_z}{L}, & k_{23} &= -6 \frac{E I_z}{L^2}, & k_{24} &= 2 \frac{E_z}{L}, \\
+k_{33} &= 12 \frac{E I_z}{L^3}, & k_{34} &= -6 \frac{E I_z}{L^2}, & k_{44} &= 4 \frac{E I_z}{L}
+\end{aligned}
+$$
+
+The **stiffness matrix** is symmetric: $k_{mn} = k_{nm}$.
+
+### Final Flexure Element Stiffness Matrix
+
+$$
+[k_e] = \frac{E I_z}{L^3} 
+\begin{bmatrix}
+12 & 6L & -12 & 6L \\
+6L & 4L^2 & -6L & 2L^2 \\
+-12 & -6L & 12 & -6L \\
+6L & 2L^2 & -6L & 4L^2
+\end{bmatrix}
+$$
+
+**Remarks:**
+
+* Valid for any consistent unit system.
+* Rotational DOFs ($\theta_1, \theta_2$) must be expressed in **radians**.
+* The matrix is singular if the element is unconstrained due to **rigid body motion**.
+
+This concludes the derivation of the **flexure element stiffness matrix**, linking nodal displacements and applied forces/moments for bending analysis in finite element modeling.
+
+---
 ## 📚 Reference
 
 - [*Fundamentals of Finite Element Analysis - (Unit 2 - Chapter 4)*](Resources/FEM_Hutton_Unit2_Ch4.pdf) – Hutton David, McGraw-Hill 
