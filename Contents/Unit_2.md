@@ -482,10 +482,6 @@ This ensures that the finite element model accurately incorporates **external no
 
 ---
 
-Here’s a fully formatted version of **Example 4.1** based on your text, preserving all calculations, tables, and results:
-
----
-
 ## Example 4.1: Midspan Deflection of a Statically Indeterminate Beam
 
 **Problem:**
