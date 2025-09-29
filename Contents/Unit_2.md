@@ -282,7 +282,7 @@ $$
 v(x) = (1 - 3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
 $$
 
-where \(0 \leq \xi \leq 1\). This form proves more amenable to the integrations required to complete development of the element equations in the next section.
+_where \(0 \leq \xi \leq 1\). This form proves more amenable to the integrations required to complete development of the element equations in the next section._
 
 
 ### Stress Computation
