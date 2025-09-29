@@ -19,8 +19,6 @@
 - [Flexure Element Stiffness Matrix](#flexure-element-stiffness-matrix)  
 - [Element Load Vector](#element-load-vector)  
 
----
-
 # Flexure Elements 
 
 ## 4.1 Introduction
@@ -284,7 +282,8 @@ $$
 v(x) = (1 - 3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
 $$
 
-- where \(0 \leq \xi \leq 1\). This form is more convenient for performing the integrations required to complete the development of the element equations in the next section.
+where \(0 \leq \xi \leq 1\). This form proves more amenable to the integrations required to complete development of the element equations in the next section.
+
 
 ### Stress Computation
 
