@@ -16,7 +16,7 @@
 ## Unit 2: Beam Elements
 
 - [Flexure Element](#flexure-elements)  
-- [Element Stiffness Matrix](#flexure-element-stiffness-matrix)  
+- [Flexure Element Stiffness Matrix](#flexure-element-stiffness-matrix)  
 - [Element Load Vector](#element-load-vector)  
 
 ---
