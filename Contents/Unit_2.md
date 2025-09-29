@@ -224,7 +224,7 @@ From finite element formulation of the beam (flexure element), we apply the boun
 
 <img width="599" height="612" alt="image" src="https://github.com/user-attachments/assets/955af7ed-453b-4029-90f2-9ae215a1e812" />
 
-*Insert Figure 4.5: Bending moment diagram for a flexure element*
+**Figure 4.5:** Bending moment diagram for a flexure element
 
 #### Solving for Coefficients
 
