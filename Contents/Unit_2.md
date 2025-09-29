@@ -64,7 +64,7 @@ Consider a **simply supported beam** subjected to a **distributed transverse loa
 <img width="660" height="373" alt="image" src="https://github.com/user-attachments/assets/cdf4ff25-891e-4021-8f25-e7c3a0e2c0f5" />
 
 **Figure 4.2:** Beam cross sections:
-*(a) and (b) symmetric sections, (c) asymmetric L-shaped section)*
+*(a) and (b) symmetric sections, (c) asymmetric L-shaped section*
 
 ## Neutral Surface and Bending Strain
 
