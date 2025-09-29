@@ -192,13 +192,43 @@ $$
 
 ### Displacement Function
 
-Assume cubic polynomial:
+Assume a cubic polynomial form for transverse displacement:
 
 $$
 v(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3 \tag{4.17}
 $$
 
-Apply boundary conditions (4.14–4.16) to solve coefficients:
+#### Applying Boundary Conditions
+
+From finite element formulation of the beam (flexure element), we apply the boundary conditions at nodes:
+
+1. At $x = 0$, displacement:
+   $$
+   v(x=0) = v_1 = a_0 \tag{4.18}
+   $$
+
+2. At $x = L$, displacement:
+   $$
+   v(x=L) = v_2 = a_0 + a_1 L + a_2 L^2 + a_3 L^3 \tag{4.19}
+   $$
+
+3. At $x = 0$, slope:
+   $$
+   \left.\frac{dv}{dx}\right|_{x=0} = \theta_1 = a_1 \tag{4.20}
+   $$
+
+4. At $x = L$, slope:
+   $$
+   \left.\frac{dv}{dx}\right|_{x=L} = \theta_2 = a_1 + 2a_2 L + 3a_3 L^2 \tag{4.21}
+   $$
+
+<img width="599" height="612" alt="image" src="https://github.com/user-attachments/assets/955af7ed-453b-4029-90f2-9ae215a1e812" />
+
+*Insert Figure 4.5: Bending moment diagram for a flexure element*
+
+#### Solving for Coefficients
+
+Equations (4.18)–(4.21) are solved simultaneously to obtain:
 
 $$
 a_0 = v_1 \tag{4.22}
@@ -209,20 +239,22 @@ a_1 = \theta_1 \tag{4.23}
 $$
 
 $$
-a_2 = \frac{3}{L^2} (v_2 - v_1) - \frac{1}{L}(2\theta_1 + \theta_2) \tag{4.24}
+a_2 = \frac{3}{L^2}(v_2 - v_1) - \frac{1}{L}(2\theta_1 + \theta_2) \tag{4.24}
 $$
 
 $$
 a_3 = \frac{2}{L^3}(v_1 - v_2) + \frac{1}{L^2}(\theta_1 + \theta_2) \tag{4.25}
 $$
 
-Substitute into $v(x)$:
+#### Final Displacement Expression
+
+Substituting into $v(x)$:
 
 $$
-v(x) = \left(1-3\frac{x^2}{L^2} + 2 \frac{x^3}{L^3}\right)v_1 + \left(x - 2\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_1 + \left(3\frac{x^2}{L^2} - 2\frac{x^3}{L^3}\right)v_2 + \left(-\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_2 \tag{4.26}
+v(x) = \left(1 - 3\frac{x^2}{L^2} + 2 \frac{x^3}{L^3}\right)v_1 + \left(x - 2\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_1 + \left(3\frac{x^2}{L^2} - 2\frac{x^3}{L^3}\right)v_2 + \left(-\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_2 \tag{4.26}
 $$
 
-Matrix form:
+#### Matrix Form
 
 $$
 v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2 \tag{4.27a}
@@ -230,20 +262,18 @@ $$
 
 $$
 v(x) = [N_1 \ N_2 \ N_3 \ N_4]
-\begin{Bmatrix} v_1 \\ \theta_1 \\ v_2 \\ \theta_2 \end{Bmatrix} = [N]\{v\} \tag{4.27b}
+\begin{Bmatrix} v_1 \ \theta_1 \ v_2 \ \theta_2 \end{Bmatrix}
+= [N]{v} \tag{4.27b}
 $$
 
-Dimensionless coordinate:
+#### Using Dimensionless Coordinate
+
+Introduce $\xi = \dfrac{x}{L}$:
 
 $$
-\xi = \frac{x}{L} \tag{4.28}
+v(x) = (1 - 3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
 $$
 
-Alternative form:
-
-$$
-v(x) = (1-3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L^2(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
-$$
 
 ### Stress Computation
 
@@ -275,10 +305,6 @@ $$
 \sigma_x(x=L) = y_{\max} E \left[ \frac{6}{L^2}(v_1 - v_2) + \frac{2}{L}(2\theta_2 + \theta_1) \right] \tag{4.34}
 $$
 
-
-<img width="599" height="612" alt="image" src="https://github.com/user-attachments/assets/955af7ed-453b-4029-90f2-9ae215a1e812" />
-
-**Figure:** Bending moment diagram for a flexure element. Sign convention per the strength of materials theory.
 
 ---
 
