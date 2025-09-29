@@ -66,83 +66,89 @@ Consider a **simply supported beam** subjected to a **distributed transverse loa
 **Figure 4.2:** Beam cross sections:
 *(a) and (b) symmetric sections, (c) asymmetric L-shaped section)*
 
-### Neutral Surface and Bending Strain
+Got it! I’ve incorporated that **radius of curvature step from calculus** correctly along with the (\rho)-based bending strain. Here’s the corrected section:
 
-Considering a differential length $dx$ after bending, the neutral surface is defined at $y=0$.
+## Neutral Surface and Bending Strain
 
-**Length after bending:**
+Consider a differential fiber of a beam after bending, as shown in Figure 4.1b of Hutton. Let the **neutral surface** be located at (y=0), the distance from the center of curvature be (\rho), and the angular increment along the arc be (d\theta).
 
-$$
-ds = (1 - y/d) dx \tag{4.1}
-$$
+**Length of a fiber at distance (y) from the neutral surface:**
 
-**Bending strain:**
+[
+ds = (\rho - y) d\theta \tag{4.1}
+]
 
-$$
-\varepsilon_x = \frac{ds - dx}{dx} = -y/d \tag{4.2}
-$$
+**Bending strain** along the fiber:
 
-**Radius of curvature:**
+[
+\varepsilon_x = \frac{ds - dx}{dx} = \frac{(\rho - y)d\theta - \rho d\theta}{\rho d\theta} = -\frac{y}{\rho} \tag{4.2}
+]
 
-$$
-\frac{1}{\rho} = \frac{d^2v/dx^2}{\left(1 + (dv/dx)^2\right)^{3/2}} \tag{4.3}
-$$
+### Radius of Curvature
 
-For **small deflections**, slopes are small, giving:
+From basic calculus, the radius of curvature of a planar curve (v=v(x)) is:
 
-$$
-\frac{1}{\rho} \approx \frac{d^2v}{dx^2} \tag{4.4}
-$$
+[
+\frac{1}{\rho} = \frac{d^2 v/dx^2}{\left(1 + (dv/dx)^2\right)^{3/2}} \tag{4.3}
+]
 
-Thus, normal strain along the beam axis is:
+For **small deflections** (slopes (dv/dx \ll 1)):
 
-$$
-\varepsilon_x = -y \frac{d^2v}{dx^2} \tag{4.5}
-$$
+[
+\frac{1}{\rho} \approx \frac{d^2 v}{dx^2} \tag{4.4}
+]
 
-Normal stress:
+### Normal Strain and Stress
 
-$$
+Using this approximation, the **normal strain along the longitudinal axis** is:
+
+[
+\varepsilon_x = -y \frac{d^2 v}{dx^2} \tag{4.5}
+]
+
+The corresponding **normal stress** is:
+
+[
 \sigma_x = E \varepsilon_x = -E y \frac{d^2 v}{dx^2} \tag{4.6}
-$$
+]
 
-Since no net axial force acts on the cross-section:
+Since there is no net axial force on the cross-section:
 
-$$
-F_x = \int_A \sigma_x \, dA = - \int_A E y \frac{d^2 v}{dx^2} \, dA = 0 \tag{4.7}
-$$
+[
+F_x = \int_A \sigma_x , dA = - \int_A E y \frac{d^2 v}{dx^2} , dA = 0 \tag{4.7}
+]
 
-This implies the neutral surface passes through the **centroid**:
+This confirms that the **neutral surface passes through the centroid**:
 
-$$
-\int_A y \, dA = 0 \tag{4.8}
-$$
+[
+\int_A y , dA = 0 \tag{4.8}
+]
 
 ### Bending Moment
 
-Internal bending moment:
+The **internal bending moment** at a cross-section:
 
-$$
-M(x) = - \int_A y \sigma_x \, dA = E \int_A y^2 \frac{d^2 v}{dx^2} \, dA \tag{4.9}
-$$
+[
+M(x) = - \int_A y \sigma_x , dA = E \int_A y^2 \frac{d^2 v}{dx^2} , dA \tag{4.9}
+]
 
-Moment of inertia:
+Using the **moment of inertia**:
 
-$$
+[
 I_z = \int_A y^2 dA
-$$
+]
 
-Hence:
+The bending moment becomes:
 
-$$
+[
 M(x) = E I_z \frac{d^2 v}{dx^2} \tag{4.10}
-$$
+]
 
-Normal stress in terms of bending moment:
+The **normal stress in terms of bending moment**:
 
-$$
+[
 \sigma_x = -\frac{M(x) y}{I_z} = -y E \frac{d^2 v}{dx^2} \tag{4.11}
-$$
+]
 
 ## 4.3 Flexure Element
 
