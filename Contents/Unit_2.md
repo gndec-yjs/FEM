@@ -254,16 +254,26 @@ $$
 v(x) = \left(1 - 3\frac{x^2}{L^2} + 2 \frac{x^3}{L^3}\right)v_1 + \left(x - 2\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_1 + \left(3\frac{x^2}{L^2} - 2\frac{x^3}{L^3}\right)v_2 + \left(-\frac{x^2}{L} + \frac{x^3}{L^2}\right)\theta_2 \tag{4.26}
 $$
 
-#### Matrix Form
+#### which is of the form
 
 $$
 v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2 \tag{4.27a}
 $$
 
+#### Matrix Form
+
 $$
-v(x) = [N_1 \ N_2 \ N_3 \ N_4]
-\begin{Bmatrix} v_1 \ \theta_1 \ v_2 \ \theta_2 \end{Bmatrix}
-= [N]{v} \tag{4.27b}
+v(x) =
+\begin{bmatrix}
+N_1 & N_2 & N_3 & N_4
+\end{bmatrix}
+\begin{Bmatrix}
+v_1 \\
+\theta_1 \\
+v_2 \\
+\theta_2
+\end{Bmatrix}
+= [N]\{v\} \tag{4.27b}
 $$
 
 #### Using Dimensionless Coordinate
@@ -274,25 +284,31 @@ $$
 v(x) = (1 - 3\xi^2 + 2\xi^3)v_1 + L(\xi - 2\xi^2 + \xi^3)\theta_1 + (3\xi^2 - 2\xi^3)v_2 + L(-\xi^2 + \xi^3)\theta_2 \tag{4.29}
 $$
 
+- where \(0 \leq \xi \leq 1\). This form is more convenient for performing the integrations required to complete the development of the element equations in the next section.
 
 ### Stress Computation
 
 Using Equation (4.11) and interpolation:
 
 $$
-\sigma_x(x,y) = -y E \frac{d^2 [N]}{dx^2} \{v_1, \theta_1, v_2, \theta_2\} \tag{4.30}
+\sigma_x(x,y) = -y E \frac{d^2 [N]}{dx^2} \{\delta\} \tag{4.30}
 $$
 
 Maximum stress occurs at outer fibers $y_{\max}$:
 
 $$
-\sigma_x(x) = y_{\max} E \frac{d^2 [N]}{dx^2} \{v_1, \theta_1, v_2, \theta_2\} \tag{4.31}
+\sigma_x(x) = y_{\max} E \frac{d^2 [N]}{dx^2} \{\delta\} \tag{4.31}
 $$
 
 Expanded form:
 
 $$
-\sigma_x(x) = y_{\max} E \left( \frac{12x}{L^3} - \frac{6}{L^2} v_1 + \frac{6x}{L^2} - \frac{4}{L} \theta_1 + \frac{6}{L^2} - \frac{12x}{L^3} v_2 + \frac{6x}{L^2} - \frac{2}{L} \theta_2 \right) \tag{4.32}
+\sigma_x(x) = y_{\max} E \Bigg[ 
+\left(\frac{12x}{L^3} - \frac{6}{L^2}\right) v_1 +
+\left(\frac{6x}{L^2} - \frac{4}{L}\right) \theta_1 +
+\left(-\frac{12x}{L^3} + \frac{6}{L^2}\right) v_2 +
+\left(\frac{6x}{L^2} - \frac{2}{L}\right) \theta_2
+\Bigg] \tag{4.32}
 $$
 
 Nodal stresses:
