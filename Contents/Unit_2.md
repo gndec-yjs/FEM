@@ -467,15 +467,50 @@ $$
 
 Introduce the dimensionless variable:
 
-$$
-\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L \, d\xi, \quad \frac{d}{dx} = \frac{1}{L} \frac{d}{d\xi} \tag{4.46, 4.47}
-$$
+\[
+\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L\,d\xi. \tag{4.46}
+\]
 
-Then the stiffness coefficients become:
+When differentiating with respect to \(x\) we use the chain rule:
 
-$$
-k_{mn} = k_{nm} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.48}
-$$
+\[
+\frac{d}{dx} = \frac{d\xi}{dx}\frac{d}{d\xi} = \frac{1}{L}\frac{d}{d\xi}
+\]
+
+so that the second derivative transforms as
+
+\[
+\frac{d^2}{dx^2} = \frac{d}{dx}\left(\frac{1}{L}\frac{d}{d\xi}\right)
+= \frac{1}{L}\frac{d}{dx}\left(\frac{d}{d\xi}\right)
+= \frac{1}{L}\left(\frac{1}{L}\frac{d}{d\xi}\right)\frac{d}{d\xi}
+= \frac{1}{L^2}\frac{d^2}{d\xi^2}. \tag{4.47}
+\]
+
+Start from the stiffness coefficient in physical coordinates:
+
+\[
+k_{mn} = E I_z \int_0^L \frac{d^2 N_m}{dx^2}\,\frac{d^2 N_n}{dx^2}\,dx.
+\]
+
+Substitute the relations \(\dfrac{d^2}{dx^2}=\dfrac{1}{L^2}\dfrac{d^2}{d\xi^2}\) and \(dx=L\,d\xi\):
+
+\[
+\begin{aligned}
+k_{mn}
+&= E I_z \int_0^L \left(\frac{1}{L^2}\frac{d^2 N_m}{d\xi^2}\right)
+\left(\frac{1}{L^2}\frac{d^2 N_n}{d\xi^2}\right)\,dx \\
+&= E I_z \int_0^1 \left(\frac{1}{L^2}\frac{d^2 N_m}{d\xi^2}\right)
+\left(\frac{1}{L^2}\frac{d^2 N_n}{d\xi^2}\right) (L\,d\xi) \\
+&= \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2}\,\frac{d^2 N_n}{d\xi^2}\,d\xi.
+\end{aligned}
+\tag{4.48}
+\]
+
+Thus the dimensionless form is
+
+\[
+k_{mn} = k_{nm} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2}\,\frac{d^2 N_n}{d\xi^2}\,d\xi.
+\]
 
 ## Computed Stiffness Coefficients
 
