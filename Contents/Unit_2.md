@@ -487,7 +487,7 @@ $$
 k_{mn} = k_{nm} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx
 $$
 
-Substitute the dimensionless derivatives and \(dx = L \, d\xi\):
+Substitute the dimensionless derivatives from Eq. 4.47:
 
 $$
 k_{mn} = E I_z \int_0^L \left( \frac{1}{L^2} \frac{d^2 N_m}{d\xi^2} \right)
