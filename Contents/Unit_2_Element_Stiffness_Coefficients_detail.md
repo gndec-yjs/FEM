@@ -143,11 +143,17 @@ k_{44} = \frac{E I_z}{L^3} \int_0^1 (L(-2 + 6\xi))^2 d\xi
 = 4 \frac{E I_z}{L} \tag{4.48j}
 $$
 
-### Symmetry of Stiffness Matrix
+### Stiffness Coefficients
 
 $$
-k_{mn} = k_{nm} \tag{4.48k}
+\begin{aligned}
+k_{11} &= 12 \frac{E I_z}{L^3}, & k_{12} &= 6 \frac{E I_z}{L^2}, & k_{13} &= -12 \frac{E I_z}{L^3}, & k_{14} &= 6 \frac{E I_z}{L^2}, \\
+k_{22} &= 4 \frac{E I_z}{L}, & k_{23} &= -6 \frac{E I_z}{L^2}, & k_{24} &= 2 \frac{E I_z}{L}, \\
+k_{33} &= 12 \frac{E I_z}{L^3}, & k_{34} &= -6 \frac{E I_z}{L^2}, & k_{44} &= 4 \frac{E I_z}{L}
+\end{aligned}
 $$
+
+The matrix is symmetric: $k_{mn} = k_{nm}$.
 
 ### Final Flexure Element Stiffness Matrix
 
