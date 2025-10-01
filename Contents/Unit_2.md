@@ -503,9 +503,8 @@ k_{mn} = E I_z \int_0^1 \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi
 $$
 
 $$
-\boxed{k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi} \tag{4.48}
+k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.48}
 $$
-
 
 ## Computed Stiffness Coefficients
 
