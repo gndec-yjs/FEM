@@ -471,11 +471,11 @@ $$
 \xi = \frac{x}{L} \quad \Rightarrow \quad 0 \leq \xi \leq 1 \tag{4.46}
 $$
 
-From this, the differential transforms as:
+Differentials transform as:
 
 $$
 dx = L \, d\xi, \qquad 
-\frac{d}{dx} = \frac{d\xi}{dx} \frac{d}{d\xi} = \frac{1}{L} \frac{d}{d\xi}, \quad
+\frac{d}{dx} = \frac{1}{L} \frac{d}{d\xi}, \quad
 \frac{d^2}{dx^2} = \frac{1}{L^2} \frac{d^2}{d\xi^2} \tag{4.47}
 $$
 
@@ -490,14 +490,22 @@ $$
 Substitute the dimensionless derivatives and \(dx = L \, d\xi\):
 
 $$
-\begin{aligned}
-k_{mn} &= E I_z \int_0^L \left( \frac{1}{L^2} \frac{d^2 N_m}{d\xi^2} \right)
-\left( \frac{1}{L^2} \frac{d^2 N_n}{d\xi^2} \right) dx \\
-&= E I_z \int_0^L \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} dx \\
-&= E I_z \int_0^1 \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} (L \, d\xi) \\
-&= \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.48}
-\end{aligned}
+k_{mn} = E I_z \int_0^L \left( \frac{1}{L^2} \frac{d^2 N_m}{d\xi^2} \right)
+\left( \frac{1}{L^2} \frac{d^2 N_n}{d\xi^2} \right) dx
 $$
+
+$$
+k_{mn} = E I_z \int_0^L \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} dx
+$$
+
+$$
+k_{mn} = E I_z \int_0^1 \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} (L \, d\xi)
+$$
+
+$$
+\boxed{k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi} \tag{4.48}
+$$
+
 
 ## Computed Stiffness Coefficients
 
