@@ -467,50 +467,37 @@ $$
 
 Introduce the dimensionless variable:
 
-\[
-\xi = \frac{x}{L} \quad \Rightarrow \quad dx = L\,d\xi. \tag{4.46}
-\]
+$$
+\xi = \frac{x}{L} \quad \Rightarrow \quad 0 \leq \xi \leq 1 \tag{4.46}
+$$
 
-When differentiating with respect to \(x\) we use the chain rule:
+From this, the differential transforms as:
 
-\[
-\frac{d}{dx} = \frac{d\xi}{dx}\frac{d}{d\xi} = \frac{1}{L}\frac{d}{d\xi}
-\]
+$$
+dx = L \, d\xi, \qquad 
+\frac{d}{dx} = \frac{d\xi}{dx} \frac{d}{d\xi} = \frac{1}{L} \frac{d}{d\xi}, \quad
+\frac{d^2}{dx^2} = \frac{1}{L^2} \frac{d^2}{d\xi^2} \tag{4.47}
+$$
 
-so that the second derivative transforms as
+### Stiffness Coefficients
 
-\[
-\frac{d^2}{dx^2} = \frac{d}{dx}\left(\frac{1}{L}\frac{d}{d\xi}\right)
-= \frac{1}{L}\frac{d}{dx}\left(\frac{d}{d\xi}\right)
-= \frac{1}{L}\left(\frac{1}{L}\frac{d}{d\xi}\right)\frac{d}{d\xi}
-= \frac{1}{L^2}\frac{d^2}{d\xi^2}. \tag{4.47}
-\]
+The element stiffness coefficient in terms of \(x\) is:
 
-Start from the stiffness coefficient in physical coordinates:
+$$
+k_{mn} = k_{nm} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx
+$$
 
-\[
-k_{mn} = E I_z \int_0^L \frac{d^2 N_m}{dx^2}\,\frac{d^2 N_n}{dx^2}\,dx.
-\]
+Substitute the dimensionless derivatives and \(dx = L \, d\xi\):
 
-Substitute the relations \(\dfrac{d^2}{dx^2}=\dfrac{1}{L^2}\dfrac{d^2}{d\xi^2}\) and \(dx=L\,d\xi\):
-
-\[
+$$
 \begin{aligned}
-k_{mn}
-&= E I_z \int_0^L \left(\frac{1}{L^2}\frac{d^2 N_m}{d\xi^2}\right)
-\left(\frac{1}{L^2}\frac{d^2 N_n}{d\xi^2}\right)\,dx \\
-&= E I_z \int_0^1 \left(\frac{1}{L^2}\frac{d^2 N_m}{d\xi^2}\right)
-\left(\frac{1}{L^2}\frac{d^2 N_n}{d\xi^2}\right) (L\,d\xi) \\
-&= \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2}\,\frac{d^2 N_n}{d\xi^2}\,d\xi.
+k_{mn} &= E I_z \int_0^L \left( \frac{1}{L^2} \frac{d^2 N_m}{d\xi^2} \right)
+\left( \frac{1}{L^2} \frac{d^2 N_n}{d\xi^2} \right) dx \\
+&= E I_z \int_0^L \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} dx \\
+&= E I_z \int_0^1 \frac{1}{L^4} \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} (L \, d\xi) \\
+&= \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.48}
 \end{aligned}
-\tag{4.48}
-\]
-
-Thus the dimensionless form is
-
-\[
-k_{mn} = k_{nm} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2}\,\frac{d^2 N_n}{d\xi^2}\,d\xi.
-\]
+$$
 
 ## Computed Stiffness Coefficients
 
