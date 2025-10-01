@@ -48,13 +48,13 @@ $$
 \frac{d^2 N_2}{d\xi^2} &= L(-4 + 6\xi), \\
 \frac{d^2 N_3}{d\xi^2} &= 6 - 12\xi, \\
 \frac{d^2 N_4}{d\xi^2} &= L(-2 + 6\xi)
-\end{aligned} \tag{4.49}
+\end{aligned} \tag{4.47a}
 $$
 
 Then with respect to $x$:
 
 $$
-\frac{d^2 N_i}{dx^2} = \frac{1}{L^2} \frac{d^2 N_i}{d\xi^2} \tag{4.50}
+\frac{d^2 N_i}{dx^2} = \frac{1}{L^2} \frac{d^2 N_i}{d\xi^2} \tag{4.47b}
 $$
 
 ### Stiffness Coefficients
@@ -62,13 +62,13 @@ $$
 Element stiffness coefficients:
 
 $$
-k_{mn} = k_{nm} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx \tag{4.51}
+k_{mn} = k_{nm} = E I_z \int_0^L \frac{d^2 N_m}{dx^2} \frac{d^2 N_n}{dx^2} dx \tag{4.47c}
 $$
 
 Substitute dimensionless derivatives ($dx = L d\xi$):
 
 $$
-k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.52}
+k_{mn} = \frac{E I_z}{L^3} \int_0^1 \frac{d^2 N_m}{d\xi^2} \frac{d^2 N_n}{d\xi^2} d\xi \tag{4.47d}
 $$
 
 ### Step-by-Step Computation of Each Coefficient
