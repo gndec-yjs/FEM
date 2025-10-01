@@ -508,7 +508,9 @@ $$
 
 ## Computed Stiffness Coefficients
 
-Direct integration yields:
+#### [Click here to see the step-by-step derivation of stiffness coefficients](Unit_2_Element_Stiffness_Coefficients_detail.md)
+
+Direct integration yields: 
 
 $$
 \begin{aligned}
