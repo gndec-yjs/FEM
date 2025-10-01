@@ -392,7 +392,7 @@ F_1 = \frac{\partial U_e}{\partial v_1}
 \frac{d^2 N_3}{dx^2} v_2 +
 \frac{d^2 N_4}{dx^2} \theta_2
 \right)
-\frac{d^2 N_1}{dx^2} , dx \tag{4.40}
+\frac{d^2 N_1}{dx^2} dx \tag{4.40}
 $$
 
 **For node 1 rotation (\theta_1):**
@@ -406,7 +406,7 @@ M_1 = \frac{\partial U_e}{\partial \theta_1}
 \frac{d^2 N_3}{dx^2} v_2 +
 \frac{d^2 N_4}{dx^2} \theta_2
 \right)
-\frac{d^2 N_2}{dx^2} , dx \tag{4.41}
+\frac{d^2 N_2}{dx^2} dx \tag{4.41}
 $$
 
 **For node 2 displacement (v_2):**
@@ -420,7 +420,7 @@ F_2 = \frac{\partial U_e}{\partial v_2}
 \frac{d^2 N_3}{dx^2} v_2 +
 \frac{d^2 N_4}{dx^2} \theta_2
 \right)
-\frac{d^2 N_3}{dx^2} , dx \tag{4.42}
+\frac{d^2 N_3}{dx^2} dx \tag{4.42}
 $$
 
 **For node 2 rotation (\theta_2):**
@@ -434,7 +434,7 @@ M_2 = \frac{\partial U_e}{\partial \theta_2}
 \frac{d^2 N_3}{dx^2} v_2 +
 \frac{d^2 N_4}{dx^2} \theta_2
 \right)
-\frac{d^2 N_4}{dx^2} , dx \tag{4.43}
+\frac{d^2 N_4}{dx^2} dx \tag{4.43}
 $$
 
 ## Element Stiffness Matrix
