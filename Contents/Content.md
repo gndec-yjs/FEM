@@ -9,7 +9,7 @@
 
 2) **[Beam Elements](Unit_2.md):** Flexure element, Element stiffness matrix, Element load vector  
 
-📌 **Assignment 2**
+📌 **[Assignment 2](Assignment_2025/2.md)**
 
 3) **Method of Weighted Residuals:** Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
 
