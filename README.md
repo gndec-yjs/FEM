@@ -10,6 +10,12 @@
 🚨 The due date for submitting Assignment 1 is September 21, 2025 (Sunday), by 11:59 PM. - [Click Here](https://gndec-yjs.github.io/FEM/Contents/Assignment_2025/1.html)
 </span>
 
+<style>
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+</style> 
+
 ![FEM](Contents/FEM.png)
 
 ---
