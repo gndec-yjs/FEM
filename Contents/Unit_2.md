@@ -610,10 +610,24 @@ Since **flexure elements require loading only at nodes**, the beam is divided in
 
 ### Step 1: Element Stiffness Matrices
 
-The individual element stiffness matrices are:
+As derived earlier, 
+
+#### Flexure Element Stiffness Matrix
 
 $$
-k^{(1)} = k^{(2)} = \frac{E I_z}{(L/2)^3} 
+[k_e] = \frac{E I_z}{L^3} 
+\begin{bmatrix}
+12 & 6L & -12 & 6L \\
+6L & 4L^2 & -6L & 2L^2 \\
+-12 & -6L & 12 & -6L \\
+6L & 2L^2 & -6L & 4L^2
+\end{bmatrix} \tag{4.49}
+$$
+
+Therefore, for the given problem, the individual element stiffness matrices are:
+
+$$
+[k^{(1)}] = [k^{(2)}] = \frac{E I_z}{(L/2)^3} 
 \begin{bmatrix}
 12 & 6(L/2) & -12 & 6(L/2) \\
 6(L/2) & 4(L/2)^2 & -6(L/2) & 2(L/2)^2 \\
