@@ -717,13 +717,18 @@ $$
 ### Step 5: Solve for Nodal Displacements
 
 $$
-v_2 = - \frac{7 P L^3}{768 E I_z} = - \frac{P L^2}{128 E I_z}, \quad 
-\theta_2 = 2 = \dots, \quad 
-v_3 = \frac{P L^2}{32 E I_z}
+v_2 = -\frac{7PL^3}{768E I_z}
+$$
+
+$$
+\theta_2 = -\frac{PL^2}{128E I_z}
+$$
+
+$$
+v_3 = \frac{PL^2}{32E I_z}
 $$
 
 The deformed shape of the beam is shown in **Figure 4.7c**, superimposed with the **undeformed shape**.
-
 
 ### Step 6: Compute Reactions
 
