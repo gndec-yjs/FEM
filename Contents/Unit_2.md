@@ -725,7 +725,7 @@ $$
 $$
 
 $$
-v_3 = \frac{PL^2}{32E I_z}
+\theta_3 = \frac{PL^2}{32E I_z}
 $$
 
 The deformed shape of the beam is shown in **Figure 4.7c**, superimposed with the **undeformed shape**.
