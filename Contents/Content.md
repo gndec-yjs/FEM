@@ -11,7 +11,7 @@
 
 📌 **[Assignment 2](Assignment_2025/2.md)**
 
-3) **Method of Weighted Residuals:** Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
+3) **[Method of Weighted Residuals](Unit_3.md):** Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
 
 📌 **Assignment 3**
 
