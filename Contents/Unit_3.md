@@ -226,7 +226,8 @@ $$
 y(x) = \frac{5x^4}{6} + \frac{5x^2}{2} - \frac{10}{3} x
 $$  
 
-<img width="736" height="563" alt="image" src="https://github.com/user-attachments/assets/d354a697-9f79-42b1-9ec1-2eaf432baf1c" />
+<img width="745" height="592" alt="image" src="https://github.com/user-attachments/assets/f6e68039-92d0-449d-8540-e3c6653a796b" />
+
 
 **Observation:**  
 
