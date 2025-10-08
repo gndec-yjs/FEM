@@ -125,7 +125,7 @@ $$
 \tag{5.7}
 $$
 
-This again results in ( n ) algebraic equations for evaluation of the unknown coefficients ( c_i ).
+This again results in $n$ algebraic equations for evaluation of the unknown coefficients $c_i$.
 The following examples illustrate the procedure in detail.
 
 ---
