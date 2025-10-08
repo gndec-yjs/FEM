@@ -326,7 +326,7 @@ For comparison, the **exact solution**, the **one-term**, and the **two-term sol
 
 ---
 
-## 📚 Reference
+## 📚 References
 
 
 - [*Fundamentals of Finite Element Analysis - (Unit 3 - Chapter 5)*](Resources/FEM_Hutton_Unit3_Ch5.pdf) – Hutton David, McGraw-Hill 
