@@ -120,8 +120,8 @@ $$
 Therefore, the unknown parameters are determined via
 
 $$
-\int_{a}^{b} w_i(x) R(x), dx =
-\int_{a}^{b} N_i(x) R(x), dx = 0, \quad i = 1, 2, \dots, n
+\int_{a}^{b} w_i(x) R(x) dx =
+\int_{a}^{b} N_i(x) R(x) dx = 0, \quad i = 1, 2, \dots, n
 \tag{5.7}
 $$
 
