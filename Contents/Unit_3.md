@@ -85,22 +85,22 @@ R(x) = D[y^*(x), x] \ne 0
 \tag{5.4}
 $$
 
-where ( R(x) ) depends on the unknown coefficients ( c_i ).
+where $R(x)$ depends on the unknown coefficients $c_i$.
 
-The **method of weighted residuals** requires that the coefficients ( c_i ) be chosen such that the *weighted integral of the residual* over the domain vanishes:
+The **method of weighted residuals** requires that the coefficients $c_i$ be chosen such that the *weighted integral of the residual* over the domain vanishes:
 
 $$
 \int_{a}^{b} w_i(x) R(x), dx = 0, \quad i = 1, 2, \dots, n
 \tag{5.5}
 $$
 
-Here ( w_i(x) ) are **arbitrary weighting functions**.
-Equation (5.5) produces ( n ) algebraic equations, which can be solved for the ( n ) unknown coefficients ( c_i ).
+Here $w_i(x)$ are **arbitrary weighting functions**.
+Equation (5.5) produces $n$ algebraic equations, which can be solved for the $n$ unknown coefficients $c_i$.
 
 This expresses that the *integral of the weighted residual error* over the domain is zero.
 Because the trial functions satisfy the boundary conditions, the solution is exact at the endpoints, while the residual may be nonzero at interior points.
 
-Several variations of the MWR exist, differing mainly in how the weighting functions ( w_i(x) ) are chosen.
+Several variations of the MWR exist, differing mainly in how the weighting functions $w_i(x)$ are chosen.
 The most common are:
 
 * Point Collocation
@@ -120,8 +120,8 @@ $$
 Therefore, the unknown parameters are determined via
 
 $$
-\int_{a}^{b} w_i(x), R(x), dx =
-\int_{a}^{b} N_i(x), R(x), dx = 0, \quad i = 1, 2, \dots, n
+\int_{a}^{b} w_i(x) R(x), dx =
+\int_{a}^{b} N_i(x) R(x), dx = 0, \quad i = 1, 2, \dots, n
 \tag{5.7}
 $$
 
