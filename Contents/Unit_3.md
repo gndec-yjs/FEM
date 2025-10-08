@@ -72,7 +72,7 @@ y^*(x) = \sum_{i=1}^{n} c_i N_i(x)
 \tag{5.3}
 $$
 
-where ( y^*(x) ) is the approximate solution, ( c_i ) are unknown constants to be determined, and ( N_i(x) ) are **trial functions**.
+where $y^*(x)$ is the approximate solution, $c_i$ are unknown constants to be determined, and $N_i(x)$ are **trial functions**.
 
 The **trial functions** must be *admissible* — that is, continuous over the domain and satisfying the boundary conditions exactly.
 They should also reflect the physics of the problem in a general sense.
