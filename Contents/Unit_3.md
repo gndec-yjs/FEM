@@ -413,6 +413,8 @@ $$
 y(x) = 4x - \frac{3}{\sin 1}\,\sin x.
 $$
 
+<img width="700" height="576" alt="image" src="https://github.com/user-attachments/assets/f5bb4e20-e45f-48a4-bccc-4c178963cdf0" />
+
 **Observation:**  
 
 A plot of the approximate and exact solutions (see Figure 5.3 in Hutton) shows reasonable agreement for the one-term Galerkin approximation. The approximate solution satisfies the boundary conditions exactly (by construction). The match can be improved by including additional trial functions (higher-order terms), which allows the Galerkin approximation to capture the influence of the sinusoidal components in the exact solution more closely.
@@ -448,6 +450,160 @@ While this approach is perfectly valid, a more structured method involves **poly
 The following example illustrates this polynomial-based approach to the Method of Weighted Residuals.
 
 ---
+
+### **Example 5.4**
+
+**Problem:**  
+Solve the problem of Examples 5.1 and 5.2 by assuming a general polynomial form for the solution as  
+
+$$
+y^*(x) = c_0 + c_1x + c_2x^2 + \cdots
+$$
+
+**Solution:**  
+For the first trial, consider only the quadratic form:
+
+$$
+y^*(x) = c_0 + c_1x + c_2x^2
+$$
+
+Applying the boundary conditions \( y(0) = 0 \) and \( y(1) = 0 \):
+
+$$
+\begin{aligned}
+y^*(0) &= 0 = c_0, \\
+y^*(1) &= 0 = c_1 + c_2.
+\end{aligned}
+$$
+
+The second equation shows that \( c_1 \) and \( c_2 \) are **not independent** if the homogeneous boundary conditions are to be satisfied exactly.  
+This gives the constraint relation:
+
+$$
+c_2 = -c_1
+$$
+
+Thus, the trial solution becomes
+
+$$
+y^*(x) = c_1x + c_2x^2 = c_1x - c_1x^2 = c_1x(1 - x)
+$$
+
+which is identical to the one-term solution obtained in **Example 5.1**.
+
+Next, we **add a cubic term** and write:
+
+$$
+y^*(x) = c_0 + c_1x + c_2x^2 + c_3x^3
+$$
+
+Applying the boundary conditions:
+
+$$
+\begin{aligned}
+y^*(0) &= 0 = c_0, \\
+y^*(1) &= 0 = c_1 + c_2 + c_3.
+\end{aligned}
+$$
+
+Hence, we have the constraint relation:
+
+$$
+c_1 + c_2 + c_3 = 0
+$$
+
+or equivalently,
+
+$$
+c_3 = - (c_1 + c_2)
+$$
+
+Substituting this back, the trial solution becomes
+
+$$
+\begin{aligned}
+y^*(x) &= c_1x + c_2x^2 + c_3x^3 \\
+       &= c_1x + c_2x^2 - (c_1 + c_2)x^3 \\
+       &= c_1x(1 - x^2) + c_2x^2(1 - x)
+\end{aligned}
+$$
+
+Thus, we have obtained **two trial functions**, each satisfying the boundary conditions identically.  
+(The determination of constants for this two-term solution is left as an end-of-chapter exercise.)
+
+Now, **add the quartic term** and consider the trial solution:
+
+$$
+y^*(x) = c_0 + c_1x + c_2x^2 + c_3x^3 + c_4x^4
+$$
+
+Applying the boundary conditions:
+
+$$
+\begin{aligned}
+c_0 &= 0, \\
+c_1 + c_2 + c_3 + c_4 &= 0
+\end{aligned}
+$$
+
+We can use this constraint to eliminate \( c_4 \) (arbitrarily chosen) and rewrite:
+
+$$
+\begin{aligned}
+y^*(x) &= c_1x + c_2x^2 + c_3x^3 - (c_1 + c_2 + c_3)x^4 \\
+       &= c_1x(1 - x^3) + c_2x^2(1 - x^2) + c_3x^3(1 - x)
+\end{aligned}
+$$
+
+**Residual Formulation**
+
+Substituting into the governing differential equation
+
+$$
+\frac{d^2y}{dx^2} = 10x^2 + 5
+$$
+
+we obtain the residual:
+
+$$
+R(x; c_1, c_2, c_3) = -12c_1x^2 + c_2(2 - 12x^2) + c_3(6x - 12x^2) - 10x^2 - 5
+$$
+
+Setting the residual expression equal to zero and equating coefficients of like powers of \( x \),  
+we find that the residual is exactly zero when:
+
+$$
+\begin{aligned}
+c_1 &= -\frac{10}{3}, \\
+c_2 &= \frac{5}{2}, \\
+c_3 &= 0, \\
+c_4 &= \frac{5}{6}
+\end{aligned}
+$$
+
+**Final Solution**
+
+Hence, the resulting polynomial form gives the **exact solution**:
+
+$$
+y^*(x) = \frac{5}{6}x^4 + \frac{5}{2}x^2 - \frac{10}{3}x
+$$
+
+This demonstrates that by **increasing the polynomial order**,  
+the **Galerkin formulation using the Method of Weighted Residuals** can recover the **exact analytical solution** for this problem.
+
+---
+
+> **Note:**  
+> The procedure detailed in the previous example represents a **systematic approach** for developing polynomial trial functions.  
+> It can be applied not only to problems with **homogeneous boundary conditions**, but also extended to those with **nonhomogeneous conditions** by appropriate modification of the trial function form.  
+> 
+> Algebraically, the process is quite **straightforward**, but it becomes increasingly **tedious** as the number of trial functions — and thus the **order of the polynomial** — is increased.  
+> 
+> Having now outlined the **general technique of Galerkin’s Method of Weighted Residuals (MWR)**, we proceed next to develop the **Galerkin Finite Element Method**, which is founded on the same fundamental principles of MWR.
+
+---
+
 ## Galerkin Finite Element Method
 
 ---
