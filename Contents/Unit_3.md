@@ -422,31 +422,31 @@ A plot of the approximate and exact solutions (see Figure 5.3 in Hutton) shows r
 ---
 
 > **Note on Accuracy and Convergence in the Method of Weighted Residuals**
-
+>
 > A natural question arises after obtaining an approximate solution:  
 > **How do we know when the Method of Weighted Residuals (MWR) solution is accurate enough?**  
 > In other words, how can we determine whether our approximate solution is sufficiently close to the exact one?
 
 > This issue of **convergence** is central to all approximate solution techniques.  
 > In most practical problems, the **exact solution is unknown**, so we must develop some logical criterion to assess accuracy.
-
+>
 > The general approach in MWR is **progressive refinement**:
 > - Begin with a small number of trial functions and obtain the corresponding approximate solution.  
 > - Gradually **increase the number of trial functions** and observe how the solution changes.  
 > - If the solution varies only slightly with the addition of more trial functions, we say that the **solution has converged**.
-
-However, convergence alone does not guarantee correctness—i.e., that the approximation converges **to the true solution**.  
+>
+> However, convergence alone does not guarantee correctness—i.e., that the approximation converges **to the true solution**.  
 > This deeper question involves advanced theoretical analysis, which lies beyond the present discussion.  
 > For practical engineering purposes, we assume that if the solution converges smoothly, it converges toward the correct physical behavior.
-
+>
 > To ensure that a converged numerical solution is *reasonable* in the context of a physical problem, one can perform additional checks such as:
 > - **Equilibrium verification** (for structural or mechanical systems),  
 > - **Energy balance** checks,  
 > - **Heat or fluid flow balance**, and other problem-specific validations discussed in later chapters.
-
+>
 > In the earlier examples, we employed **trial functions chosen ad hoc**—that is, functions tailored to satisfy the boundary conditions but not derived from a systematic procedure.  
 > While this approach is perfectly valid, a more structured method involves **polynomial trial functions**, which provide a systematic means of increasing the number of terms and examining convergence behavior more rigorously.
-
+>
 > The following example illustrates this polynomial-based approach to the Method of Weighted Residuals.
 
 ---
