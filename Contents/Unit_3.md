@@ -305,6 +305,149 @@ $$
 For comparison, the **exact solution**, the **one-term**, and the **two-term solutions** can be plotted (Figure 5.2). The two-term Galerkin solution is **almost indistinguishable** from the exact solution, showing how adding higher-order terms improves the accuracy of the approximate solution.
 
 ---
+
+### Example 5.3
+
+**Problem:**  
+Use **Galerkin’s method of weighted residuals** to obtain a one-term approximation to the solution of the differential equation
+
+$$
+\frac{d^2 y}{dx^2} + y = 4x, \qquad 0 \le x \le 1
+$$
+
+with boundary conditions
+$$
+y(0) = 0, \qquad y(1) = 1.
+$$
+
+**Solution:**  
+
+Here the boundary conditions are **nonhomogeneous**, so the trial solution must be constructed to satisfy the prescribed boundary values.  
+We assume a trial solution of the form
+
+$$
+y^*(x) = c_1 N_1(x) + f(x)
+$$
+
+where \(N_1(x)\) satisfies the homogeneous boundary conditions and \(f(x)\) is chosen to satisfy the nonhomogeneous condition.  
+Choose
+
+$$
+N_1(x) = x(x-1), \qquad f(x) = x,
+$$
+
+so that \(y^*(0)=0\) and \(y^*(1)=1\) are satisfied identically. Thus
+
+$$
+y^*(x) = c_1 x(x-1) + x.
+$$
+
+Compute derivatives:
+
+$$
+\frac{d^2 y^*}{dx^2} = 2 c_1.
+$$
+
+Form the residual
+
+$$
+R(x;c_1) = \frac{d^2 y^*}{dx^2} + y^* - 4x
+= 2c_1 + c_1(x^2 - x) + x - 4x
+= c_1 x^2 - c_1 x + 2c_1 - 3x.
+$$
+
+Apply Galerkin’s weighted residual condition with weight \(N_1(x)\):
+
+$$
+\int_{0}^{1} N_1(x)\, R(x;c_1)\, dx = 0,
+$$
+
+i.e.
+
+$$
+\int_{0}^{1} x(x-1)\big( c_1 x^2 - c_1 x + 2c_1 - 3x \big)\, dx = 0.
+$$
+
+Carry out the integration (algebra steps):
+
+1. Expand integrand:
+   $$
+   x(x-1)\big( c_1 x^2 - c_1 x + 2c_1 - 3x \big)
+   = c_1(x^4 - x^3 - x^3 + x^2) + 2c_1(x^2 - x) - 3(x^2 - x).
+   $$
+
+2. Integrate term-by-term from 0 to 1. The symbolic evaluation gives the linear equation in \(c_1\):
+   $$
+   \frac{1}{4} - \frac{3}{10} c_1 = 0.
+   $$
+
+Solve for \(c_1\):
+
+$$
+c_1 = \frac{1/4}{3/10} = \frac{10}{12} = \frac{5}{6}.
+$$
+
+Hence the one-term Galerkin approximate solution is
+
+$$
+y^*(x) = \frac{5}{6}\, x(x-1) + x
+= \frac{5}{6}x^2 + \frac{1}{6}x.
+$$
+
+**Exact solution (for comparison):**  
+Solving the differential equation exactly yields
+
+$$
+y(x) = C_1\sin x + C_2\cos x + 4x.
+$$
+
+Applying the boundary conditions \(y(0)=0\) and \(y(1)=1\) gives \(C_2=0\) and
+
+$$
+C_1 = \frac{1-4}{\sin 1} = -\frac{3}{\sin 1} \approx -3.565,
+$$
+
+so the exact solution may be written
+
+$$
+y(x) = 4x - \frac{3}{\sin 1}\,\sin x.
+$$
+
+**Observation:**  
+
+A plot of the approximate and exact solutions (see Figure 5.3 in Hutton) shows reasonable agreement for the one-term Galerkin approximation. The approximate solution satisfies the boundary conditions exactly (by construction). The match can be improved by including additional trial functions (higher-order terms), which allows the Galerkin approximation to capture the influence of the sinusoidal components in the exact solution more closely.
+
+---
+
+> **Note on Accuracy and Convergence in the Method of Weighted Residuals**
+
+A natural question arises after obtaining an approximate solution:  
+**How do we know when the Method of Weighted Residuals (MWR) solution is accurate enough?**  
+In other words, how can we determine whether our approximate solution is sufficiently close to the exact one?
+
+This issue of **convergence** is central to all approximate solution techniques.  
+In most practical problems, the **exact solution is unknown**, so we must develop some logical criterion to assess accuracy.
+
+The general approach in MWR is **progressive refinement**:
+- Begin with a small number of trial functions and obtain the corresponding approximate solution.  
+- Gradually **increase the number of trial functions** and observe how the solution changes.  
+- If the solution varies only slightly with the addition of more trial functions, we say that the **solution has converged**.
+
+However, convergence alone does not guarantee correctness—i.e., that the approximation converges **to the true solution**.  
+This deeper question involves advanced theoretical analysis, which lies beyond the present discussion.  
+For practical engineering purposes, we assume that if the solution converges smoothly, it converges toward the correct physical behavior.
+
+To ensure that a converged numerical solution is *reasonable* in the context of a physical problem, one can perform additional checks such as:
+- **Equilibrium verification** (for structural or mechanical systems),  
+- **Energy balance** checks,  
+- **Heat or fluid flow balance**, and other problem-specific validations discussed in later chapters.
+
+In the earlier examples, we employed **trial functions chosen ad hoc**—that is, functions tailored to satisfy the boundary conditions but not derived from a systematic procedure.  
+While this approach is perfectly valid, a more structured method involves **polynomial trial functions**, which provide a systematic means of increasing the number of terms and examining convergence behavior more rigorously.
+
+The following example illustrates this polynomial-based approach to the Method of Weighted Residuals.
+
+---
 ## Galerkin Finite Element Method
 
 ---
