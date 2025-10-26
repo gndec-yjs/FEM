@@ -606,6 +606,144 @@ the **Galerkin formulation using the Method of Weighted Residuals** can recover 
 
 ## Galerkin Finite Element Method
 
+The **classical method of weighted residuals** described earlier utilizes **global trial functions**—that is, each trial function must apply over the **entire domain** and satisfy all **boundary conditions** exactly.  
+
+However, in practical **two- and three-dimensional problems**, governed by **partial differential equations**, determining suitable trial functions and verifying their accuracy become formidable tasks.  
+
+To overcome this, the **Galerkin approach** is adapted to the **finite element context**, where local trial functions are defined over smaller subdomains (elements).
+
+### **Governing Equation**
+
+Consider the differential equation:
+
+$$
+\frac{d^2 y}{dx^2} + f(x) = 0
+\quad \text{subject to} \quad
+y(a) = y_a, \quad y(b) = y_b
+\tag{5.8, 5.9}
+$$
+
+The problem domain is divided into **M elements**, bounded by **M + 1 nodal points**  (Figure 5.4a) \( x_1, x_2, \dots, x_{M+1} \), where:
+
+$$
+x_1 = x_a, \quad x_{M+1} = x_b
+$$
+
+<img width="1015" height="763" alt="image" src="https://github.com/user-attachments/assets/9d7b28b2-31d6-48bf-8a28-c67b9bf30923" />
+
+
+### **Approximate Solution**
+
+An approximate solution is assumed in the form:
+
+$$
+y^*(x) = \sum_{i=1}^{M+1} y_i \, n_i(x)
+\tag{5.10}
+$$
+
+where:
+- \( y_i \) = value of the solution at node \( x_i \),
+- \( n_i(x) \) = corresponding **trial (shape) function**.
+
+In contrast to the global trial functions of MWR, here the \( n_i(x) \) are **piecewise-defined and locally supported**, i.e., **nonzero only within one or two adjacent elements**.
+
+### **Shape Functions**
+
+For a simple **linear element**, the trial (interpolation) functions are defined as:
+
+$$
+n_i(x) =
+\begin{cases}
+\dfrac{x - x_{i-1}}{x_i - x_{i-1}}, & x_{i-1} \le x \le x_i \\
+[6pt]
+\dfrac{x_{i+1} - x}{x_{i+1} - x_i}, & x_i \le x \le x_{i+1} \\
+[6pt]
+0, & \text{otherwise}
+\end{cases}
+\tag{5.11}
+$$
+
+Thus, each \( n_i(x) \) overlaps only with its immediate neighbors \( n_{i-1}(x) \) and \( n_{i+1}(x) \), as illustrated schematically in **Figure 5.4(b)**.
+
+### **Local Approximation Example**
+
+In the interval \( x_2 \le x \le x_3 \), only two functions—\( n_2(x) \) and \( n_3(x) \)—are nonzero.  
+The approximate solution becomes:
+
+$$
+y^*(x) = y_2 n_2(x) + y_3 n_3(x)
+= y_2 \frac{x_3 - x}{x_3 - x_2} + y_3 \frac{x - x_2}{x_3 - x_2}
+\tag{5.12}
+$$
+
+> Here, \( y_2 \) and \( y_3 \) are the nodal values at points \( x_2 \) and \( x_3 \), and the solution varies **linearly** within the element.
+
+### **Weighted Residual Formulation**
+
+Substituting the approximate solution (Eq. 5.10) into the governing equation (Eq. 5.8), we obtain the **residual**:
+
+$$
+R(x; y_i) =
+\frac{d^2 y^*}{dx^2} + f(x)
+= \sum_{i=1}^{M+1} \frac{d^2}{dx^2} \{ y_i n_i(x) \} + f(x)
+\tag{5.13}
+$$
+
+Applying **Galerkin’s weighted residual principle**, each trial function is used as a **weighting function**, giving:
+
+$$
+\int_{x_a}^{x_b} n_j(x) R(x; y_i) \, dx = 0
+\quad j = 1, 2, \dots, M+1
+\tag{5.14}
+$$
+
+That is,
+
+$$
+\int_{x_a}^{x_b} n_j(x)
+\left[
+\sum_{i=1}^{M+1} \frac{d^2}{dx^2} \{ y_i n_i(x) \} + f(x)
+\right] dx = 0
+$$
+
+### **Element-Level Expression**
+
+In any single element \( x_j \le x \le x_{j+1} \), only **two shape functions**—\( n_j(x) \) and \( n_{j+1}(x) \)—are nonzero.  
+Hence, the equation reduces to:
+
+$$
+\int_{x_j}^{x_{j+1}}
+n_j(x)
+\left[
+\frac{d^2}{dx^2} (y_j n_j(x) + y_{j+1} n_{j+1}(x)) + f(x)
+\right] dx = 0,
+\quad j = 1, 2, \dots, M
+\tag{5.15}
+$$
+
+### **Matrix Form**
+
+After integration over all elements, we obtain a system of **M + 1 algebraic equations**:
+
+$$
+[K]\{y\} = \{F\}
+\tag{5.16}
+$$
+
+where:  
+- \([K]\) = global **stiffness matrix**,  
+- \(\{y\}\) = vector of nodal **displacements (solution values)**,  
+- \(\{F\}\) = vector of nodal **forces (load terms)**.
+
+### **Observation**
+
+Equation (5.14) represents the **formal statement of the Galerkin Finite Element Method**.  
+It clearly demonstrates that the **finite element formulation** is rooted in the **Method of Weighted Residuals**, but differs by:
+- Using **piecewise-defined trial functions**, and  
+- Performing integration **locally over each element**.
+
+This approach leads naturally to the **element formation** and **system assembly** procedures that form the foundation of all **finite element formulations**.
+
 ---
 
 ## Application to Structural Elements
