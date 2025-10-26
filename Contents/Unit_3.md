@@ -623,7 +623,7 @@ y(a) = y_a, \quad y(b) = y_b
 \tag{5.8, 5.9}
 $$
 
-The problem domain is divided into **M elements**, bounded by **M + 1 nodal points**  (Figure 5.4a) \( x_1, x_2, \dots, x_{M+1} \), where:
+The problem domain is divided into **M elements**, bounded by **M + 1 nodal points**  (Figure 5.4a) $$\( x_1, x_2, \dots, x_{M+1} \)$$, where:
 
 $$
 x_1 = x_a, \quad x_{M+1} = x_b
@@ -642,10 +642,10 @@ y^*(x) = \sum_{i=1}^{M+1} y_i \, n_i(x)
 $$
 
 where:
-- \( y_i \) = value of the solution at node \( x_i \),
-- \( n_i(x) \) = corresponding **trial (shape) function**.
+- $$\( y_i \)$$ = value of the solution at node $$\( x_i \)$$,
+- $$\( n_i(x) \)$$ = corresponding **trial (shape) function**.
 
-In contrast to the global trial functions of MWR, here the \( n_i(x) \) are **piecewise-defined and locally supported**, i.e., **nonzero only within one or two adjacent elements**.
+In contrast to the global trial functions of MWR, here the $$\( n_i(x) \)$$ are **piecewise-defined and locally supported**, i.e., **nonzero only within one or two adjacent elements**.
 
 ### **Shape Functions**
 
@@ -663,11 +663,11 @@ n_i(x) =
 \tag{5.11}
 $$
 
-Thus, each \( n_i(x) \) overlaps only with its immediate neighbors \( n_{i-1}(x) \) and \( n_{i+1}(x) \), as illustrated schematically in **Figure 5.4(b)**.
+Thus, each $$\( n_i(x) \)$$ overlaps only with its immediate neighbors $$\( n_{i-1}(x) \)$$ and $$\( n_{i+1}(x) \)$$, as illustrated schematically in **Figure 5.4(b)**.
 
 ### **Local Approximation Example**
 
-In the interval \( x_2 \le x \le x_3 \), only two functions—\( n_2(x) \) and \( n_3(x) \)—are nonzero.  
+In the interval $$\( x_2 \le x \le x_3 \)$$, only two functions— $$\( n_2(x) \)$$ and $$\( n_3(x) \)$$ —are nonzero.  
 The approximate solution becomes:
 
 $$
@@ -676,7 +676,7 @@ y^*(x) = y_2 n_2(x) + y_3 n_3(x)
 \tag{5.12}
 $$
 
-> Here, \( y_2 \) and \( y_3 \) are the nodal values at points \( x_2 \) and \( x_3 \), and the solution varies **linearly** within the element.
+> Here, $$\( y_2 \)$$ and $$\( y_3 \)$$ are the nodal values at points $$\( x_2 \)$$ and $$\( x_3 \)$$, and the solution varies **linearly** within the element.
 
 ### **Weighted Residual Formulation**
 
@@ -708,7 +708,7 @@ $$
 
 ### **Element-Level Expression**
 
-In any single element \( x_j \le x \le x_{j+1} \), only **two shape functions**—\( n_j(x) \) and \( n_{j+1}(x) \)—are nonzero.  
+In any single element $$\( x_j \le x \le x_{j+1} \)$$, only **two shape functions**— $$\( n_j(x) \) and \( n_{j+1}(x) \)$$ —are nonzero.  
 Hence, the equation reduces to:
 
 $$
@@ -731,9 +731,9 @@ $$
 $$
 
 where:  
-- \([K]\) = global **stiffness matrix**,  
-- \(\{y\}\) = vector of nodal **displacements (solution values)**,  
-- \(\{F\}\) = vector of nodal **forces (load terms)**.
+- $$\([K]\)$$ = global **stiffness matrix**,  
+- $$\(\{y\}\)$$ = vector of nodal **displacements (solution values)**,  
+- $$\(\{F\}\)$$ = vector of nodal **forces (load terms)**.
 
 ### **Observation**
 
