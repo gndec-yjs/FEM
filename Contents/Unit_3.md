@@ -623,7 +623,7 @@ y(a) = y_a, \quad y(b) = y_b
 \tag{5.8, 5.9}
 $$
 
-The problem domain is divided into **M elements**, bounded by **M + 1 nodal points**  (Figure 5.4a) $$\( x_1, x_2, \dots, x_{M+1} \)$$, where:
+The problem domain is divided into **M elements**, bounded by **M + 1 nodal points**  (Figure 5.4a) $$x_1, x_2, \dots, x_{M+1}$$, where:
 
 $$
 x_1 = x_a, \quad x_{M+1} = x_b
