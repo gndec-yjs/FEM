@@ -23,6 +23,6 @@
 
 📌 **Assignment 5**
 
-6) **Computer Implementation:** Use of commercial FEA Software, Pre-processing, Solution, Post-processing 
+6) **[Computer Implementation](Unit_6.md):** Use of commercial FEA Software, Pre-processing, Solution, Post-processing 
 
 📌 **Assignment 6**
