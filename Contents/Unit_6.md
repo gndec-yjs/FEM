@@ -3,8 +3,8 @@
 Use of commercial FEA Software, Pre-processing, Solution, Post-processing
 
 * [6.1 Introduction](#61-introduction)
-    - [6.1.1 Use of Commercial FEA Software](#611-use-of-commercial-fea-software)
-    - [6.1.2 Stages of Finite Element Analysis](#612-stages-of-finite-element-analysis)
+  - [6.1.1 Use of Commercial FEA Software](#611-use-of-commercial-fea-software)
+  - [6.1.2 Stages of Finite Element Analysis](#612-stages-of-finite-element-analysis)
       a) [Pre-processing](#a-pre-processing)
       b) [Solution Phase](#b-solution-phase)
       c) [Post-processing](#c-post-processing)
