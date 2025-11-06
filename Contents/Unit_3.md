@@ -790,8 +790,8 @@ $$
 
 Applying boundary conditions:
 
-1. At $$\( x = 1 \)$$:  
-   $$\( y(1) = 1 + C_1 \ln 1 + C_2 = 0 \Rightarrow C_2 = -1 \)$$
+1. At \( x = 1 \):  
+   \( y(1) = 1 + C_1 \ln 1 + C_2 = 0 \Rightarrow C_2 = -1 \)
 
 2. At $$\( x = 2 \)$$:  
    $$\( y(2) = 4 + C_1 \ln 2 - 1 = 0 \Rightarrow C_1 = \frac{-3}{\ln 2} \)$$
