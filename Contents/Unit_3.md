@@ -746,7 +746,7 @@ This approach leads naturally to the **element formation** and **system assembly
 
 ---
 
-## Example 5.5 — Galerkin Finite Element Method
+## Example 5.5 — Galerkin Finite Element Solution
 
 Use Galerkin’s method to formulate a linear finite element for solving the differential equation
 
@@ -754,20 +754,18 @@ $$
 x \frac{d^2y}{dx^2} + \frac{dy}{dx} - 4x = 0, \quad 1 \leq x \leq 2
 $$
 
-subject to boundary conditions:
+subject to the boundary conditions
 
 $$
 y(1) = 0, \quad y(2) = 0
 $$
 
-### Solution:
+### Exact Solution
 
-### Exact (Analytical) Solution
-
-We first rewrite the equation as
+Rewriting the differential equation in self-adjoint form:
 
 $$
-\frac{d}{dx} \left( x \frac{dy}{dx} \right) - 4x = 0
+\frac{d}{dx}\left( x \frac{dy}{dx} \right) - 4x = 0
 $$
 
 Integrating once:
@@ -788,159 +786,147 @@ $$
 y = \int \left( 2x + \frac{C_1}{x} \right) dx = x^2 + C_1 \ln x + C_2
 $$
 
-Applying boundary conditions:
+Applying the boundary conditions:
 
-1. At \( x = 1 \):  
-   \( y(1) = 1 + C_1 \ln 1 + C_2 = 0 \Rightarrow C_2 = -1 \)
-
-2. At $$\( x = 2 \)$$:  
-   $$\( y(2) = 4 + C_1 \ln 2 - 1 = 0 \Rightarrow C_1 = \frac{-3}{\ln 2} \)$$
-
-Thus, the **exact solution** is:
+At \( x = 1 \), \( y(1) = 0 \):
 
 $$
-y(x) = x^2 - \frac{3}{\ln 2} \ln x - 1
+1 + C_1(0) + C_2 = 0 \quad \Rightarrow \quad C_2 = -1
 $$
 
-### Finite Element Solution (Galerkin Method)
+At \( x = 2 \), \( y(2) = 0 \):
 
-We divide the domain $$\( [1, 2] \)$$ into elements.  
-For each element $$\( x_1 \leq x \leq x_2 \)$$, the approximate solution is assumed as
+$$
+4 + C_1 \ln 2 - 1 = 0 \quad \Rightarrow \quad C_1 = -\frac{3}{\ln 2}
+$$
+
+Hence, the exact solution is
+
+$$
+\boxed{y(x) = x^2 - 1 - \frac{3}{\ln 2} \ln x}
+$$
+
+### Finite Element Formulation
+
+Rewriting the differential equation again:
+
+$$
+\frac{d}{dx}\left( x \frac{dy}{dx} \right) - 4x = 0
+$$
+
+We use the Galerkin approach, multiplying by a weight function \( N_i \) and integrating over an element:
+
+$$
+\int_{x_1}^{x_2} N_i \left[ \frac{d}{dx}\left( x \frac{dy}{dx} \right) - 4x \right] dx = 0, \quad i = 1,2
+$$
+
+Integrating the first term by parts:
+
+$$
+\left[ N_i x \frac{dy}{dx} \right]_{x_1}^{x_2} - \int_{x_1}^{x_2} x \frac{dN_i}{dx} \frac{dy}{dx} dx - \int_{x_1}^{x_2} 4x N_i \, dx = 0
+$$
+
+### Linear Element Interpolation
+
+For a two-node linear element, the interpolation is:
 
 $$
 y(x) = N_1(x) y_1 + N_2(x) y_2
 $$
 
-where $$\( y_1 \)$$ and $$\( y_2 \)$$ are nodal values, and
+where
 
 $$
-N_1(x) = \frac{x_2 - x}{x_2 - x_1}, \qquad N_2(x) = \frac{x - x_1}{x_2 - x_1}
+N_1 = \frac{x_2 - x}{x_2 - x_1}, \quad N_2 = \frac{x - x_1}{x_2 - x_1}
 $$
 
-### Residual Form
-
-Substitute into the governing equation in residual form:
-
-$$
-R = \frac{d}{dx} \left( x \frac{dy}{dx} \right) - 4x
-$$
-
-The Galerkin weighted residual statement for the element is
-
-$$
-\int_{x_1}^{x_2} N_i R \, dx = 0, \quad i = 1, 2
-$$
-
-or
-
-$$
-\int_{x_1}^{x_2} N_i \frac{d}{dx}\left( x \frac{dy}{dx} \right) dx = \int_{x_1}^{x_2} 4x N_i \, dx
-$$
-
-### Integration by Parts
-
-Integrate the left term by parts:
-
-$$
-\left. N_i \, x \frac{dy}{dx} \right|_{x_1}^{x_2} - \int_{x_1}^{x_2} x \frac{dN_i}{dx} \frac{dy}{dx} \, dx = \int_{x_1}^{x_2} 4x N_i \, dx
-$$
-
-Rearrange:
-
-$$
-\int_{x_1}^{x_2} x \frac{dN_i}{dx} \frac{dy}{dx} \, dx = \left. N_i \, x \frac{dy}{dx} \right|_{x_1}^{x_2} - \int_{x_1}^{x_2} 4x N_i \, dx
-$$
-
-### Substitute the Element Approximation
-
-Compute derivatives:
-
-$$
-\frac{dy}{dx} = \frac{dN_1}{dx} y_1 + \frac{dN_2}{dx} y_2
-$$
-
-Since the interpolation functions are linear,
+and their derivatives:
 
 $$
 \frac{dN_1}{dx} = -\frac{1}{x_2 - x_1}, \quad \frac{dN_2}{dx} = \frac{1}{x_2 - x_1}
 $$
 
-Substitute into the equation:
+Substituting \( y(x) \) into the weak form, the term involving \(\frac{dy}{dx}\) becomes:
 
 $$
-\int_{x_1}^{x_2} x \frac{dN_i}{dx} \left( \frac{dN_1}{dx} y_1 + \frac{dN_2}{dx} y_2 \right) dx = \left. N_i \, x \frac{dy}{dx} \right|_{x_1}^{x_2} - \int_{x_1}^{x_2} 4x N_i \, dx
+\frac{dy}{dx} = \frac{y_2 - y_1}{x_2 - x_1}
 $$
 
-### Element Stiffness Matrix
-
-Compute the first term on LHS:
+Thus, the stiffness term:
 
 $$
-\frac{dN_1}{dx} = -\frac{1}{x_2 - x_1}, \quad \frac{dN_2}{dx} = \frac{1}{x_2 - x_1}
+\int_{x_1}^{x_2} x \frac{dN_i}{dx} \frac{dy}{dx} dx
+= \frac{(y_2 - y_1)}{(x_2 - x_1)^2} \int_{x_1}^{x_2} x \, dx
+= \frac{(y_2 - y_1)}{(x_2 - x_1)^2} \left( \frac{x_2^2 - x_1^2}{2} \right)
 $$
 
-Hence,
+So the element stiffness matrix becomes:
 
 $$
-\frac{dN_1}{dx} y_1 + \frac{dN_2}{dx} y_2 = \frac{y_2 - y_1}{x_2 - x_1}
-$$
-
-Thus,
-
-$$
-\int_{x_1}^{x_2} x \frac{dN_i}{dx} \frac{dy}{dx} \, dx 
-= \frac{1}{(x_2 - x_1)^2} \int_{x_1}^{x_2} x (y_2 - y_1) \, dx
-$$
-
-Compute this integral:
-
-$$
-\int_{x_1}^{x_2} x \, dx = \frac{1}{2} (x_2^2 - x_1^2)
-$$
-
-So,
-
-$$
-k^{(e)} = \frac{x_2^2 - x_1^2}{2 (x_2 - x_1)^2}
+[k^{(e)}] = \frac{(x_2^2 - x_1^2)}{2(x_2 - x_1)^2}
 \begin{bmatrix}
 1 & -1 \\
 -1 & 1
 \end{bmatrix}
 $$
 
-### Element Load Vector
+### Element Force Vector
 
-Compute the load term:
-
-$$
-F_i^{(e)} = -\int_{x_1}^{x_2} 4x N_i \, dx
-$$
-
-**For \( N_1 = \frac{x_2 - x}{x_2 - x_1} \):**
+The load (force) term is:
 
 $$
-F_1^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x (x_2 - x) \, dx
+F_i^{(e)} = - \int_{x_1}^{x_2} 4x N_i dx
+$$
+
+For \( N_1 = \frac{x_2 - x}{x_2 - x_1} \):
+
+$$
+F_1^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x(x_2 - x) dx
 = -\frac{4}{x_2 - x_1} \left[ \frac{x_2 x^2}{2} - \frac{x^3}{3} \right]_{x_1}^{x_2}
 $$
 
-**For \( N_2 = \frac{x - x_1}{x_2 - x_1} \):**
+Similarly, for \( N_2 = \frac{x - x_1}{x_2 - x_1} \):
 
 $$
-F_2^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x (x - x_1) \, dx
+F_2^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x(x - x_1) dx
 = -\frac{4}{x_2 - x_1} \left[ \frac{x^3}{3} - \frac{x_1 x^2}{2} \right]_{x_1}^{x_2}
 $$
 
+### Element Calculations
 
-### Numerical Example
+#### Element 1: \( x_1 = 1, \, x_2 = 1.5 \)
 
-Two elements, nodes at \( x = 1, 1.5, 2 \).
+$$
+k^{(1)} = \frac{1.5^2 - 1^2}{2(0.5)^2} =
+\frac{1.25}{0.5} = 2.5
+$$
 
-| Element | \(x_1\) | \(x_2\) | \(k^{(e)}\) | \(F_1^{(e)}\) | \(F_2^{(e)}\) |
-|----------|----------|----------|--------------|---------------|---------------|
-| 1 | 1 | 1.5 | 2.5 | −1.1667 | −1.3333 |
-| 2 | 1.5 | 2 | 3.5 | −1.6667 | −1.8333 |
+$$
+F_1^{(1)} = -4 \int_1^{1.5} x \frac{1.5 - x}{0.5} dx = -1.1667
+$$
+
+$$
+F_2^{(1)} = -4 \int_1^{1.5} x \frac{x - 1}{0.5} dx = -1.3333
+$$
+
+#### Element 2: \( x_1 = 1.5, \, x_2 = 2.0 \)
+
+$$
+k^{(2)} = \frac{2^2 - 1.5^2}{2(0.5)^2} =
+\frac{1.75}{0.5} = 3.5
+$$
+
+$$
+F_1^{(2)} = -4 \int_{1.5}^{2} x \frac{2 - x}{0.5} dx = -1.6667
+$$
+
+$$
+F_2^{(2)} = -4 \int_{1.5}^{2} x \frac{x - 1.5}{0.5} dx = -1.8333
+$$
 
 ### Element Equations
+
+Element 1:
 
 $$
 \begin{bmatrix}
@@ -952,12 +938,12 @@ y_1 \\ y_2
 \end{Bmatrix}
 =
 \begin{Bmatrix}
--1.1667 - x_1 \frac{dy}{dx}\bigg|_{x_1} \\
--1.3333 + x_2 \frac{dy}{dx}\bigg|_{x_2}
+-1.1667 - x_1 \frac{dy}{dx}\big|_{x_1} \\
+-1.3333 + x_2 \frac{dy}{dx}\big|_{x_2}
 \end{Bmatrix}
 $$
 
-and
+Element 2:
 
 $$
 \begin{bmatrix}
@@ -969,17 +955,19 @@ y_2 \\ y_3
 \end{Bmatrix}
 =
 \begin{Bmatrix}
--1.6667 - x_2 \frac{dy}{dx}\bigg|_{x_2} \\
--1.8333 + x_3 \frac{dy}{dx}\bigg|_{x_3}
+-1.6667 - x_2 \frac{dy}{dx}\big|_{x_2} \\
+-1.8333 + x_3 \frac{dy}{dx}\big|_{x_3}
 \end{Bmatrix}
 $$
 
-### Assembled Global Equations
+### Assembly of Global Equations
+
+After assembling and applying continuity at node 2:
 
 $$
 \begin{bmatrix}
 2.5 & -2.5 & 0 \\
--2.5 & 6.0 & -3.5 \\
+-2.5 & 6 & -3.5 \\
 0 & -3.5 & 3.5
 \end{bmatrix}
 \begin{Bmatrix}
@@ -987,19 +975,19 @@ Y_1 \\ Y_2 \\ Y_3
 \end{Bmatrix}
 =
 \begin{Bmatrix}
--1.1667 - x_1 \frac{dy}{dx}\big|_{x_1} \\
--3.0 \\
--1.8333 + x_3 \frac{dy}{dx}\big|_{x_3}
+-1.1667 - \frac{dy}{dx}\big|_{x_1} \\
+-3 \\
+-1.8333 + 2\frac{dy}{dx}\big|_{x_3}
 \end{Bmatrix}
 $$
 
-Applying boundary conditions \( Y_1 = Y_3 = 0 \):
+With boundary conditions \( Y_1 = 0, \, Y_3 = 0 \):
 
 $$
 Y_2 = -0.5
 $$
 
-Back-substitution gives boundary slopes:
+and corresponding boundary gradients:
 
 $$
 \frac{dy}{dx}\bigg|_{x_1} = -2.4167, \quad \frac{dy}{dx}\bigg|_{x_3} = 1.7917
@@ -1010,15 +998,26 @@ $$
 Exact solution gives:
 
 $$
-Y_2 = -0.5049, \quad \frac{dy}{dx}\bigg|_{x_1} = -2.3281, \quad \frac{dy}{dx}\bigg|_{x_3} = 1.8360
+Y_2 = y(1.5) = -0.5049, \quad
+\frac{dy}{dx}\bigg|_{x_1} = -2.3281, \quad
+\frac{dy}{dx}\bigg|_{x_3} = 1.8360
 $$
 
-Hence, the finite element solution matches the analytical result closely.
-
+Hence, the finite element solution is in close agreement with the exact analytical result.
 
 <img width="742" height="585" alt="image" src="https://github.com/user-attachments/assets/6d1cfbcb-fba3-428d-85df-cd4d7a3f7074" />
 
 *Figure 5.6: Comparison of exact, two-element, and four-element Galerkin FEM solutions.*
+
+### Observation
+
+A two-element solution provides a rough approximation except at nodes, with derivative discontinuities significant at inter-element boundaries.  
+Increasing the number of elements (e.g., to four) improves accuracy and reduces these discontinuities, closely matching the exact solution.
+
+### Note
+
+The procedure detailed above represents a systematic method for constructing polynomial trial functions and is applicable to both homogeneous and nonhomogeneous boundary conditions. Although algebraically straightforward, the process becomes tedious as the number of elements or polynomial order increases.  
+Having outlined the Galerkin weighted residual method, we now proceed to the **Galerkin finite element method**.
 
 ---
 
