@@ -878,14 +878,14 @@ $$
 F_i^{(e)} = - \int_{x_1}^{x_2} 4x N_i dx
 $$
 
-For \( N_1 = \frac{x_2 - x}{x_2 - x_1} \):
+For $$N_1 = \frac{x_2 - x}{x_2 - x_1}$$
 
 $$
 F_1^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x(x_2 - x) dx
 = -\frac{4}{x_2 - x_1} \left[ \frac{x_2 x^2}{2} - \frac{x^3}{3} \right]_{x_1}^{x_2}
 $$
 
-Similarly, for \( N_2 = \frac{x - x_1}{x_2 - x_1} \):
+Similarly, for $$N_2 = \frac{x - x_1}{x_2 - x_1}$$
 
 $$
 F_2^{(e)} = -\frac{4}{x_2 - x_1} \int_{x_1}^{x_2} x(x - x_1) dx
