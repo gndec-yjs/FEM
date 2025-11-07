@@ -131,18 +131,20 @@ FEA software automates this process and handles complex behaviors such as:
 
 **Steps:**
 
-1. Visit [https://www.cervenka.cz](https://www.cervenka.cz)
-2. Navigate to the **Downloads** section.
-3. Download the latest version of **ATENA Engineering**.
+1. It is **recommended** to obtain the installation setup directly from the **technician in the Computational Lab**, where the verified version of the software is available.
+
+   * This ensures compatibility with the **hard key (dongle)** available in the lab for license validation and analysis.
+2. Alternatively, you may visit [https://www.cervenka.cz](https://www.cervenka.cz) and navigate to the **Downloads** section.
+3. Download the appropriate version of **ATENA Engineering** (as guided by the lab technician).
 4. Install using administrative privileges.
-5. Launch the software and verify the license or demo configuration.
-6. Familiarize yourself with key modules:
+5. Launch the software and verify the license using the **lab’s hard key** or demo configuration.
+6. Familiarize yourself with the key modules:
 
-   * **ATENA Studio** (Modeling & Pre-processing)
-   * **ATENA Solver** (Computation)
-   * **GiD / Viewer** (Post-processing and visualization)
+   * **ATENA Studio** – Modeling & Pre-processing
+   * **ATENA Solver** – Computation
+   * **GiD / Viewer** – Post-processing and visualization
 
-> ⚙️ *Ensure system requirements (Windows 64-bit, ≥8GB RAM, OpenGL support) are met for smooth performance.*
+> ⚙️ *Ensure system requirements (Windows 64-bit, ≥8 GB RAM, OpenGL support) are met for smooth performance.*
 
 ## **6.6 Guided Tutorial Exercise**
 
