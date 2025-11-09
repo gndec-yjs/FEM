@@ -1023,9 +1023,318 @@ Having outlined the Galerkin weighted residual method, we now proceed to the **G
 
 ## Application to Structural Elements
 
+## 5.4 Application of Galerkin’s Method to Structural Elements
+
+### 5.4.1 Spar Element
+
+Reconsidering the elastic bar (or spar) element discussed in Chapter 2 and recalling that the bar is a **constant strain** (and therefore **constant stress**) element, the applicable equilibrium equation is obtained from Equations (2.29) and (2.30) as:
+
+$$
+\frac{d}{dx}\left(E\varepsilon_x\right) = E\frac{d^2u(x)}{dx^2} = 0
+$$
+  
+where \(E\) is the elastic modulus (assumed constant).  
+Let \(L\) denote the element length. The displacement field is discretized using Equation (2.17):
+
+$$
+u(x) = u_1 N_1(x) + u_2 N_2(x) = u_1\left(1 - \frac{x}{L}\right) + u_2\frac{x}{L}
+$$
+
+Since the domain of interest is the *volume* of the element, the Galerkin residual equations become:
+
+$$
+\int_V N_i(x) E \frac{d^2u}{dx^2} \, dV =
+\int_0^L N_i E \frac{d^2u}{dx^2} A\,dx = 0, \quad i = 1,2
+$$
+
+where \(dV = A\,dx\) and \(A\) is the constant cross-sectional area.
+
+Integrating by parts and rearranging gives:
+
+$$
+AE \int_0^L \frac{dN_i}{dx}\frac{du}{dx}\,dx =
+N_i AE \frac{du}{dx}\Big|_0^L
+$$
+
+Using the discretized displacement field:
+
+$$
+u(x) = u_1 N_1 + u_2 N_2
+$$
+
+we obtain:
+
+$$
+AE \int_0^L \frac{dN_1}{dx}\frac{d(u_1N_1 + u_2N_2)}{dx} dx =
+- AE \frac{du}{dx}\Big|_{x=0} = -A\varepsilon|_{x=0} = -A\sigma|_{x=0}
+$$
+
+$$
+AE \int_0^L \frac{dN_2}{dx}\frac{d(u_1N_1 + u_2N_2)}{dx} dx =
+AE \frac{du}{dx}\Big|_{x=L} = A\varepsilon|_{x=L} = A\sigma|_{x=L}
+$$
+
+The right-hand sides represent the **applied nodal forces**, since \(A\sigma = F\).
+
+Combining these equations in matrix form:
+
+$$
+AE \int_0^L 
+\begin{bmatrix}
+\dfrac{dN_1}{dx} \\[6pt] 
+\dfrac{dN_2}{dx}
+\end{bmatrix}
+\begin{bmatrix}
+\dfrac{dN_1}{dx} & \dfrac{dN_2}{dx}
+\end{bmatrix}
+dx 
+\begin{bmatrix}
+u_1 \\[4pt] u_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+F_1 \\[4pt] F_2
+\end{bmatrix}
+$$
+
+Carrying out the differentiations and integrations gives:
+
+$$
+\frac{AE}{L}
+\begin{bmatrix}
+1 & -1 \\[4pt]
+-1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+u_1 \\[4pt]
+u_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+F_1 \\[4pt]
+F_2
+\end{bmatrix}
+$$
+
+This is the **same result** obtained in Chapter 2 for the bar element, illustrating the *equivalence* of **Galerkin’s Method** and the earlier **Equilibrium** and **Energy (Castigliano)** approaches.
+
+## 5.4.2 Beam Element
+
+Application of the Galerkin method to the beam element begins with consideration of the **equilibrium conditions** of a differential section taken along the longitudinal axis of a loaded beam, as depicted in **Figure 5.7**.
+
+<img width="893" height="304" alt="image" src="https://github.com/user-attachments/assets/5c57acff-cbf7-440a-8250-9d83d01ead7f" />
+
+> *Figure 5.7: Differential section of a loaded beam.*
+
+Let \( q(x) \) represent the distributed load (force per unit length).  
+Although \( q \) may vary arbitrarily, it is assumed constant over a differential length \( dx \).
+
+The condition of **force equilibrium** in the \( y \)-direction is:
+
+$$
+- V + (V + dV) + q(x)\,dx = 0
+$$
+
+which gives
+
+$$
+\frac{dV}{dx} = -q(x)
+\tag{5.39}
+$$
+
+Moment equilibrium about a point on the left face is expressed as:
+
+$$
+(M + dM) - M + (V + dV)dx - q(x)dx \cdot \frac{dx}{2} = 0
+$$
+
+Neglecting second-order differentials, we have:
+
+$$
+\frac{dM}{dx} = -V
+\tag{5.41}
+$$
+
+Combining Equations (5.39) and (5.41):
+
+$$
+\frac{d^2M}{dx^2} = q(x)
+\tag{5.42}
+$$
+
+From elementary strength of materials, the **flexure formula** (following the sign conventions of Figure 5.7) is:
+
+$$
+M = EIz \frac{d^2v}{dx^2}
+\tag{5.43}
+$$
+
+where \( v(x) \) is the transverse displacement, \( E \) is the modulus of elasticity, and \( I_z \) is the second moment of area.
+
+Combining Equations (5.42) and (5.43) gives the **governing differential equation for beam flexure**:
+
+$$
+\frac{d^2}{dx^2}\left(EIz \frac{d^2v}{dx^2}\right) = q(x)
+\tag{5.44}
+$$
+
+The **Galerkin finite element formulation** assumes the displacement field as:
+
+$$
+v(x) = N_1(x)v_1 + N_2(x)\theta_1 + N_3(x)v_2 + N_4(x)\theta_2 = \sum_{i=1}^{4} N_i(x)\,\delta_i
+\tag{5.45}
+$$
+
+where \( N_i(x) \) are the shape (interpolation) functions, \( v_1, v_2 \) are nodal displacements, and \( \theta_1, \theta_2 \) are nodal rotations.
+
+Thus, the element residual equations are:
+
+$$
+\int_{x_1}^{x_2} N_i(x) 
+\left[
+\frac{d^2}{dx^2}
+\left(EIz \frac{d^2v}{dx^2}\right)
+- q(x)
+\right] dx = 0, 
+\quad i = 1, 2, 3, 4
+\tag{5.46}
+$$
+
+Integrating the first term by parts and assuming \( EIz \) constant:
+
+$$
+\Big[ N_i EIz \frac{d^3v}{dx^3} \Big]_{x_1}^{x_2}
+- EIz \int_{x_1}^{x_2} 
+\frac{dN_i}{dx}
+\frac{d^3v}{dx^3}\,dx
+- \int_{x_1}^{x_2} N_i q(x)\,dx = 0
+\tag{5.47}
+$$
+
+Since
+
+$$
+V = -\frac{dM}{dx} = -\frac{d}{dx}\left(EIz \frac{d^2v}{dx^2}\right)
+= -EIz \frac{d^3v}{dx^3}
+\tag{5.48}
+$$
+
+the first term of Equation (5.47) represents **shear force conditions** at the element nodes.
+
+Integrating by parts again and rearranging:
+
+$$
+EIz \int_{x_1}^{x_2}
+\frac{d^2N_i}{dx^2}
+\frac{d^2v}{dx^2}\,dx =
+\int_{x_1}^{x_2} N_i q(x)\,dx
+- N_i EIz \frac{d^3v}{dx^3}\Big|_{x_1}^{x_2}
++ \frac{dN_i}{dx}EIz \frac{d^2v}{dx^2}\Big|_{x_1}^{x_2},
+\quad i = 1, 2, 3, 4
+\tag{5.49}
+$$
+
+Per Equation (5.43), the last term represents **moment conditions** at the boundaries.
+
+This can be written compactly as:
+
+$$
+[\mathbf{k}]\{\delta\} = \{\mathbf{F}\}
+$$
+
+where
+
+$$
+k_{ij} = EIz \int_{x_1}^{x_2} 
+\frac{d^2N_i}{dx^2} 
+\frac{d^2N_j}{dx^2} \, dx, 
+\quad i,j = 1,2,3,4
+\tag{5.50}
+$$
+
+and
+
+$$
+F_i = 
+\int_{x_1}^{x_2} N_i q(x)\,dx
+- N_i EIz \frac{d^3v}{dx^3}\Big|_{x_1}^{x_2}
++ \frac{dN_i}{dx}EIz \frac{d^2v}{dx^2}\Big|_{x_1}^{x_2},
+\quad i = 1,2,3,4
+\tag{5.51a}
+$$
+
+or, using Equations (5.43) and (5.48),
+
+$$
+F_i =
+\int_{x_1}^{x_2} N_i q(x)\,dx
++ N_i V(x)\Big|_{x_1}^{x_2}
++ \frac{dN_i}{dx} M(x)\Big|_{x_1}^{x_2},
+\quad i = 1,2,3,4
+\tag{5.51b}
+$$
+
+For a **uniform distributed load** \( q(x) = q = \text{constant} \), substitution of interpolation functions gives the **element nodal force vector**:
+
+$$
+\{F\} =
+\begin{Bmatrix}
+\frac{qL}{2} - V_1 \\[4pt]
+\frac{qL^2}{12} - M_1 \\[4pt]
+\frac{qL}{2} + V_2 \\[4pt]
+-\frac{qL^2}{12} + M_2
+\end{Bmatrix}
+\tag{5.52}
+$$
+
+### Notes on Boundary Conditions
+
+When two beam elements share a common node, one of two cases arises:
+
+1. **No external load or moment at the node:**  
+   The nodal shear and moment contributions from adjacent elements are equal and opposite, cancelling in assembly.
+
+2. **Concentrated load or moment at the node:**  
+   The algebraic sum of boundary shear forces equals the applied force, and similarly for moments.
+
+Equation (5.52) shows that the effects of a distributed load are transferred to the element nodes.  
+In practical finite element software, a “pressure” on the beam’s transverse face
+
 ---
 
 ## Interpolation Functions
+
+## Interpolation Functions for General Element Formulation
+
+## 6.1 INTRODUCTION
+
+The structural elements introduced in the previous chapters were formulated on the basis of known principles from elementary strength of materials theory. We have also shown, by example, how **Galerkin’s method** can be applied to a heat conduction problem.  
+
+This chapter examines the requirements for **interpolation functions** in terms of solution accuracy and convergence of a finite element analysis to the exact solution of a general field problem. Interpolation functions for various common element shapes in one, two, and three dimensions are developed, and these functions are used to formulate finite element equations for various types of physical problems in the remainder of the text.  
+
+With the exception of the **beam element**, all the interpolation functions discussed in this chapter are applicable to finite elements used to obtain solutions to problems that are said to be **C⁰-continuous**.  
+
+This terminology means that, across element boundaries, only the zeroth-order derivatives of the field variable (i.e., the field variable itself) are continuous.  
+
+On the other hand, the **beam element formulation** is such that the element exhibits **C¹-continuity**, since the first derivative of the transverse displacement (i.e., slope) is continuous across element boundaries — as discussed previously and repeated later for emphasis.  
+
+In general, in a problem having **Cⁿ-continuity**, derivatives of the field variable up to and including nth-order derivatives are continuous across element boundaries.
+
+### Mathematical representation
+
+If \( \phi(x) \) is the field variable, then:
+
+$$
+\begin{cases}
+\text{C}^0\text{-continuity: } \phi \text{ is continuous across elements, but } \frac{d\phi}{dx} \text{ may be discontinuous} \\
+\text{C}^1\text{-continuity: } \phi \text{ and } \frac{d\phi}{dx} \text{ are continuous across elements} \\
+\text{C}^n\text{-continuity: } \phi, \frac{d\phi}{dx}, \frac{d^2\phi}{dx^2}, \ldots, \frac{d^n\phi}{dx^n} \text{ are continuous across elements}
+\end{cases}
+$$
+
+> **Note:**  
+> The choice of interpolation functions directly affects the accuracy, stability, and convergence of the finite element solution. Higher-order continuity is generally required for problems involving derivatives of higher order (e.g., beam and plate bending problems).
+
 
 ---
 
