@@ -1304,7 +1304,7 @@ In practical finite element software, a “pressure” on the beam’s transvers
 
 ## Interpolation Functions
 
-## Interpolation Functions for General Element Formulation
+### _Interpolation Functions for General Element Formulation_
 
 ## 6.1 INTRODUCTION
 
@@ -1322,7 +1322,7 @@ In general, in a problem having **Cⁿ-continuity**, derivatives of the field va
 
 ### Mathematical representation
 
-If \( \phi(x) \) is the field variable, then:
+If $$\phi(x)$$ is the field variable, then:
 
 $$
 \begin{cases}
