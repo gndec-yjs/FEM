@@ -1306,43 +1306,694 @@ In practical finite element software, a “pressure” on the beam’s transvers
 
 ### _Interpolation Functions for General Element Formulation_
 
-## 6.1 INTRODUCTION
+### Introduction
 
-The structural elements introduced in the previous chapters were formulated on the basis of known principles from elementary strength of materials theory. We have also shown, by example, how **Galerkin’s method** can be applied to a heat conduction problem.  
+In the earlier chapters, the structural elements were derived using the basic principles of **Strength of Materials**.  
+We also demonstrated how **Galerkin’s Method** can be applied to a simple **heat conduction problem**.
 
-This chapter examines the requirements for **interpolation functions** in terms of solution accuracy and convergence of a finite element analysis to the exact solution of a general field problem. Interpolation functions for various common element shapes in one, two, and three dimensions are developed, and these functions are used to formulate finite element equations for various types of physical problems in the remainder of the text.  
+In this chapter, we focus on the **interpolation functions** (also called *shape functions*) that are used to approximate the field variables (like displacement, temperature, etc.) within a finite element.
 
-With the exception of the **beam element**, all the interpolation functions discussed in this chapter are applicable to finite elements used to obtain solutions to problems that are said to be **C⁰-continuous**.  
+These functions play a critical role because:
 
-This terminology means that, across element boundaries, only the zeroth-order derivatives of the field variable (i.e., the field variable itself) are continuous.  
+- They determine the **accuracy** of the finite element solution.
+- They influence how well the solution **converges** to the exact result when the mesh is refined.
 
-On the other hand, the **beam element formulation** is such that the element exhibits **C¹-continuity**, since the first derivative of the transverse displacement (i.e., slope) is continuous across element boundaries — as discussed previously and repeated later for emphasis.  
+We will derive interpolation functions for different element types in **1D, 2D, and 3D**, and use them to formulate the finite element equations for a variety of physical problems.
 
-In general, in a problem having **Cⁿ-continuity**, derivatives of the field variable up to and including nth-order derivatives are continuous across element boundaries.
+### Continuity Requirements
 
-### Mathematical representation
+All interpolation functions (except those for **beam elements**) described in this chapter are designed for **C⁰-continuity**.
 
-If $$\phi(x)$$ is the field variable, then:
+#### What does C⁰-continuity mean?
+
+At the boundaries between elements, only the field variable itself (for example, displacement or temperature) is continuous —  
+its **first derivative** may be **discontinuous**.
+
+#### Example
+
+If the field variable is \( \phi(x) \), then in a C⁰-continuous formulation:
+
+$$
+\phi_1(x_e) = \phi_2(x_e)
+$$
+
+but
+
+$$
+\frac{d\phi_1}{dx} \neq \frac{d\phi_2}{dx}
+$$
+
+#### What about beam elements?
+
+Beam elements must satisfy **C¹-continuity**, because the slope (first derivative of displacement) must also remain continuous across element boundaries.
+
+Mathematically:
 
 $$
 \begin{cases}
-\text{C}^0\text{-continuity: } \phi \text{ is continuous across elements, but } \frac{d\phi}{dx} \text{ may be discontinuous} \\
-\text{C}^1\text{-continuity: } \phi \text{ and } \frac{d\phi}{dx} \text{ are continuous across elements} \\
-\text{C}^n\text{-continuity: } \phi, \frac{d\phi}{dx}, \frac{d^2\phi}{dx^2}, \ldots, \frac{d^n\phi}{dx^n} \text{ are continuous across elements}
+\text{C}^0\text{-continuity: } & \phi \text{ is continuous, but } \frac{d\phi}{dx} \text{ may jump at boundaries.} \\
+\text{C}^1\text{-continuity: } & \phi \text{ and } \frac{d\phi}{dx} \text{ are both continuous.} \\
+\text{C}^n\text{-continuity: } & \phi, \frac{d\phi}{dx}, \frac{d^2\phi}{dx^2}, \ldots, \frac{d^n\phi}{dx^n} \text{ are continuous.}
 \end{cases}
 $$
 
-> **Note:**  
-> The choice of interpolation functions directly affects the accuracy, stability, and convergence of the finite element solution. Higher-order continuity is generally required for problems involving derivatives of higher order (e.g., beam and plate bending problems).
+### Summary
 
+- **Interpolation functions** are mathematical expressions used to approximate field variables within finite elements.
+- **Continuity** describes how smoothly these approximations connect across element boundaries.
+- For most elements, **C⁰-continuity** is enough.
+- For **beams and plates**, higher continuity (C¹ or C²) is needed to ensure slope and curvature continuity.
+
+> 🟢 **Key takeaway:**  
+> The smoother (more continuous) the interpolation, the better the representation of derivatives — which is crucial in bending and vibration problems.
 
 ---
 
 ## Compatibility and Completeness Requirements
 
+The **line elements** (spring, truss, beam) illustrate the general procedures used to formulate and solve a finite element problem and are quite useful in analyzing truss and frame structures. Such structures, however, tend to be well defined in terms of the number and type of elements used.
+
+In most engineering problems, the domain of interest is a **continuous solid body**, often of irregular shape, in which the behavior of one or more field variables is governed by one or more partial differential equations.  
+The objective of the **finite element method (FEM)** is to discretize the domain into a number of finite elements for which the governing equations are **algebraic equations**. The solution of this resulting algebraic system provides an **approximate solution** to the original problem.
+
+As with any approximate technique, a natural question arises:  
+> **How accurate is the finite element solution?**
+
+### Convergence and Mesh Refinement
+
+In finite element analysis, solution accuracy is judged in terms of **convergence** as the element *mesh* is refined. There are two primary methods of mesh refinement:
+
+1. **h-refinement** – Increasing the number of elements used to model the domain (reducing individual element size).
+2. **p-refinement** – Keeping element size constant but increasing the **order of the interpolation polynomials** (shape functions).
+
+The objective of either refinement method is to obtain **sequential solutions** that exhibit **asymptotic convergence** toward the exact (analytical) solution.
+
+Although the mathematical proof of convergence is beyond the scope of this text, these proofs are based on a **regular mesh refinement procedure** defined in literature. While such proofs assume regular meshes, **irregular or unstructured meshes** (such as those automatically generated by FEM software) can also provide excellent results because:
+
+- Most engineering geometries are irregular.
+- Automatic meshing tools in software naturally generate unstructured meshes.
+
+### Example of Mesh Refinement and Convergence
+
+An example illustrating regular **h-refinement** and solution convergence is shown in **Figure 6.1(a–e)**.  
+The figure depicts a **rectangular elastic plate** of uniform thickness, fixed on one edge and subjected to a **concentrated load at one corner**.
+
+<img width="1422" height="442" alt="image" src="https://github.com/user-attachments/assets/9f1a10f9-97cc-4ae8-8d3e-c84222f5ecad" />
+
+As the mesh is refined from coarse to fine (Figures 6.1b–6.1d), the solution for **maximum normal stress in the x-direction** converges toward the theoretical value, as shown in Figure 6.1(e).
+
+- The **exact solution** is the plane stress solution from elasticity theory.
+- For simplicity, the **maximum bending stress** from beam theory is used for comparison, since it closely approximates the exact value.
+
+If convergence is **not** obtained during mesh refinement, the engineer has **no assurance** that the results represent a meaningful approximation to the correct solution.
+
+### General Field Variable Representation
+
+For a general field problem, the field variable within an element can be expressed in discretized form as:
+
+$$
+\phi^{(e)}(x, y, z) = \sum_{i=1}^{M} N_i(x, y, z) \, \phi_i
+$$
+
+where:
+
+$$
+\phi^{(e)} = \text{Field variable within element } e
+$$
+
+$$
+N_i(x, y, z) = \text{Interpolation (shape) function for node } i
+$$
+
+$$
+\phi_i = \text{Value of field variable at node } i
+$$
+
+$$
+M = \text{Number of element degrees of freedom (DOF)}
+$$
+
+### Requirements for Convergence
+
+To ensure convergence during mesh refinement, the interpolation (shape) functions must satisfy **two primary requirements**:
+
+1. **Compatibility Requirement:**  
+   - The displacement (or field variable) field must be **continuous** across adjacent element boundaries.  
+   - No gaps or overlaps should exist between connected elements.
+
+2. **Completeness Requirement:**  
+   - The interpolation functions must be able to represent **rigid-body motion** and **constant strain states** within an element.  
+   - In other words, the shape functions should be capable of reproducing a complete polynomial of a required order.
+
+**In summary:**  
+Compatibility ensures **continuity** between elements, while completeness ensures **accuracy within** each element.  
+Both are essential for achieving **convergent and reliable finite element solutions** as the mesh is refined.
+
+### 6.2.1 Compatibility
+
+Along **element boundaries**, the field variable and its partial derivatives up to one order less than the **highest-order derivative** appearing in the *integral formulation* of the element equations must be **continuous**.  
+
+Given the discretized representation from Equation 6.1:
+
+$$
+\phi^{(e)}(x, y, z) = \sum_{i=1}^{M} N_i(x, y, z)\, \phi_i
+$$
+
+it follows that the **interpolation (shape) functions**, \( N_i(x, y, z) \), must also satisfy this condition since they define how the field variable varies spatially within each element.
+
+### Example: Structural Elements
+
+Recalling the application of **Galerkin’s method** to the formulation of the truss and beam elements:
+
+- For the **truss element**, the first derivative of displacement appears in Equation 5.34.  
+  Therefore, **displacement** itself must be **continuous** across element boundaries,  
+  but its derivative (strain) need **not** be continuous.
+
+  → The truss element is a **constant strain element**,  
+  meaning the first derivative of displacement is, in general, **discontinuous** at boundaries.
+
+- For the **beam element**, Equation 5.49 includes the **second derivative** of displacement.  
+  Thus, the **compatibility requirement** demands that both:
+  - the **displacement**, and  
+  - the **slope** (first derivative of displacement)  
+  must be **continuous** across element boundaries.
+
+### Physical Interpretation
+
+In addition to ensuring **mathematical convergence**, the compatibility condition also carries a **physical meaning**:
+
+- In **structural problems**:
+  - **Displacement continuity** ensures that no **gaps** or **voids** form between connected elements during deformation.
+  - **Slope continuity** (for beam elements) ensures that no **“kinks”** or abrupt changes in angle occur in the deformed shape.
+
+- In **heat transfer problems**:
+  - The compatibility requirement prevents **jump discontinuities** in temperature across element interfaces — a physically unrealistic scenario.
+
+**In summary:**  
+Compatibility ensures that the field variable transitions smoothly from one element to the next, both **mathematically** (for convergence) and **physically** (for realistic modeling of continuous media).
+
+### **6.2.2 Completeness**
+
+In the **finite element method (FEM)**, the **completeness** requirement ensures that the interpolation (shape) functions are capable of representing certain basic field conditions exactly.  
+
+When the **element size becomes very small** (i.e., in the limit of mesh refinement), the **field variable** $$\phi$$ and its **partial derivatives**—up to the **highest order** appearing in the governing equations—must be able to assume **constant values** within the element.  
+
+Because FEM discretizes the domain, this requirement is **applied directly to the interpolation functions** $$N_i(x, y, z)$$.
+
+#### **Physical Meaning**
+
+The completeness requirement guarantees that the **finite element model** can reproduce:
+
+- **Constant displacement** — representing **rigid body motion** (no deformation).  
+- **Constant slope** — for beam elements, representing **rigid body rotation**.  
+- **Constant temperature** — for thermal elements, representing a **no heat flux** condition.  
+
+In other words, the element must be able to represent a **uniform field** (e.g., constant strain, constant heat flow, or constant velocity) without error.
+
+#### **Importance**
+
+Completeness ensures:
+
+- The element behaves correctly under **rigid body motion**.  
+- The element can model **constant strain or gradient fields** (like uniform stress or uniform heat flow).  
+- The finite element solution **converges properly** as the mesh is refined.
+
+#### **In Summary**
+
+- Completeness means interpolation functions $$N_i$$ must be able to represent:  
+  - Constant values of the field variable:  
+    $$
+    \phi = \text{constant}
+    $$
+  - Constant values of its first derivatives:  
+    $$
+    \frac{\partial \phi}{\partial x} = \text{constant}, \quad 
+    \frac{\partial \phi}{\partial y} = \text{constant}, \quad 
+    \frac{\partial \phi}{\partial z} = \text{constant}
+    $$
+- This property is **fundamental for accuracy and convergence** of finite element models.
+
 ---
 
 ## Polynomial Form Applications
+
+### _**6.3 Polynomial Forms: One-Dimensional Elements**_
+
+Formulation of finite element characteristics requires **differentiation** and **integration** of interpolation functions in various forms.  
+Because **polynomial functions** are simple to differentiate and integrate, they are the most commonly used interpolation (shape) functions.
+
+### **Linear (Truss) Element Example**
+
+Recalling the truss element development from Chapter 2, the displacement field is expressed as a **first-degree polynomial**:
+
+$$
+u(x) = a_0 + a_1x \quad \text{(6.2)}
+$$
+
+In terms of nodal displacements, this can be written as:
+
+$$
+u(x) = \left(1 - \frac{x}{L}\right)u_1 + \frac{x}{L}u_2 \quad \text{(6.3)}
+$$
+
+The coefficients $$a_0$$ and $$a_1$$ are obtained by applying nodal conditions:
+
+$$
+u(x=0) = u_1, \quad u(x=L) = u_2
+$$
+
+Then, collecting coefficients of nodal displacements, the **interpolation functions** are:
+
+$$
+N_1 = 1 - \frac{x}{L}, \quad N_2 = \frac{x}{L} \quad \text{(6.4)}
+$$
+
+Equation (6.3) shows that if $$u_1 = u_2$$, the element displacement field corresponds to **rigid body motion** (no strain).  
+The **first derivative** of Equation (6.3) with respect to $$x$$ yields a constant value, which represents the **element axial strain**.  
+Hence, the truss element satisfies the **completeness requirement**, since both displacement and strain can assume constant values regardless of element size.
+
+Also, since only displacement is involved, the truss element automatically satisfies the **compatibility requirement**, as displacement continuity is enforced at the nodal connections during system assembly.
+
+### **Why a Linear Polynomial Is Sufficient**
+
+The choice of linear polynomial in Equation (6.2) was **not arbitrary**.  
+- The **constant term** $$a_0$$ ensures the possibility of **rigid body motion**.  
+- The **first-order term** $$a_1x$$ provides for a **constant first derivative** (constant strain).  
+- Only **two terms** are needed, since there are only **two nodal boundary conditions** (two DOF).
+
+If a **quadratic term** $$a_2x^2$$ were used, the nodal displacements could still be matched mathematically, but a constant nonzero first derivative (strain) could **not** be obtained — violating completeness.
+
+### **Cubic Polynomial for Beam Element**
+
+To satisfy both **displacement** and **slope continuity** (required by beam theory), a **cubic polynomial** is used to represent the displacement field:
+
+$$
+v(x) = a_0 + a_1x + a_2x^2 + a_3x^3 \quad \text{(6.5)}
+$$
+
+This can be expressed in terms of **nodal variables** (displacements and slopes):
+
+$$
+v(x) = N_1 v_1 + N_2 \theta_1 + N_3 v_2 + N_4 \theta_2 = [N_1 \; N_2 \; N_3 \; N_4]
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{Bmatrix}
+$$
+
+Rewriting Equation (6.5) as a matrix product:
+
+$$
+v(x) = [1 \; x \; x^2 \; x^3]
+\begin{Bmatrix}
+a_0 \\ a_1 \\ a_2 \\ a_3
+\end{Bmatrix}
+\quad \text{(6.6)}
+$$
+
+The nodal displacement and slope conditions are:
+
+$$
+\begin{aligned}
+v(x=0) &= v_1 \\
+\frac{dv}{dx}\Big|_{x=0} &= \theta_1 \\
+v(x=L) &= v_2 \\
+\frac{dv}{dx}\Big|_{x=L} &= \theta_2
+\end{aligned}
+\quad \text{(6.8)}
+$$
+
+Substituting these into Equation (6.6) gives:
+
+$$
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{Bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+1 & L & L^2 & L^3 \\
+0 & 1 & 2L & 3L^2
+\end{bmatrix}
+\begin{Bmatrix}
+a_0 \\ a_1 \\ a_2 \\ a_3
+\end{Bmatrix}
+\quad \text{(6.13)}
+$$
+
+Inverting the matrix, we obtain:
+
+$$
+\begin{Bmatrix}
+a_0 \\ a_1 \\ a_2 \\ a_3
+\end{Bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+-\frac{3}{L^2} & -\frac{2}{L} & \frac{3}{L^2} & -\frac{1}{L} \\
+\frac{2}{L^3} & \frac{1}{L^2} & -\frac{2}{L^3} & \frac{1}{L^2}
+\end{bmatrix}
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{Bmatrix}
+\quad \text{(6.14)}
+$$
+
+### **Interpolation Functions**
+
+Substitute Equation (6.14) into (6.6) to obtain:
+
+$$
+v(x) = [1 \; x \; x^2 \; x^3]
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+-\frac{3}{L^2} & -\frac{2}{L} & \frac{3}{L^2} & -\frac{1}{L} \\
+\frac{2}{L^3} & \frac{1}{L^2} & -\frac{2}{L^3} & \frac{1}{L^2}
+\end{bmatrix}
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{Bmatrix}
+=
+[N_1 \; N_2 \; N_3 \; N_4]
+\begin{Bmatrix}
+v_1 \\ \theta_1 \\ v_2 \\ \theta_2
+\end{Bmatrix}
+\quad \text{(6.15)}
+$$
+
+Thus, the **shape functions** are:
+
+$$
+[N_1 \; N_2 \; N_3 \; N_4]
+= [1 \; x \; x^2 \; x^3]
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+-\frac{3}{L^2} & -\frac{2}{L} & \frac{3}{L^2} & -\frac{1}{L} \\
+\frac{2}{L^3} & \frac{1}{L^2} & -\frac{2}{L^3} & \frac{1}{L^2}
+\end{bmatrix}
+\quad \text{(6.16)}
+$$
+
+These results are identical to those shown earlier in Equation (4.26).
+
+### **Remarks**
+
+The purpose of this section is twofold:
+1. To **establish a general polynomial procedure** for developing interpolation functions.
+2. To **revisit the beam element** in light of **compatibility** and **completeness** requirements.
+
+#### General Polynomial Procedure
+1. Express the field variable as a **polynomial of order (DOF − 1)**.  
+2. Apply **nodal boundary conditions** to compute the coefficients.  
+3. Substitute the coefficients into the field variable to obtain **interpolation functions** in terms of nodal values.
+
+### **Completeness of Beam Element**
+
+For the cubic beam element:
+- The **third derivative** of deflection is constant.  
+- **Rigid body translation** occurs when nodal forces are equal and moments are zero.  
+- **Rigid body rotation** and **constant bending moment/shear force** cases can be similarly verified (left as exercises).
+
+Hence, the **cubic polynomial** representation ensures the beam element meets the **completeness** and **compatibility** requirements.
+
+## 6.3.1 Higher-Order One-Dimensional Elements
+
+In formulating the truss element and the one-dimensional heat conduction element (Chapter 5), only **line elements** having a single degree of freedom at each of two nodes are considered.  
+While quite appropriate for the problems considered, the **linear element** is by no means the only one-dimensional element that can be formulated for a given problem type.
+
+Figure 6.2 depicts a **three-node line element** in which node 2 is an **interior node**.  
+As mentioned briefly in Chapter 1, an interior node is not connected to any other node in any other element in the model.  
+Inclusion of the interior node is a **mathematical tool** to increase the order of approximation of the field variable.
+
+Assuming that we deal with only **one degree of freedom per node**, the appropriate polynomial representation of the field variable is:
+
+$$
+\phi(x) = a_0 + a_1 x + a_2 x^2
+$$
+
+and the **nodal conditions** are:
+
+$$
+\phi(x = 0) = \phi_1, \qquad 
+\phi\left(x = \tfrac{L}{2}\right) = \phi_2, \qquad 
+\phi(x = L) = \phi_3
+$$
+
+<img width="566" height="280" alt="image" src="https://github.com/user-attachments/assets/270f3dea-71ed-4f9d-97b8-4349cdc1d585" />
+
+**Figure 6.2** – A three-node line element. Node 2 is an interior node.
+
+$$
+1 \quad 2 \quad 3 \quad x
+$$
+
+Applying the general procedure outlined previously in the context of the beam element,  
+we apply the nodal (boundary) conditions to obtain:
+
+$$
+\begin{bmatrix}
+\phi_1 \\[6pt]
+\phi_2 \\[6pt]
+\phi_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\[6pt]
+1 & \tfrac{L}{2} & \tfrac{L^2}{4} \\[6pt]
+1 & L & L^2
+\end{bmatrix}
+\begin{bmatrix}
+a_0 \\[6pt]
+a_1 \\[6pt]
+a_2
+\end{bmatrix}
+\tag{6.19}
+$$
+
+from which the interpolation functions are obtained via the following sequence:
+
+$$
+\begin{bmatrix}
+a_0 \\[6pt]
+a_1 \\[6pt]
+a_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\[6pt]
+-\tfrac{3}{L} & \tfrac{4}{L} & -\tfrac{1}{L} \\[6pt]
+\tfrac{2}{L^2} & -\tfrac{4}{L^2} & \tfrac{2}{L^2}
+\end{bmatrix}
+\begin{bmatrix}
+\phi_1 \\[6pt]
+\phi_2 \\[6pt]
+\phi_3
+\end{bmatrix}
+\tag{6.20a}
+$$
+
+Thus,
+
+$$
+\phi(x)
+= [\,1 \;\; x \;\; x^2\,]
+\begin{bmatrix}
+1 & 0 & 0 \\[6pt]
+-\tfrac{3}{L} & \tfrac{4}{L} & -\tfrac{1}{L} \\[6pt]
+\tfrac{2}{L^2} & -\tfrac{4}{L^2} & \tfrac{2}{L^2}
+\end{bmatrix}
+\begin{bmatrix}
+\phi_1 \\[6pt]
+\phi_2 \\[6pt]
+\phi_3
+\end{bmatrix}
+= [N_1 \; N_2 \; N_3]
+\begin{bmatrix}
+\phi_1 \\[6pt]
+\phi_2 \\[6pt]
+\phi_3
+\end{bmatrix}
+\tag{6.20b}
+$$
+
+where
+
+$$
+\begin{aligned}
+N_1(x) &= 1 - \frac{3x}{L} + \frac{2x^2}{L^2} \\[6pt]
+N_2(x) &= 4\frac{x}{L}\left(1 - \frac{x}{L}\right) \\[6pt]
+N_3(x) &= \frac{x}{L}\left(2\frac{x}{L} - 1\right)
+\end{aligned}
+\tag{6.20c}
+$$
+
+Note that each interpolation function varies **quadratically** in $x$ and has a value of **unity at its associated node** and **zero at the other two nodes**, as illustrated in **Figure 6.3**.
+
+These observations lead to a **shortcut method** of constructing the interpolation functions for a $C^0$ line element as products of monomials as follows.  
+Let
+
+$$
+s = \frac{x}{L}
+$$
+
+such that
+
+$$
+s_1 = 0, \qquad s_2 = \tfrac{1}{2}, \qquad s_3 = 1
+$$
+
+are the **non-dimensional coordinates** of nodes 1, 2, and 3, respectively.
+
+Instead of following the formal procedure used previously, we hypothesize, for example:
+
+$$
+N_1(s) = C_1 (s - s_2)(s - s_3)
+\tag{6.21}
+$$
+
+where $C_1$ is a constant.  
+The first monomial term ensures that $N_1$ has a value of zero at node 2, and the second ensures the same at node 3.  
+Therefore, we need to determine only $C_1$ to provide **unity value at node 1**.
+
+Substituting $s = 0$, we obtain:
+
+$$
+N_1(s = 0) = 1 = C_1 (0 - \tfrac{1}{2})(0 - 1)
+$$
+
+yielding
+
+$$
+C_1 = 2
+$$
+
+and therefore
+
+$$
+N_1(s) = 2 (s - \tfrac{1}{2})(s - 1)
+\tag{6.22}
+$$
+
+Following similar logic and procedure shows that
+
+$$
+\begin{aligned}
+N_2(s) &= -4s(s - 1) \\[6pt]
+N_3(s) &= 2s(s - \tfrac{1}{2})
+\end{aligned}
+\tag{6.23–6.24}
+$$
+
+Substituting $s = \frac{x}{L}$ in Equations (6.23–6.25) and expanding shows that the results are identical to those given in Equation (6.20).  
+The monomial-based procedure can be **extended to line elements of any order** as illustrated by the following example.
+
+<img width="624" height="472" alt="image" src="https://github.com/user-attachments/assets/45419b38-31c1-422c-a67a-09f9ce9cd867" />
+
+**Figure 6.3 – Spatial variation of interpolation functions** for a three-node line element:
+
+$$
+\text{Graph shows } N_1,\, N_2,\, N_3 \text{ varying quadratically along } x/L.
+$$
+
+---
+
+## Example 6.1
+
+**Use the monomial method to obtain the interpolation functions for the four-node line element shown in Figure 6.4.**
+
+<img width="520" height="228" alt="image" src="https://github.com/user-attachments/assets/6fb824d5-d66f-4b11-8ed4-b4ef074307e7" />
+
+**Figure 6.4:** Four-node line element of Example 6.1.
+
+
+### Solution
+
+Using the coordinate transformation:
+
+$$
+s = \frac{x}{L}
+$$
+
+we have:
+
+$$
+s_1 = 0, \quad s_2 = \frac{1}{3}, \quad s_3 = \frac{2}{3}, \quad s_4 = 1
+$$
+
+The monomial terms of interest are:
+
+$$
+s, \; (s - \frac{1}{3}), \; (s - \frac{2}{3}), \; (s - 1)
+$$
+
+The monomial products are:
+
+$$
+N_1(s) = C_1 (s - \frac{1}{3})(s - \frac{2}{3})(s - 1)
+$$
+
+$$
+N_2(s) = C_2 s (s - \frac{2}{3})(s - 1)
+$$
+
+$$
+N_3(s) = C_3 s (s - \frac{1}{3})(s - 1)
+$$
+
+$$
+N_4(s) = C_4 s (s - \frac{1}{3})(s - \frac{2}{3})
+$$
+
+These automatically satisfy the required zero-value conditions for each interpolation function. Hence, we need only evaluate the constants \( C_i \) such that:
+
+$$
+N_i(s_i) = 1, \quad i = 1, 2, 3, 4
+$$
+
+Applying each of the four unity-value conditions, we obtain:
+
+$$
+N_1(0) = 1 = C_1 (-\frac{1}{3})(-\frac{2}{3})(-1)
+$$
+
+$$
+N_2(\frac{1}{3}) = 1 = C_2 (\frac{1}{3})(-\frac{1}{3})(-\frac{2}{3})
+$$
+
+$$
+N_3(\frac{2}{3}) = 1 = C_3 (\frac{2}{3})(\frac{1}{3})(-\frac{1}{3})
+$$
+
+$$
+N_4(1) = 1 = C_4 (1)(\frac{2}{3})(\frac{1}{3})
+$$
+
+From which:
+
+$$
+C_1 = -\frac{9}{2}, \quad C_2 = \frac{27}{2}, \quad C_3 = -\frac{27}{2}, \quad C_4 = \frac{9}{2}
+$$
+
+The interpolation functions are then given as:
+
+$$
+N_1(s) = -\frac{9}{2}(s - \frac{1}{3})(s - \frac{2}{3})(s - 1)
+$$
+
+$$
+N_2(s) = \frac{27}{2}s (s - \frac{2}{3})(s - 1)
+$$
+
+$$
+N_3(s) = -\frac{27}{2}s (s - \frac{1}{3})(s - 1)
+$$
+
+$$
+N_4(s) = \frac{9}{2}s (s - \frac{1}{3})(s - \frac{2}{3})
+$$
 
 
 ---
