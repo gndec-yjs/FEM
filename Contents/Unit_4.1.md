@@ -1,10 +1,21 @@
----
-title: "Unit 4 – Finite Element Types and Numerical Integration"
-layout: default
-mathjax: true
----
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
 
-# Unit 4: Finite Element Types and Numerical Integration
+<script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+# MST-102: Finite Element Method in Structural Engineering  
+
+## Unit 4: Finite Element Types and Numerical Integration
+
+**Types:** Triangular Elements, Rectangular Elements, Three-dimensional elements, Iso-parametric Formulation, Axis-Symmetric elements, Numerical integration, Gaussian quadrature
 
 ## 🔗 Index
 1. [Introduction](#41-introduction)
