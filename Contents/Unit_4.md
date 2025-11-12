@@ -145,7 +145,7 @@ $$
 
 is **exact for all polynomials of order up to \(2m - 1\)**.
 
-This means that the higher the number of sampling (Gauss) points \(m\), the higher the order of the polynomial that can be integrated exactly.  
+This means that the higher the number of sampling (Gauss) points $$ m $$, the higher the order of the polynomial that can be integrated exactly.  
 The following table summarizes this relationship:
 
 | No. of Gauss Points $$m$$ | Polynomial Order Exactly Integrated | Example Function |
@@ -230,7 +230,7 @@ I &\approx W_1(a_0 + a_1r_1 + a_2r_1^2 + a_3r_1^3 + \cdots + a_n r_1^n) \\
 $$
 
 > 💡 **Note:**  
-> This explicit expansion shows how the integral approximation is formed as the weighted sum of the function values evaluated at the selected sampling points \(r_i\), each multiplied by its respective weight \(W_i\).
+> This explicit expansion shows how the integral approximation is formed as the weighted sum of the function values evaluated at the selected sampling points $$ r_i $$, each multiplied by its respective weight $$ W_i $$.
 
 For this approximation to be **exact** for all polynomials up to order $n$, the following conditions must be satisfied:
 
