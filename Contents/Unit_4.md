@@ -143,18 +143,23 @@ $$
 I = \int_{-1}^{1} f(r)\,dr \approx \sum_{i=1}^{m} W_i f(r_i)
 $$
 
-is **exact for all polynomials of order up to \( 2m - 1 \)**.
+is **exact for all polynomials of order up to \(2m - 1\)**.
 
-This means:
+This means that the higher the number of sampling (Gauss) points \(m\), the higher the order of the polynomial that can be integrated exactly.  
+The following table summarizes this relationship:
 
-| No. of Gauss Points (m) | Polynomial Order Exactly Integrated | Example |
-|--------------------------|------------------------------------|----------|
-| 1-point rule             | Linear (n = 1)                     | \( f(r) = a_0 + a_1r \) |
-| 2-point rule             | Cubic (n = 3)                      | \( f(r) = a_0 + a_1r + a_2r^2 + a_3r^3 \) |
-| 3-point rule             | Quintic (n = 5)                    | \( f(r) = a_0 + a_1r + \dots + a_5r^5 \) |
-| 4-point rule             | Septic (n = 7)                     | \( f(r) = a_0 + a_1r + \dots + a_7r^7 \) |
+| No. of Gauss Points $$m$$ | Polynomial Order Exactly Integrated | Example Function |
+|:--------------------------:|:-----------------------------------:|:----------------:|
+| $$1$$ | Linear $$ (n = 1) $$ | $$ f(r) = a_0 + a_1r $$ |
+| $$2$$ | Cubic $$ (n = 3) $$ | $$ f(r) = a_0 + a_1r + a_2r^2 + a_3r^3 $$ |
+| $$3$$ | Quintic $$ (n = 5) $$ | $$ f(r) = a_0 + a_1r + a_2r^2 + a_3r^3 + a_4r^4 + a_5r^5 $$ |
+| $$4$$ | Septic $$ (n = 7) $$ | $$ f(r) = a_0 + a_1r + \dots + a_7r^7 $$ |
 
-Hence, a **quadratic (n=2)** or **quartic (n=4)** function will also be **integrated exactly** by the 2-point and 3-point rules respectively.
+Hence:
+- A **quadratic** function $$ (n = 2) $$ is integrated exactly using the **2-point rule**.  
+- A **quartic** function $$ (n = 4) $$ is integrated exactly using the **3-point rule**.
+
+This property makes Gaussian Quadrature extremely efficient for finite element computations, as it achieves high accuracy with relatively few integration points.
 
 #### (b) Derivation Outline  
 
@@ -173,6 +178,37 @@ $$
 
 Since the integration limits are symmetric, all **odd powers** of $r$ integrate to zero.
 
+> #### 🔹 Note: Derivation of Equation (4.7.3)
+>
+> Consider a general polynomial function:
+>
+> $$
+> f(r) = a_0 + a_1r + a_2r^2 + a_3r^3 + \cdots + a_n r^n
+> $$
+>
+> Integrating term-by-term over the interval $$[-1,1]$$ gives
+>
+> $$
+> \int_{-1}^{1} f(r)\,dr
+> = a_0\!\int_{-1}^{1}\!dr + a_1\!\int_{-1}^{1}\!r\,dr + a_2\!\int_{-1}^{1}\!r^2\,dr + \cdots + a_n\!\int_{-1}^{1}\!r^n\,dr
+> $$
+>
+> 1. **Odd powers** of \(r\) integrate to zero due to symmetry:  
+>    $$\displaystyle \int_{-1}^{1} r^{k}\,dr = 0 \quad \text{for odd } k.$$
+>
+> 2. **Even powers** of \(r\) yield:  
+>    $$\displaystyle \int_{-1}^{1} r^{k}\,dr = \frac{2}{k+1} \quad \text{for even } k.$$
+>
+> Substituting, we obtain:
+>
+> $$
+> \boxed{
+> \int_{-1}^{1} f(r)\,dr
+> = 2a_0 + \frac{2}{3}a_2 + \frac{2}{5}a_4 + \cdots + \frac{2}{n+1}a_n
+> }
+> \tag{4.7.3}
+> $$
+
 The Gaussian approximation (Eq. 4.7.2) expands to:
 
 $$
@@ -180,7 +216,26 @@ I \approx \sum_{i=1}^{m} W_i \big(a_0 + a_1r_i + a_2r_i^2 + a_3r_i^3 + \cdots + 
 \tag{4.7.4}
 $$
 
+Expanding Equation (4.7.4), we get:
+
+$$
+\begin{aligned}
+I &\approx W_1(a_0 + a_1r_1 + a_2r_1^2 + a_3r_1^3 + \cdots + a_n r_1^n) \\
+  &\quad + W_2(a_0 + a_1r_2 + a_2r_2^2 + a_3r_2^3 + \cdots + a_n r_2^n) \\
+  &\quad + W_3(a_0 + a_1r_3 + a_2r_3^2 + a_3r_3^3 + \cdots + a_n r_3^n) \\
+  &\quad + \cdots \\
+  &\quad + W_m(a_0 + a_1r_m + a_2r_m^2 + a_3r_m^3 + \cdots + a_n r_m^n)
+\end{aligned}
+\tag{4.7.5}
+$$
+
+> 💡 **Note:**  
+> This explicit expansion shows how the integral approximation is formed as the weighted sum of the function values evaluated at the selected sampling points \(r_i\), each multiplied by its respective weight \(W_i\).
+
 For this approximation to be **exact** for all polynomials up to order $n$, the following conditions must be satisfied:
+
+Comparing Equations $$ (4.7.3) $$ and $$ (4.7.5) $$ in terms of the coefficients $$ a_j $$ of the polynomial,  
+the approximation given by Equation $$ (4.7.5) $$ becomes **exact** if the following conditions are satisfied:
 
 $$
 \begin{aligned}
@@ -188,17 +243,28 @@ $$
 \sum_{i=1}^{m} W_i r_i &= 0, \\
 \sum_{i=1}^{m} W_i r_i^2 &= \frac{2}{3}, \\
 \sum_{i=1}^{m} W_i r_i^3 &= 0, \\
-\sum_{i=1}^{m} W_i r_i^4 &= \frac{2}{5}, \quad \text{and so on.}
+\sum_{i=1}^{m} W_i r_i^4 &= \frac{2}{5}, \\
+&\ \vdots \\
+\sum_{i=1}^{m} W_i r_i^{n-1} &= 0, \\
+\sum_{i=1}^{m} W_i r_i^{n} &= \frac{2}{n+1}.
 \end{aligned}
-\tag{4.7.5}
+\tag{4.7.6}
 $$
 
-These relationships can be solved to determine the Gauss points $r_i$ and the weights $W_i$.
+These relationships can be solved to determine the Gauss points $r_i$ and the weights $W_i$.  
+
+where $$ m $$ is the number of sampling (Gauss) integration points,  
+$$ r_i $$ are the sampling locations, and $$ W_i $$ are the corresponding weighting factors.
+
+> 💬 **Interpretation:**  
+> These relations ensure that the Gaussian quadrature integration rule is *exact* for all polynomials up to degree $$ n $$.
+> The number of sampling points $$ m $$ determines the highest order polynomial that can be integrated exactly.
+
 
 #### (c) Illustrative Examples  
 
 1️⃣ **For a linear polynomial ($n=1$):**  
-Only the first two equations in (4.7.5) apply.  
+Only the first two equations in (4.7.6) apply.  
 One sampling point ($m=1$) is sufficient, giving  
 
 $$
