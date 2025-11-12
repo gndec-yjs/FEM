@@ -135,6 +135,27 @@ Example:
 - 2-point rule → exact for cubic ($n=3$) functions.  
 - 3-point rule → exact for quintic ($n=5$) functions.
 
+#### Accuracy of Gaussian Quadrature
+
+For Gaussian Quadrature, the integral
+
+$$
+I = \int_{-1}^{1} f(r)\,dr \approx \sum_{i=1}^{m} W_i f(r_i)
+$$
+
+is **exact for all polynomials of order up to \( 2m - 1 \)**.
+
+This means:
+
+| No. of Gauss Points (m) | Polynomial Order Exactly Integrated | Example |
+|--------------------------|------------------------------------|----------|
+| 1-point rule             | Linear (n = 1)                     | \( f(r) = a_0 + a_1r \) |
+| 2-point rule             | Cubic (n = 3)                      | \( f(r) = a_0 + a_1r + a_2r^2 + a_3r^3 \) |
+| 3-point rule             | Quintic (n = 5)                    | \( f(r) = a_0 + a_1r + \dots + a_5r^5 \) |
+| 4-point rule             | Septic (n = 7)                     | \( f(r) = a_0 + a_1r + \dots + a_7r^7 \) |
+
+Hence, a **quadratic (n=2)** or **quartic (n=4)** function will also be **integrated exactly** by the 2-point and 3-point rules respectively.
+
 #### (b) Derivation Outline  
 
 To illustrate, consider a general polynomial:
