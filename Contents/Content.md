@@ -5,11 +5,11 @@
 
 1) **[Introduction](Unit_1.md):** History and applications. Spring and bar elements, Minimum potential energy principle, Direct stiffness method, Nodal equilibrium equations, Assembly of global stiffness matrix, Element strain and stress  
 
-📌 **[Assignment 1](Assignment_2025/1.md)**
+📌 **[Assignment 1](Assignment_2026/1.md)**
 
 2) **[Beam Elements](Unit_2.md):** Flexure element, Element stiffness matrix, Element load vector  
 
-📌 **[Assignment 2](Assignment_2025/2.md)**
+📌 **[Assignment 2](Assignment_2026/2.md)**
 
 3) **[Method of Weighted Residuals](Unit_3.md):** Galerkin finite element method, Application to structural elements, Interpolation functions, Compatibility and Completeness requirements, Polynomial form applications  
 
