@@ -1,6 +1,6 @@
 # Finite Element Method in Structural Engineering 
 
-| **[Contents](Contents/Content.md)** | **[Syllabus](Contents/Syllabus.md)** | **[Contact](Contents/Contact.md)** |  
+| **[Contents](Contents/Content.md)** | **[Syllabus](Contents/Syllabus.md)** | **[Assignment](Contents/Notifications.md)** | **[Contact](Contents/Contact.md)** |  
 
 <span style="color:red; font-weight:bold; animation: blinker 1s linear infinite;">
 🚨 [All Notifications](Contents/Notifications.md)
