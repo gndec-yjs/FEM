@@ -3,7 +3,7 @@
 ## **Semester:** July-Dec 2026
 
 <span style="color:red; font-weight:bold; animation: blinker 1s linear infinite;">
-🚨 Students are required to submit Assignment 2 (Individual Topic Presentation) by November 20, 2026 (Friday), 11:59 PM. - [Click Here](https://gndec-yjs.github.io/FEM/Contents/Assignment_2026/2.html)
+🚨 The due date to submit Assignment 2 (Individual Topic Presentation) is November 20, 2026 (Friday), 11:59 PM. - [Click Here](https://gndec-yjs.github.io/FEM/Contents/Assignment_2026/2.html)
 </span>
 
 
