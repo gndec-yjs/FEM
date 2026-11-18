@@ -17,7 +17,7 @@
 
 6) **[Computer Implementation](Unit_6.md):** Use of commercial FEA Software, Pre-processing, Solution, Post-processing 
 
-📌 **[Assignment 2](Assignment_2025/2.md)**  
+📌 **[Assignment 2 - 2025](Assignment_2025/2.md)**  
 
 📌 **[Assignment 3](PY_QPs/MST-102_2023_1.pdf)**  
 
