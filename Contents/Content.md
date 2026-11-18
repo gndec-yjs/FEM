@@ -17,7 +17,7 @@
 
 6) **[Computer Implementation](Unit_6.md):** Use of commercial FEA Software, Pre-processing, Solution, Post-processing 
 
-📌 **[Assignment 2 - 2025](Assignment_2025/2.md)**  
+📌 **[Assignment 2 - 2026](Assignment_2026/2.md)**  
 
 📌 **[Assignment 3](PY_QPs/MST-102_2023_1.pdf)**  
 
@@ -29,7 +29,9 @@
 - [QP Year 2023 (2)](PY_QPs/MST-102_2023_2.pdf)
 - [QP Year 2022 (1)](PY_QPs/MST-102_2022_1.pdf)
 - [QP Year 2022 (2)](PY_QPs/MST-102_2022_2.pdf)
-- [QP Year 2021](PY_QPs/MST-102_2021.pdf)
+- [QP Year 2021](PY_QPs/MST-102_2021.pdf)  
+
+- **[Assignment 2 - 2025](Assignment_2025/2.md)**  
 
 
 ## 📚 Reference Books
